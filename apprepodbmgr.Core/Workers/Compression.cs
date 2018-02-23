@@ -173,7 +173,7 @@ namespace apprepodbmgr.Core
                         break;
                 }
 
-                long totalSize                                                           = 0, currentSize = 0;
+                long totalSize                                                            = 0, currentSize = 0;
                 foreach(KeyValuePair<string, DbAppFile> file in Context.Hashes) totalSize += file.Value.Length;
 
                 #if DEBUG

@@ -46,18 +46,19 @@ namespace apprepodbmgr.Eto
     {
         public delegate void OnAddedAppDelegate(DbEntry app);
 
-        ObservableCollection<FileEntry>     fileView;
-        int                                 knownFiles;
         ObservableCollection<DBEntryForEto> appView;
-        bool                                stopped;
-        Thread                              thdAddFiles;
-        Thread                              thdCheckFiles;
-        Thread                              thdExtractArchive;
-        Thread                              thdFindFiles;
-        Thread                              thdHashFiles;
-        Thread                              thdOpenArchive;
-        Thread                              thdPackFiles;
-        Thread                              thdRemoveTemp;
+
+        ObservableCollection<FileEntry> fileView;
+        int                             knownFiles;
+        bool                            stopped;
+        Thread                          thdAddFiles;
+        Thread                          thdCheckFiles;
+        Thread                          thdExtractArchive;
+        Thread                          thdFindFiles;
+        Thread                          thdHashFiles;
+        Thread                          thdOpenArchive;
+        Thread                          thdPackFiles;
+        Thread                          thdRemoveTemp;
 
         public dlgAdd()
         {
@@ -293,8 +294,8 @@ namespace apprepodbmgr.Eto
                 Workers.Finished        += ChkFilesFinished;
                 Workers.UpdateProgress  += UpdateProgress;
                 Workers.UpdateProgress2 += UpdateProgress2;
-                Workers.AddFileForApp    += AddFile;
-                Workers.AddApp           += AddApp;
+                Workers.AddFileForApp   += AddFile;
+                Workers.AddApp          += AddApp;
                 thdCheckFiles.Start();
             });
         }
@@ -312,8 +313,8 @@ namespace apprepodbmgr.Eto
                 Workers.Finished        -= ChkFilesFinished;
                 Workers.UpdateProgress  -= UpdateProgress;
                 Workers.UpdateProgress2 -= UpdateProgress2;
-                Workers.AddFileForApp    -= AddFile;
-                Workers.AddApp           -= AddApp;
+                Workers.AddFileForApp   -= AddFile;
+                Workers.AddApp          -= AddApp;
                 thdCheckFiles?.Abort();
                 thdHashFiles = null;
                 fileView?.Clear();
@@ -332,8 +333,8 @@ namespace apprepodbmgr.Eto
                 Workers.Finished        -= ChkFilesFinished;
                 Workers.UpdateProgress  -= UpdateProgress;
                 Workers.UpdateProgress2 -= UpdateProgress2;
-                Workers.AddFileForApp    -= AddFile;
-                Workers.AddApp           -= AddApp;
+                Workers.AddFileForApp   -= AddFile;
+                Workers.AddApp          -= AddApp;
 
                 thdCheckFiles?.Abort();
 
@@ -560,8 +561,8 @@ namespace apprepodbmgr.Eto
         {
             stopped = true;
 
-            Workers.AddFileForApp     -= AddFile;
-            Workers.AddApp            -= AddApp;
+            Workers.AddFileForApp    -= AddFile;
+            Workers.AddApp           -= AddApp;
             Workers.Failed           -= AddFilesToDbFailed;
             Workers.Failed           -= ChkFilesFailed;
             Workers.Failed           -= ExtractArchiveFailed;

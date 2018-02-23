@@ -64,7 +64,7 @@ namespace DiscImageChef.Interop
                 {
                     #if __ANDROID__
                         return PlatformID.Android;
-                    #else
+                                        #else
                     return PlatformID.Linux;
                     #endif
                 }

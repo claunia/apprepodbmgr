@@ -889,10 +889,10 @@ namespace apprepodbmgr.Core
             dbcmd.Transaction    = trans;
 
             dbcmd.CommandText =
-                $"DROP TABLE IF EXISTS `app_{id}_symlinks`;\n\n"                                               +
-                $"CREATE TABLE IF NOT EXISTS `app_{id}_symlinks` (\n"                                          +
-                "  `path` VARCHAR(8192) PRIMARY KEY,\n"                                                       +
-                "  `target` VARCHAR(8192) NOT NULL);\n\n"                                                     +
+                $"DROP TABLE IF EXISTS `app_{id}_symlinks`;\n\n"                                                +
+                $"CREATE TABLE IF NOT EXISTS `app_{id}_symlinks` (\n"                                           +
+                "  `path` VARCHAR(8192) PRIMARY KEY,\n"                                                         +
+                "  `target` VARCHAR(8192) NOT NULL);\n\n"                                                       +
                 $"CREATE UNIQUE INDEX `app_{id}_symlinks_path_UNIQUE` ON `app_{id}_symlinks` (`path` ASC);\n\n" +
                 $"CREATE INDEX `app_{id}_symlinks_target_idx` ON `app_{id}_symlinks` (`target` ASC);";
 

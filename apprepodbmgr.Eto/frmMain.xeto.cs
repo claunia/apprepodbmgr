@@ -39,17 +39,17 @@ namespace apprepodbmgr.Eto
 {
     public class frmMain : Form
     {
-        int                          infectedFiles;
-        ObservableCollection<DbFile> lstFiles;
+        int infectedFiles;
 
         ObservableCollection<DBEntryForEto> lstApps;
+        ObservableCollection<DbFile>        lstFiles;
         DbFile                              outIter;
         bool                                populatingFiles;
         bool                                scanningFiles;
         Thread                              thdCleanFiles;
         Thread                              thdCompressTo;
-        Thread                              thdPopulateFiles;
         Thread                              thdPopulateApps;
+        Thread                              thdPopulateFiles;
         Thread                              thdSaveAs;
         Thread                              thdScanFile;
 
@@ -209,7 +209,7 @@ namespace apprepodbmgr.Eto
             Workers.Failed         += LoadAppsFailed;
             Workers.Finished       += LoadAppsFinished;
             Workers.UpdateProgress += UpdateProgress;
-            Workers.AddApp          += AddApp;
+            Workers.AddApp         += AddApp;
             Workers.AddFile        += AddFile;
             Workers.AddFiles       += AddFiles;
             thdPopulateApps        =  new Thread(Workers.GetAllApps);
@@ -242,22 +242,22 @@ namespace apprepodbmgr.Eto
                 Workers.Failed         -= LoadAppsFailed;
                 Workers.Finished       -= LoadAppsFinished;
                 Workers.UpdateProgress -= UpdateProgress;
-                Workers.AddApp          -= AddApp;
+                Workers.AddApp         -= AddApp;
                 if(thdPopulateApps != null)
                 {
                     thdPopulateApps.Abort();
                     thdPopulateApps = null;
                 }
 
-                lblProgress.Visible = false;
-                prgProgress.Visible = false;
-                treeApps.Enabled    = true;
-                btnAdd.Visible      = true;
-                btnRemove.Visible   = true;
-                btnCompress.Visible = Context.UsableDotNetZip;
-                btnSave.Visible     = true;
-                btnHelp.Enabled     = true;
-                btnSettings.Enabled = true;
+                lblProgress.Visible  = false;
+                prgProgress.Visible  = false;
+                treeApps.Enabled     = true;
+                btnAdd.Visible       = true;
+                btnRemove.Visible    = true;
+                btnCompress.Visible  = Context.UsableDotNetZip;
+                btnSave.Visible      = true;
+                btnHelp.Enabled      = true;
+                btnSettings.Enabled  = true;
                 lblAppStatus.Visible = true;
                 lblAppStatus.Text    = $"{lstApps.Count} applications";
             });
@@ -326,7 +326,7 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnAddClicked(object sender, EventArgs e)
         {
-            dlgAdd dlgAdd    = new dlgAdd();
+            dlgAdd dlgAdd     = new dlgAdd();
             dlgAdd.OnAddedApp += app => { lstApps.Add(new DBEntryForEto(app)); };
             dlgAdd.ShowModal(this);
         }
@@ -459,7 +459,7 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnStopClicked(object sender, EventArgs e)
         {
-            Workers.AddApp           -= AddApp;
+            Workers.AddApp          -= AddApp;
             Workers.Failed          -= CompressToFailed;
             Workers.Failed          -= LoadAppsFailed;
             Workers.Failed          -= SaveAsFailed;

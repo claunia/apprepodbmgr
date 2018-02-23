@@ -25,6 +25,7 @@
 //  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
+
 using System;
 using apprepodbmgr.Core;
 using Eto;
@@ -41,11 +42,11 @@ namespace apprepodbmgr.Eto.Desktop
             Context.CheckUnar();
             if(Settings.Current.UseAntivirus)
             {
-                if(Settings.Current.UseClamd)
-                    Workers.InitClamd();
+                if(Settings.Current.UseClamd) Workers.InitClamd();
                 if(Settings.Current.UseVirusTotal)
                     Context.VirusTotalEnabled = Workers.InitVirusTotal(Settings.Current.VirusTotalKey);
             }
+
             Context.UsableDotNetZip = !Platform.Detect.IsMac && !Platform.Detect.IsIos;
 
             new Application(Platform.Detect).Run(new frmMain());

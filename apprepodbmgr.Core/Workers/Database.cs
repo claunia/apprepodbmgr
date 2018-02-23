@@ -111,7 +111,7 @@ namespace apprepodbmgr.Core
                     UpdateProgress?.Invoke(null, "Checking files in database", counter, Context.Hashes.Count);
 
                     AddFileForApp?.Invoke(kvp.Key, kvp.Value.Sha256, dbCore.DbOps.ExistsFile(kvp.Value.Sha256),
-                                         kvp.Value.Crack);
+                                          kvp.Value.Crack);
 
                     if(dbCore.DbOps.ExistsFile(kvp.Value.Sha256))
                     {
@@ -246,7 +246,8 @@ namespace apprepodbmgr.Core
                 counter = 0;
                 foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
                 {
-                    UpdateProgress?.Invoke(null, "Adding files to application in database", counter, Context.Hashes.Count);
+                    UpdateProgress?.Invoke(null, "Adding files to application in database", counter,
+                                           Context.Hashes.Count);
 
                     dbCore.DbOps.AddFileToApp(kvp.Value, Context.DbInfo.Id);
 
