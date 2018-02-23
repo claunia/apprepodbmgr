@@ -705,16 +705,16 @@ namespace apprepodbmgr.Core
             trans             = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            sql = $"DROP TABLE IF EXISTS `os_{id}_folders`;\n\n"                                          +
-                  $"CREATE TABLE IF NOT EXISTS `os_{id}_folders` (\n"                                     +
-                  "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                                           +
-                  "  `path` VARCHAR(8192) NOT NULL,\n"                                                    +
-                  "  `creation` DATETIME NULL,\n"                                                         +
-                  "  `access` DATETIME NULL,\n"                                                           +
-                  "  `modification` DATETIME NULL,\n"                                                     +
-                  "  `attributes` INTEGER NULL);\n\n"                                                     +
-                  $"CREATE UNIQUE INDEX `os_{id}_folders_id_UNIQUE` ON `os_{id}_folders` (`id` ASC);\n\n" +
-                  $"CREATE INDEX `os_{id}_folders_path_idx` ON `os_{id}_folders` (`path` ASC);";
+            sql = $"DROP TABLE IF EXISTS `app_{id}_folders`;\n\n"                                           +
+                  $"CREATE TABLE IF NOT EXISTS `app_{id}_folders` (\n"                                      +
+                  "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                                             +
+                  "  `path` VARCHAR(8192) NOT NULL,\n"                                                      +
+                  "  `creation` DATETIME NULL,\n"                                                           +
+                  "  `access` DATETIME NULL,\n"                                                             +
+                  "  `modification` DATETIME NULL,\n"                                                       +
+                  "  `attributes` INTEGER NULL);\n\n"                                                       +
+                  $"CREATE UNIQUE INDEX `app_{id}_folders_id_UNIQUE` ON `app_{id}_folders` (`id` ASC);\n\n" +
+                  $"CREATE INDEX `app_{id}_folders_path_idx` ON `app_{id}_folders` (`path` ASC);";
 
             dbcmd.CommandText = sql;
 

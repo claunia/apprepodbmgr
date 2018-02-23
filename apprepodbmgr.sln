@@ -25,11 +25,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apprepodbmgr.Core", "apprep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apprepodbmgr.Eto", "apprepodbmgr.Eto\apprepodbmgr.Eto.csproj", "{E805559F-89AE-47B4-926D-5B63A4F3A123}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apprepodbmgr.Eto.Desktop", "apprepodbmgr.Eto.Desktop\apprepodbmgr.Eto.Desktop.csproj", "{DCC4B0CF-0F0D-4EDA-87CB-ED8303D07555}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apprepodbmgr.Eto.XamMac2", "apprepodbmgr.Eto.XamMac2\apprepodbmgr.Eto.XamMac2.csproj", "{FE0C10AD-1C0D-490F-B1BF-9702A5B01074}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Interop", "DiscImageChef\DiscImageChef.Interop\DiscImageChef.Interop.csproj", "{9183F2E0-A879-4F23-9EE3-C6908F1332B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apprepodbmgr.Eto.Desktop", "apprepodbmgr.Eto.Desktop\apprepodbmgr.Eto.Desktop.csproj", "{8DE87AED-B364-4208-B878-E3CA514F363E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,10 +85,6 @@ Global
 		{E805559F-89AE-47B4-926D-5B63A4F3A123}.Debug|x86.Build.0 = Debug|Any CPU
 		{E805559F-89AE-47B4-926D-5B63A4F3A123}.Release|x86.ActiveCfg = Release|Any CPU
 		{E805559F-89AE-47B4-926D-5B63A4F3A123}.Release|x86.Build.0 = Release|Any CPU
-		{DCC4B0CF-0F0D-4EDA-87CB-ED8303D07555}.Debug|x86.ActiveCfg = Debug|x86
-		{DCC4B0CF-0F0D-4EDA-87CB-ED8303D07555}.Debug|x86.Build.0 = Debug|x86
-		{DCC4B0CF-0F0D-4EDA-87CB-ED8303D07555}.Release|x86.ActiveCfg = Release|x86
-		{DCC4B0CF-0F0D-4EDA-87CB-ED8303D07555}.Release|x86.Build.0 = Release|x86
 		{FE0C10AD-1C0D-490F-B1BF-9702A5B01074}.Debug|x86.ActiveCfg = Debug|x86
 		{FE0C10AD-1C0D-490F-B1BF-9702A5B01074}.Debug|x86.Build.0 = Debug|x86
 		{FE0C10AD-1C0D-490F-B1BF-9702A5B01074}.Release|x86.ActiveCfg = Release|x86
@@ -97,6 +93,10 @@ Global
 		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Debug|x86.Build.0 = Debug|Any CPU
 		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Release|x86.ActiveCfg = Release|Any CPU
 		{9183F2E0-A879-4F23-9EE3-C6908F1332B2}.Release|x86.Build.0 = Release|Any CPU
+		{8DE87AED-B364-4208-B878-E3CA514F363E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8DE87AED-B364-4208-B878-E3CA514F363E}.Debug|x86.Build.0 = Debug|Any CPU
+		{8DE87AED-B364-4208-B878-E3CA514F363E}.Release|x86.ActiveCfg = Release|Any CPU
+		{8DE87AED-B364-4208-B878-E3CA514F363E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
