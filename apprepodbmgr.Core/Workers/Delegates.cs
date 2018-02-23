@@ -34,11 +34,11 @@ namespace apprepodbmgr.Core
     {
         public delegate void AddFileDelegate(DbFile file);
 
-        public delegate void AddFileForOSDelegate(string filename, string hash, bool known, bool isCrack);
+        public delegate void AddFileForAppDelegate(string filename, string hash, bool known, bool isCrack);
 
         public delegate void AddFilesDelegate(List<DbFile> file);
 
-        public delegate void AddOSDelegate(DbEntry os);
+        public delegate void AddAppDelegate(DbEntry os);
 
         public delegate void FailedDelegate(string text);
 
@@ -57,8 +57,8 @@ namespace apprepodbmgr.Core
         public static event FailedDelegate               Failed;
         public static event FinishedWithoutErrorDelegate Finished;
         public static event FinishedWithTextDelegate     FinishedWithText;
-        public static event AddFileForOSDelegate         AddFileForOS;
-        public static event AddOSDelegate                AddOS;
+        public static event AddFileForAppDelegate         AddFileForApp;
+        public static event AddAppDelegate                AddApp;
         public static event AddFileDelegate              AddFile;
         public static event AddFilesDelegate             AddFiles;
         public static event ScanFinishedDelegate         ScanFinished;

@@ -133,17 +133,17 @@ namespace apprepodbmgr.Core
                 {
                     if(File.Exists(destination))
                     {
-                        Failed?.Invoke("OS already exists.");
+                        Failed?.Invoke("Application already exists.");
                         return;
                     }
 
-                    Failed?.Invoke("OS already exists in the database but not in the repository, check for inconsistencies.");
+                    Failed?.Invoke("Application already exists in the database but not in the repository, check for inconsistencies.");
                     return;
                 }
 
                 if(File.Exists(destination))
                 {
-                    Failed?.Invoke("OS already exists in the repository but not in the database, check for inconsistencies.");
+                    Failed?.Invoke("Application already exists in the repository but not in the database, check for inconsistencies.");
                     return;
                 }
 
@@ -174,12 +174,12 @@ namespace apprepodbmgr.Core
                 }
 
                 long totalSize                                                           = 0, currentSize = 0;
-                foreach(KeyValuePair<string, DbOsFile> file in Context.Hashes) totalSize += file.Value.Length;
+                foreach(KeyValuePair<string, DbAppFile> file in Context.Hashes) totalSize += file.Value.Length;
 
                 #if DEBUG
                 stopwatch.Restart();
                 #endif
-                foreach(KeyValuePair<string, DbOsFile> file in Context.Hashes)
+                foreach(KeyValuePair<string, DbAppFile> file in Context.Hashes)
                 {
                     UpdateProgress?.Invoke("Compressing...", file.Value.Path, currentSize, totalSize);
 
@@ -291,7 +291,7 @@ namespace apprepodbmgr.Core
                     jms.Position = 0;
                 }
 
-                FinishedWithText?.Invoke($"Correctly added operating system with MDID {mdid}");
+                FinishedWithText?.Invoke($"Correctly added application with MDID {mdid}");
             }
             catch(ThreadAbortException) { }
             catch(Exception ex)
@@ -613,7 +613,7 @@ namespace apprepodbmgr.Core
 
                 UpdateProgress?.Invoke("", "Asking DB for files...", 1, 100);
 
-                dbCore.DbOps.GetAllFilesInOs(out List<DbOsFile> files, Context.DbInfo.Id);
+                dbCore.DbOps.GetAllFilesInApp(out List<DbAppFile> files, Context.DbInfo.Id);
 
                 UpdateProgress?.Invoke("", "Asking DB for folders...", 2, 100);
 
@@ -645,11 +645,11 @@ namespace apprepodbmgr.Core
                 #endif
 
                 counter        = 3;
-                Context.Hashes = new Dictionary<string, DbOsFile>();
+                Context.Hashes = new Dictionary<string, DbAppFile>();
                 #if DEBUG
                 stopwatch.Restart();
                 #endif
-                foreach(DbOsFile file in files)
+                foreach(DbAppFile file in files)
                 {
                     UpdateProgress?.Invoke("", $"Adding {file.Path}...", counter, 3 + files.Count);
 
@@ -688,7 +688,7 @@ namespace apprepodbmgr.Core
 
         static Stream Zf_HandleOpen(string entryName)
         {
-            DbOsFile file;
+            DbAppFile file;
             if(!Context.Hashes.TryGetValue(entryName,                        out file))
                 if(!Context.Hashes.TryGetValue(entryName.Replace('/', '\\'), out file))
                     throw new ArgumentException("Cannot find requested zip entry in hashes dictionary");

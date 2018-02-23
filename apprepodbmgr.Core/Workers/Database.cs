@@ -36,43 +36,38 @@ namespace apprepodbmgr.Core
 {
     public static partial class Workers
     {
-        public static void GetAllOSes()
+        public static void GetAllApps()
         {
             try
             {
                 #if DEBUG
                 stopwatch.Restart();
                 #endif
-                dbCore.DbOps.GetAllOSes(out List<DbEntry> oses);
+                dbCore.DbOps.GetAllApps(out List<DbEntry> apps);
                 #if DEBUG
                 stopwatch.Stop();
-                Console.WriteLine("Core.GetAllOSes(): Took {0} seconds to get OSes from database",
+                Console.WriteLine("Core.GetAllApps(): Took {0} seconds to get apps from database",
                                   stopwatch.Elapsed.TotalSeconds);
                 #endif
 
-                if(AddOS != null)
+                if(AddApp != null)
                 {
                     #if DEBUG
                     stopwatch.Restart();
                     #endif
                     int counter = 0;
                     // TODO: Check file name and existence
-                    foreach(DbEntry os in oses)
+                    foreach(DbEntry app in apps)
                     {
-                        UpdateProgress?.Invoke("Populating OSes table", $"{os.Developer} {os.Product}", counter,
-                                               oses.Count);
-                        string destination = Path.Combine(Settings.Current.RepositoryPath, os.Mdid[0].ToString(),
-                                                          os.Mdid[1].ToString(), os.Mdid[2].ToString(),
-                                                          os.Mdid[3].ToString(), os.Mdid[4].ToString(), os.Mdid) +
-                                             ".zip";
-
-                        AddOS?.Invoke(os);
+                        UpdateProgress?.Invoke("Populating apps table", $"{app.Developer} {app.Product}", counter,
+                                               apps.Count);
+                        AddApp?.Invoke(app);
 
                         counter++;
                     }
                     #if DEBUG
                     stopwatch.Stop();
-                    Console.WriteLine("Core.GetAllOSes(): Took {0} seconds to add OSes to the GUI",
+                    Console.WriteLine("Core.GetAllApps(): Took {0} seconds to add apps to the GUI",
                                       stopwatch.Elapsed.TotalSeconds);
                     #endif
                 }
@@ -99,23 +94,23 @@ namespace apprepodbmgr.Core
                 #if DEBUG
                 stopwatch.Restart();
                 #endif
-                Dictionary<string, DbOsFile> knownFiles = new Dictionary<string, DbOsFile>();
+                Dictionary<string, DbAppFile> knownFiles = new Dictionary<string, DbAppFile>();
 
                 bool unknownFile = false;
 
-                foreach(KeyValuePair<string, DbOsFile> kvp in Context.Hashes)
+                foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
                 {
                     // Empty file with size zero
                     if(kvp.Value.Sha256 == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
                     {
-                        AddFileForOS(kvp.Key, kvp.Value.Sha256, true, kvp.Value.Crack);
+                        AddFileForApp(kvp.Key, kvp.Value.Sha256, true, kvp.Value.Crack);
                         counter++;
                         continue;
                     }
 
                     UpdateProgress?.Invoke(null, "Checking files in database", counter, Context.Hashes.Count);
 
-                    AddFileForOS?.Invoke(kvp.Key, kvp.Value.Sha256, dbCore.DbOps.ExistsFile(kvp.Value.Sha256),
+                    AddFileForApp?.Invoke(kvp.Key, kvp.Value.Sha256, dbCore.DbOps.ExistsFile(kvp.Value.Sha256),
                                          kvp.Value.Crack);
 
                     if(dbCore.DbOps.ExistsFile(kvp.Value.Sha256))
@@ -137,37 +132,37 @@ namespace apprepodbmgr.Core
                     return;
                 }
 
-                UpdateProgress?.Invoke(null, "Retrieving OSes from database", counter, Context.Hashes.Count);
-                dbCore.DbOps.GetAllOSes(out List<DbEntry> oses);
+                UpdateProgress?.Invoke(null, "Retrieving apps from database", counter, Context.Hashes.Count);
+                dbCore.DbOps.GetAllApps(out List<DbEntry> apps);
                 #if DEBUG
                 stopwatch.Stop();
-                Console.WriteLine("Core.CheckDbForFiles(): Took {0} seconds get all OSes from DB",
+                Console.WriteLine("Core.CheckDbForFiles(): Took {0} seconds get all apps from DB",
                                   stopwatch.Elapsed.TotalSeconds);
                 #endif
 
-                if(oses != null && oses.Count > 0)
+                if(apps != null && apps.Count > 0)
                 {
-                    DbEntry[] osesArray = new DbEntry[oses.Count];
-                    oses.CopyTo(osesArray);
+                    DbEntry[] appsArray = new DbEntry[apps.Count];
+                    apps.CopyTo(appsArray);
 
-                    long osCounter = 0;
+                    long appCounter = 0;
                     #if DEBUG
                     stopwatch.Restart();
                     #endif
 
-                    foreach(DbEntry os in osesArray)
+                    foreach(DbEntry app in appsArray)
                     {
-                        UpdateProgress?.Invoke(null, $"Check OS id {os.Id}", osCounter, osesArray.Length);
+                        UpdateProgress?.Invoke(null, $"Check application id {app.Id}", appCounter, appsArray.Length);
 
                         counter = 0;
-                        foreach(KeyValuePair<string, DbOsFile> kvp in knownFiles)
+                        foreach(KeyValuePair<string, DbAppFile> kvp in knownFiles)
                         {
                             UpdateProgress2?.Invoke(null, $"Checking for file {kvp.Value.Path}", counter,
                                                     knownFiles.Count);
 
-                            if(!dbCore.DbOps.ExistsFileInOs(kvp.Value.Sha256, os.Id))
+                            if(!dbCore.DbOps.ExistsFileInApp(kvp.Value.Sha256, app.Id))
                             {
-                                if(oses.Contains(os)) oses.Remove(os);
+                                if(apps.Contains(app)) apps.Remove(app);
 
                                 // If one file is missing, the rest don't matter
                                 break;
@@ -176,25 +171,18 @@ namespace apprepodbmgr.Core
                             counter++;
                         }
 
-                        if(oses.Count == 0) break; // No OSes left
+                        if(apps.Count == 0) break; // No apps left
                     }
                     #if DEBUG
                     stopwatch.Stop();
-                    Console.WriteLine("Core.CheckDbForFiles(): Took {0} seconds correlate all files with all known OSes",
+                    Console.WriteLine("Core.CheckDbForFiles(): Took {0} seconds correlate all files with all known applications",
                                       stopwatch.Elapsed.TotalSeconds);
                     #endif
                 }
 
-                if(AddOS != null)
-                    foreach(DbEntry os in oses)
-                    {
-                        string destination = Path.Combine(Settings.Current.RepositoryPath, os.Mdid[0].ToString(),
-                                                          os.Mdid[1].ToString(), os.Mdid[2].ToString(),
-                                                          os.Mdid[3].ToString(), os.Mdid[4].ToString(), os.Mdid) +
-                                             ".zip";
-
-                        AddOS?.Invoke(os);
-                    }
+                if(AddApp != null)
+                    foreach(DbEntry app in apps)
+                        AddApp?.Invoke(app);
 
                 Finished?.Invoke();
             }
@@ -218,7 +206,7 @@ namespace apprepodbmgr.Core
                 #if DEBUG
                 stopwatch.Restart();
                 #endif
-                foreach(KeyValuePair<string, DbOsFile> kvp in Context.Hashes)
+                foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
                 {
                     UpdateProgress?.Invoke(null, "Adding files to database", counter, Context.Hashes.Count);
 
@@ -247,36 +235,36 @@ namespace apprepodbmgr.Core
                                   stopwatch.Elapsed.TotalSeconds);
                 #endif
 
-                UpdateProgress?.Invoke(null, "Adding OS information", counter, Context.Hashes.Count);
-                dbCore.DbOps.AddOs(Context.DbInfo, out Context.DbInfo.Id);
-                UpdateProgress?.Invoke(null, "Creating OS table", counter, Context.Hashes.Count);
-                dbCore.DbOps.CreateTableForOs(Context.DbInfo.Id);
+                UpdateProgress?.Invoke(null, "Adding application information", counter, Context.Hashes.Count);
+                dbCore.DbOps.AddApp(Context.DbInfo, out Context.DbInfo.Id);
+                UpdateProgress?.Invoke(null, "Creating application table", counter, Context.Hashes.Count);
+                dbCore.DbOps.CreateTableForApp(Context.DbInfo.Id);
 
                 #if DEBUG
                 stopwatch.Restart();
                 #endif
                 counter = 0;
-                foreach(KeyValuePair<string, DbOsFile> kvp in Context.Hashes)
+                foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
                 {
-                    UpdateProgress?.Invoke(null, "Adding files to OS in database", counter, Context.Hashes.Count);
+                    UpdateProgress?.Invoke(null, "Adding files to application in database", counter, Context.Hashes.Count);
 
-                    dbCore.DbOps.AddFileToOs(kvp.Value, Context.DbInfo.Id);
+                    dbCore.DbOps.AddFileToApp(kvp.Value, Context.DbInfo.Id);
 
                     counter++;
                 }
                 #if DEBUG
                 stopwatch.Stop();
-                Console.WriteLine("Core.AddFilesToDb(): Took {0} seconds to add all files to the OS in the database",
+                Console.WriteLine("Core.AddFilesToDb(): Took {0} seconds to add all files to the application in the database",
                                   stopwatch.Elapsed.TotalSeconds);
                 stopwatch.Restart();
                 #endif
                 counter = 0;
                 foreach(KeyValuePair<string, DbFolder> kvp in Context.FoldersDict)
                 {
-                    UpdateProgress?.Invoke(null, "Adding folders to OS in database", counter,
+                    UpdateProgress?.Invoke(null, "Adding folders to application in database", counter,
                                            Context.FoldersDict.Count);
 
-                    dbCore.DbOps.AddFolderToOs(kvp.Value, Context.DbInfo.Id);
+                    dbCore.DbOps.AddFolderToApp(kvp.Value, Context.DbInfo.Id);
 
                     counter++;
                 }
@@ -291,10 +279,10 @@ namespace apprepodbmgr.Core
 
                 foreach(KeyValuePair<string, string> kvp in Context.SymlinksDict)
                 {
-                    UpdateProgress?.Invoke(null, "Adding symbolic links to OS in database", counter,
+                    UpdateProgress?.Invoke(null, "Adding symbolic links to application in database", counter,
                                            Context.SymlinksDict.Count);
 
-                    dbCore.DbOps.AddSymlinkToOs(kvp.Key, kvp.Value, Context.DbInfo.Id);
+                    dbCore.DbOps.AddSymlinkToApp(kvp.Key, kvp.Value, Context.DbInfo.Id);
 
                     counter++;
                 }
@@ -377,17 +365,11 @@ namespace apprepodbmgr.Core
             dbCore?.CloseDb();
         }
 
-        public static void RemoveOS(long id, string mdid)
+        public static void RemoveApp(long id, string mdid)
         {
             if(id == 0 || string.IsNullOrWhiteSpace(mdid)) return;
 
-            string destination = Path.Combine(Settings.Current.RepositoryPath, mdid[0].ToString(), mdid[1].ToString(),
-                                              mdid[2].ToString(), mdid[3].ToString(), mdid[4].ToString(),
-                                              mdid) + ".zip";
-
-            if(File.Exists(destination)) File.Delete(destination);
-
-            dbCore.DbOps.RemoveOs(id);
+            dbCore.DbOps.RemoveApp(id);
         }
 
         public static void GetFilesFromDb()

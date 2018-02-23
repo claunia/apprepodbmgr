@@ -67,7 +67,7 @@ namespace apprepodbmgr.Core
         public long      Length         { get; set; }
     }
 
-    public struct DbOsFile
+    public struct DbAppFile
     {
         public ulong          Id;
         public string         Path;
@@ -101,11 +101,11 @@ namespace apprepodbmgr.Core
             dbCore = core;
         }
 
-        public bool GetAllOSes(out List<DbEntry> entries)
+        public bool GetAllApps(out List<DbEntry> entries)
         {
             entries = new List<DbEntry>();
 
-            const string SQL = "SELECT * from oses";
+            const string SQL = "SELECT * from apps";
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -145,7 +145,7 @@ namespace apprepodbmgr.Core
             return true;
         }
 
-        IDbCommand GetOsCommand(DbEntry entry)
+        IDbCommand GetAppCommand(DbEntry entry)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
@@ -241,14 +241,14 @@ namespace apprepodbmgr.Core
             return dbcmd;
         }
 
-        public bool AddOs(DbEntry entry, out long id)
+        public bool AddApp(DbEntry entry, out long id)
         {
-            IDbCommand     dbcmd = GetOsCommand(entry);
+            IDbCommand     dbcmd = GetAppCommand(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction    = trans;
 
             const string SQL =
-                "INSERT INTO oses (developer, product, version, languages, architecture, machine, format, description, oem, upgrade, `update`, source, files, netinstall, xml, json, mdid)" +
+                "INSERT INTO apps (developer, product, version, languages, architecture, machine, format, description, oem, upgrade, `update`, source, files, netinstall, xml, json, mdid)" +
                 " VALUES (@developer, @product, @version, @languages, @architecture, @machine, @format, @description, @oem, @upgrade, @update, @source, @files, @netinstall, @xml, @json, @mdid)";
 
             dbcmd.CommandText = SQL;
@@ -501,7 +501,7 @@ namespace apprepodbmgr.Core
             return true;
         }
 
-        IDbCommand GetOsFileCommand(DbOsFile person)
+        IDbCommand GetAppFileCommand(DbAppFile person)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
@@ -548,14 +548,14 @@ namespace apprepodbmgr.Core
             return dbcmd;
         }
 
-        public bool AddFileToOs(DbOsFile file, long os)
+        public bool AddFileToApp(DbAppFile file, long app)
         {
-            IDbCommand     dbcmd = GetOsFileCommand(file);
+            IDbCommand     dbcmd = GetAppFileCommand(file);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction    = trans;
 
             string sql =
-                $"INSERT INTO `os_{os}` (`path`, `sha256`, `length`, `creation`, `access`, `modification`, `attributes`)" +
+                $"INSERT INTO `app_{app}` (`path`, `sha256`, `length`, `creation`, `access`, `modification`, `attributes`)" +
                 " VALUES (@path, @sha256, @length, @creation, @access, @modification, @attributes)";
 
             dbcmd.CommandText = sql;
@@ -567,7 +567,7 @@ namespace apprepodbmgr.Core
             return true;
         }
 
-        IDbCommand GetFolderCommand(DbFolder person)
+        IDbCommand GetFolderCommand(DbFolder folder)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
@@ -589,11 +589,11 @@ namespace apprepodbmgr.Core
             param6.DbType = DbType.String;
             param7.DbType = DbType.Int32;
 
-            param1.Value = person.Path;
-            param4.Value = person.CreationTimeUtc.ToString("yyyy-MM-dd HH:mm");
-            param5.Value = person.LastAccessTimeUtc.ToString("yyyy-MM-dd HH:mm");
-            param6.Value = person.LastWriteTimeUtc.ToString("yyyy-MM-dd HH:mm");
-            param7.Value = (int)person.Attributes;
+            param1.Value = folder.Path;
+            param4.Value = folder.CreationTimeUtc.ToString("yyyy-MM-dd HH:mm");
+            param5.Value = folder.LastAccessTimeUtc.ToString("yyyy-MM-dd HH:mm");
+            param6.Value = folder.LastWriteTimeUtc.ToString("yyyy-MM-dd HH:mm");
+            param7.Value = (int)folder.Attributes;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param4);
@@ -604,86 +604,32 @@ namespace apprepodbmgr.Core
             return dbcmd;
         }
 
-        public bool AddFolderToOs(DbFolder folder, long os)
+        public bool AddFolderToApp(DbFolder folder, long app)
         {
             IDbCommand     dbcmd = GetFolderCommand(folder);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction    = trans;
 
-            string sql = $"INSERT INTO `os_{os}_folders` (`path`, `creation`, `access`, `modification`, `attributes`)" +
-                         " VALUES (@path, @creation, @access, @modification, @attributes)";
-
-            dbcmd.CommandText = sql;
-
-            dbcmd.ExecuteNonQuery();
-            trans.Commit();
-            dbcmd.Dispose();
-
-            return true;
-        }
-
-        public bool RemoveOs(long id)
-        {
-            IDbCommand     dbcmd = dbCon.CreateCommand();
-            IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
-
-            string sql = $"DROP TABLE IF EXISTS `os_{id}`;";
-
-            dbcmd.CommandText = sql;
-
-            dbcmd.ExecuteNonQuery();
-            trans.Commit();
-            dbcmd.Dispose();
-
-            dbcmd             = dbCon.CreateCommand();
-            trans             = dbCon.BeginTransaction();
-            dbcmd.Transaction = trans;
-
-            sql = $"DROP TABLE IF EXISTS `os_{id}_folders`;";
-
-            dbcmd.CommandText = sql;
-
-            dbcmd.ExecuteNonQuery();
-            trans.Commit();
-            dbcmd.Dispose();
-
-            dbcmd             = dbCon.CreateCommand();
-            trans             = dbCon.BeginTransaction();
-            dbcmd.Transaction = trans;
-
-            sql = $"DROP TABLE IF EXISTS `os_{id}_symlinks`;";
-
-            dbcmd.CommandText = sql;
-
-            dbcmd.ExecuteNonQuery();
-            trans.Commit();
-            dbcmd.Dispose();
-
-            dbcmd             = dbCon.CreateCommand();
-            trans             = dbCon.BeginTransaction();
-            dbcmd.Transaction = trans;
-
-            sql = $"DELETE FROM oses WHERE id = '{id}';";
-
-            dbcmd.CommandText = sql;
-
-            dbcmd.ExecuteNonQuery();
-            trans.Commit();
-            dbcmd.Dispose();
-
-            return true;
-        }
-
-        public bool CreateTableForOs(long id)
-        {
-            IDbCommand     dbcmd = dbCon.CreateCommand();
-            IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
-
             string sql =
-                string.Format("DROP TABLE IF EXISTS `os_{0}`;\n\n" + "CREATE TABLE IF NOT EXISTS `os_{0}` (\n" + "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" + "  `path` VARCHAR(8192) NOT NULL,\n" + "  `sha256` VARCHAR(64) NOT NULL,\n\n" + "  `length` BIGINT NOT NULL,\n" + "  `creation` DATETIME NULL,\n" + "  `access` DATETIME NULL,\n" + "  `modification` DATETIME NULL,\n" + "  `attributes` INTEGER NULL);\n\n" + "CREATE UNIQUE INDEX `os_{0}_id_UNIQUE` ON `os_{0}` (`id` ASC);\n\n" + "CREATE INDEX `os_{0}_path_idx` ON `os_{0}` (`path` ASC);",
-                              id);
+                $"INSERT INTO `app_{app}_folders` (`path`, `creation`, `access`, `modification`, `attributes`)" +
+                " VALUES (@path, @creation, @access, @modification, @attributes)";
+
+            dbcmd.CommandText = sql;
+
+            dbcmd.ExecuteNonQuery();
+            trans.Commit();
+            dbcmd.Dispose();
+
+            return true;
+        }
+
+        public bool RemoveApp(long id)
+        {
+            IDbCommand     dbcmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbcmd.Transaction    = trans;
+
+            string sql = $"DROP TABLE IF EXISTS `app_{id}`;";
 
             dbcmd.CommandText = sql;
 
@@ -695,9 +641,31 @@ namespace apprepodbmgr.Core
             trans             = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            sql =
-                string.Format("DROP TABLE IF EXISTS `os_{0}_folders`;\n\n" + "CREATE TABLE IF NOT EXISTS `os_{0}_folders` (\n" + "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" + "  `path` VARCHAR(8192) NOT NULL,\n" + "  `creation` DATETIME NULL,\n" + "  `access` DATETIME NULL,\n" + "  `modification` DATETIME NULL,\n" + "  `attributes` INTEGER NULL);\n\n" + "CREATE UNIQUE INDEX `os_{0}_folders_id_UNIQUE` ON `os_{0}_folders` (`id` ASC);\n\n" + "CREATE INDEX `os_{0}_folders_path_idx` ON `os_{0}_folders` (`path` ASC);",
-                              id);
+            sql = $"DROP TABLE IF EXISTS `app_{id}_folders`;";
+
+            dbcmd.CommandText = sql;
+
+            dbcmd.ExecuteNonQuery();
+            trans.Commit();
+            dbcmd.Dispose();
+
+            dbcmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbcmd.Transaction = trans;
+
+            sql = $"DROP TABLE IF EXISTS `app_{id}_symlinks`;";
+
+            dbcmd.CommandText = sql;
+
+            dbcmd.ExecuteNonQuery();
+            trans.Commit();
+            dbcmd.Dispose();
+
+            dbcmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbcmd.Transaction = trans;
+
+            sql = $"DELETE FROM apps WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 
@@ -708,7 +676,56 @@ namespace apprepodbmgr.Core
             return true;
         }
 
-        public bool ExistsFileInOs(string hash, long osId)
+        public bool CreateTableForApp(long id)
+        {
+            IDbCommand     dbcmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbcmd.Transaction    = trans;
+
+            string sql = $"DROP TABLE IF EXISTS `app_{id}`;\n\n"                                   +
+                         $"CREATE TABLE IF NOT EXISTS `app_{id}` (\n"                              +
+                         "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                             +
+                         "  `path` VARCHAR(8192) NOT NULL,\n"                                      +
+                         "  `sha256` VARCHAR(64) NOT NULL,\n\n"                                    +
+                         "  `length` BIGINT NOT NULL,\n"                                           +
+                         "  `creation` DATETIME NULL,\n"                                           +
+                         "  `access` DATETIME NULL,\n"                                             +
+                         "  `modification` DATETIME NULL,\n"                                       +
+                         "  `attributes` INTEGER NULL);\n\n"                                       +
+                         $"CREATE UNIQUE INDEX `app_{id}_id_UNIQUE` ON `app_{id}` (`id` ASC);\n\n" +
+                         $"CREATE INDEX `app_{id}_path_idx` ON `app_{id}` (`path` ASC);";
+
+            dbcmd.CommandText = sql;
+
+            dbcmd.ExecuteNonQuery();
+            trans.Commit();
+            dbcmd.Dispose();
+
+            dbcmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbcmd.Transaction = trans;
+
+            sql = $"DROP TABLE IF EXISTS `os_{id}_folders`;\n\n"                                          +
+                  $"CREATE TABLE IF NOT EXISTS `os_{id}_folders` (\n"                                     +
+                  "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                                           +
+                  "  `path` VARCHAR(8192) NOT NULL,\n"                                                    +
+                  "  `creation` DATETIME NULL,\n"                                                         +
+                  "  `access` DATETIME NULL,\n"                                                           +
+                  "  `modification` DATETIME NULL,\n"                                                     +
+                  "  `attributes` INTEGER NULL);\n\n"                                                     +
+                  $"CREATE UNIQUE INDEX `os_{id}_folders_id_UNIQUE` ON `os_{id}_folders` (`id` ASC);\n\n" +
+                  $"CREATE INDEX `os_{id}_folders_path_idx` ON `os_{id}_folders` (`path` ASC);";
+
+            dbcmd.CommandText = sql;
+
+            dbcmd.ExecuteNonQuery();
+            trans.Commit();
+            dbcmd.Dispose();
+
+            return true;
+        }
+
+        public bool ExistsFileInApp(string hash, long appId)
         {
             IDbCommand       dbcmd  = dbCon.CreateCommand();
             IDbDataParameter param1 = dbcmd.CreateParameter();
@@ -717,7 +734,7 @@ namespace apprepodbmgr.Core
             param1.DbType        = DbType.String;
             param1.Value         = hash;
             dbcmd.Parameters.Add(param1);
-            dbcmd.CommandText          = $"SELECT * FROM `os_{osId}` WHERE sha256 = @hash";
+            dbcmd.CommandText          = $"SELECT * FROM `app_{appId}` WHERE sha256 = @hash";
             DataSet        dataSet     = new DataSet();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dataAdapter.SelectCommand  = dbcmd;
@@ -738,7 +755,7 @@ namespace apprepodbmgr.Core
             param1.DbType        = DbType.String;
             param1.Value         = mdid;
             dbcmd.Parameters.Add(param1);
-            dbcmd.CommandText          = "SELECT * FROM `oses` WHERE mdid = @mdid";
+            dbcmd.CommandText          = "SELECT * FROM `apps` WHERE mdid = @mdid";
             DataSet        dataSet     = new DataSet();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dataAdapter.SelectCommand  = dbcmd;
@@ -750,11 +767,11 @@ namespace apprepodbmgr.Core
             return false;
         }
 
-        public bool GetAllFilesInOs(out List<DbOsFile> entries, long id)
+        public bool GetAllFilesInApp(out List<DbAppFile> entries, long id)
         {
-            entries = new List<DbOsFile>();
+            entries = new List<DbAppFile>();
 
-            string sql = $"SELECT * from os_{id}";
+            string sql = $"SELECT * from app_{id}";
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -766,7 +783,7 @@ namespace apprepodbmgr.Core
 
             foreach(DataRow dRow in dataTable.Rows)
             {
-                DbOsFile fEntry = new DbOsFile
+                DbAppFile fEntry = new DbAppFile
                 {
                     Id                = ulong.Parse(dRow["id"].ToString()),
                     Path              = dRow["path"].ToString(),
@@ -788,7 +805,7 @@ namespace apprepodbmgr.Core
         {
             entries = new List<DbFolder>();
 
-            string sql = $"SELECT * from os_{id}_folders";
+            string sql = $"SELECT * from app_{id}_folders";
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -854,11 +871,11 @@ namespace apprepodbmgr.Core
             return true;
         }
 
-        public bool HasSymlinks(long osId)
+        public bool HasSymlinks(long appId)
         {
             IDbCommand dbcmd  = dbCon.CreateCommand();
             dbcmd.CommandText =
-                $"SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'os_{osId}_symlinks'";
+                $"SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'app_{appId}_symlinks'";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
 
@@ -871,11 +888,13 @@ namespace apprepodbmgr.Core
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction    = trans;
 
-            string sql =
-                string.Format("DROP TABLE IF EXISTS `os_{0}_symlinks`;\n\n" + "CREATE TABLE IF NOT EXISTS `os_{0}_symlinks` (\n" + "  `path` VARCHAR(8192) PRIMARY KEY,\n" + "  `target` VARCHAR(8192) NOT NULL);\n\n" + "CREATE UNIQUE INDEX `os_{0}_symlinks_path_UNIQUE` ON `os_{0}_symlinks` (`path` ASC);\n\n" + "CREATE INDEX `os_{0}_symlinks_target_idx` ON `os_{0}_symlinks` (`target` ASC);",
-                              id);
-
-            dbcmd.CommandText = sql;
+            dbcmd.CommandText =
+                $"DROP TABLE IF EXISTS `app_{id}_symlinks`;\n\n"                                               +
+                $"CREATE TABLE IF NOT EXISTS `app_{id}_symlinks` (\n"                                          +
+                "  `path` VARCHAR(8192) PRIMARY KEY,\n"                                                       +
+                "  `target` VARCHAR(8192) NOT NULL);\n\n"                                                     +
+                $"CREATE UNIQUE INDEX `app_{id}_symlinks_path_UNIQUE` ON `app_{id}_symlinks` (`path` ASC);\n\n" +
+                $"CREATE INDEX `app_{id}_symlinks_target_idx` ON `app_{id}_symlinks` (`target` ASC);";
 
             dbcmd.ExecuteNonQuery();
             trans.Commit();
@@ -884,7 +903,7 @@ namespace apprepodbmgr.Core
             return true;
         }
 
-        public bool AddSymlinkToOs(string path, string target, long os)
+        public bool AddSymlinkToApp(string path, string target, long app)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
@@ -906,7 +925,7 @@ namespace apprepodbmgr.Core
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction    = trans;
 
-            string sql = $"INSERT INTO `os_{os}_symlinks` (`path`, `target`)" + " VALUES (@path, @target)";
+            string sql = $"INSERT INTO `app_{app}_symlinks` (`path`, `target`)" + " VALUES (@path, @target)";
 
             dbcmd.CommandText = sql;
 
@@ -921,7 +940,7 @@ namespace apprepodbmgr.Core
         {
             entries = new Dictionary<string, string>();
 
-            string sql = $"SELECT * from os_{id}_symlinks";
+            string sql = $"SELECT * from app_{id}_symlinks";
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();

@@ -106,7 +106,7 @@ namespace apprepodbmgr.Core
         {
             try
             {
-                Context.Hashes               = new Dictionary<string, DbOsFile>();
+                Context.Hashes               = new Dictionary<string, DbAppFile>();
                 Context.FoldersDict          = new Dictionary<string, DbFolder>();
                 Context.SymlinksDict         = new Dictionary<string, string>();
                 List<string> alreadyMetadata = new List<string>();
@@ -423,7 +423,7 @@ namespace apprepodbmgr.Core
                     fileStream.Close();
                     string hash = Stringify(sha256Context.Final());
 
-                    DbOsFile dbFile = new DbOsFile
+                    DbAppFile dbFile = new DbAppFile
                     {
                         Attributes        = fi.Attributes,
                         CreationTimeUtc   = fi.CreationTimeUtc,
@@ -695,7 +695,7 @@ namespace apprepodbmgr.Core
 
                 UpdateProgress?.Invoke("", "Asking DB for files...", 1, 100);
 
-                dbCore.DbOps.GetAllFilesInOs(out List<DbOsFile> files, Context.DbInfo.Id);
+                dbCore.DbOps.GetAllFilesInApp(out List<DbAppFile> files, Context.DbInfo.Id);
 
                 UpdateProgress?.Invoke("", "Asking DB for folders...", 2, 100);
 
@@ -762,7 +762,7 @@ namespace apprepodbmgr.Core
                 #endif
 
                 counter = 4;
-                foreach(DbOsFile file in files)
+                foreach(DbAppFile file in files)
                 {
                     UpdateProgress?.Invoke("", $"Creating {file.Path}...", counter, 4 + files.Count);
 
@@ -931,7 +931,7 @@ namespace apprepodbmgr.Core
             #if DEBUG
             stopwatch.Restart();
             #endif
-            dbCore.DbOps.GetAllOSes(out List<DbEntry> oses);
+            dbCore.DbOps.GetAllApps(out List<DbEntry> apps);
             #if DEBUG
             stopwatch.Stop();
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to get OSes from database",
@@ -954,11 +954,11 @@ namespace apprepodbmgr.Core
                 #if DEBUG
                 stopwatch2.Restart();
                 #endif
-                foreach(DbEntry os in oses)
+                foreach(DbEntry app in apps)
                 {
-                    UpdateProgress2?.Invoke(null, $"Checking OS {counterO} of {oses.Count}", counterO, oses.Count);
+                    UpdateProgress2?.Invoke(null, $"Checking OS {counterO} of {apps.Count}", counterO, apps.Count);
 
-                    if(dbCore.DbOps.ExistsFileInOs(file.Sha256, os.Id))
+                    if(dbCore.DbOps.ExistsFileInApp(file.Sha256, app.Id))
                     {
                         fileExists = true;
                         break;
@@ -968,7 +968,7 @@ namespace apprepodbmgr.Core
                 }
                 #if DEBUG
                 stopwatch2.Stop();
-                Console.WriteLine("Core.CleanFiles(): Took {0} seconds to check file in all OSes",
+                Console.WriteLine("Core.CleanFiles(): Took {0} seconds to check file in all applications",
                                   stopwatch2.Elapsed.TotalSeconds);
                 #endif
 

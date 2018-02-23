@@ -105,9 +105,9 @@ namespace apprepodbmgr.Core
                 dbCmd.ExecuteNonQuery();
 
                 #if DEBUG
-                Console.WriteLine("Creating oses table");
+                Console.WriteLine("Creating applications table");
                 #endif
-                dbCmd.CommandText = Schema.OSesTableSql;
+                dbCmd.CommandText = Schema.AppsTableSql;
                 dbCmd.ExecuteNonQuery();
 
                 #if DEBUG

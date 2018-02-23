@@ -40,7 +40,7 @@ namespace apprepodbmgr.Core
         public static       List<string>                 Files;
         public static       List<string>                 Folders;
         public static       List<string>                 Symlinks;
-        public static       Dictionary<string, DbOsFile> Hashes;
+        public static       Dictionary<string, DbAppFile> Hashes;
         public static       Dictionary<string, DbFolder> FoldersDict;
         public static       Dictionary<string, string>   SymlinksDict;
         public static       string                       Path;

@@ -102,7 +102,7 @@ namespace apprepodbmgr.Core
                                                          ? ((NSString)obj).ToString()
                                                          : Path
                                                             .Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                                                     "osrepo");
+                                                                     "apprepo");
 
                             Current.UnArchiverPath = parsedPreferences.TryGetValue("UnArchiverPath", out obj)
                                                          ? ((NSString)obj).ToString()
@@ -166,7 +166,7 @@ namespace apprepodbmgr.Core
                             return;
                         }
 
-                        RegistryKey key = parentKey.OpenSubKey("OSRepoDBMgr");
+                        RegistryKey key = parentKey.OpenSubKey("AppRepoDBMgr");
                         if(key == null)
                         {
                             SetDefaultSettings();
@@ -195,7 +195,7 @@ namespace apprepodbmgr.Core
                         string configPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
                         string settingsPath =
-                            Path.Combine(configPath, "OSRepoDBMgr.xml");
+                            Path.Combine(configPath, "AppRepoDBMgr.xml");
 
                         if(!Directory.Exists(configPath))
                         {
@@ -269,7 +269,7 @@ namespace apprepodbmgr.Core
                         RegistryKey parentKey = Registry
                                                .CurrentUser.OpenSubKey("SOFTWARE", true)
                                               ?.CreateSubKey("Canary Islands Computer Museum");
-                        RegistryKey key = parentKey?.CreateSubKey("OSRepoDBMgr");
+                        RegistryKey key = parentKey?.CreateSubKey("AppRepoDBMgr");
 
                         if(key != null)
                         {
@@ -294,7 +294,7 @@ namespace apprepodbmgr.Core
                         string configPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
                         string settingsPath =
-                            Path.Combine(configPath, "OSRepoDBMgr.xml");
+                            Path.Combine(configPath, "AppRepoDBMgr.xml");
 
                         if(!Directory.Exists(configPath)) Directory.CreateDirectory(configPath);
 
@@ -322,7 +322,7 @@ namespace apprepodbmgr.Core
                 DatabasePath    =
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "apprepodbmgr.db"),
                 RepositoryPath =
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "osrepo"),
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "apprepo"),
                 UnArchiverPath       = null,
                 CompressionAlgorithm = AlgoEnum.GZip,
                 UseAntivirus         = false,

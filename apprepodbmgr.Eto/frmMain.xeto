@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Height="365" Width="612" Title="App Repository DB Manager">
 	<TabControl>
-		<TabPage Text="Operating systems" ID="tabOSes">
+		<TabPage Text="Operating systems" ID="tabApps">
 			<StackLayout Orientation="Vertical">
 				<StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
-					<GridView ID="treeOSes" Enabled="False" />
+					<GridView ID="treeApps" Enabled="False" />
 				</StackLayoutItem>
 				<StackLayoutItem HorizontalAlignment="Center">
-					<Label ID="lblOSStatus" Visible="False">lblOSStatus</Label>
+					<Label ID="lblAppStatus" Visible="False">lblAppStatus</Label>
 				</StackLayoutItem>
 				<StackLayoutItem HorizontalAlignment="Stretch">
 					<Label ID="lblProgress">lblProgress</Label>

@@ -44,11 +44,11 @@ namespace apprepodbmgr.Eto
 {
     public class dlgAdd : Dialog
     {
-        public delegate void OnAddedOSDelegate(DbEntry os);
+        public delegate void OnAddedAppDelegate(DbEntry app);
 
         ObservableCollection<FileEntry>     fileView;
         int                                 knownFiles;
-        ObservableCollection<DBEntryForEto> osView;
+        ObservableCollection<DBEntryForEto> appView;
         bool                                stopped;
         Thread                              thdAddFiles;
         Thread                              thdCheckFiles;
@@ -98,85 +98,85 @@ namespace apprepodbmgr.Eto
                 e.BackgroundColor = ((FileEntry)e.Item).Known ? Colors.Green : Colors.Red;
             };
 
-            osView = new ObservableCollection<DBEntryForEto>();
+            appView = new ObservableCollection<DBEntryForEto>();
 
-            treeOSes.DataStore = osView;
+            treeApps.DataStore = appView;
 
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.developer)},
                 HeaderText = "Developer"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.product)},
                 HeaderText = "Product"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.version)},
                 HeaderText = "Version"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.languages)},
                 HeaderText = "Languages"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.architecture)},
                 HeaderText = "Architecture"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.machine)},
                 HeaderText = "Machine"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.format)},
                 HeaderText = "Format"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.description)},
                 HeaderText = "Description"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.oem)},
                 HeaderText = "OEM?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.upgrade)},
                 HeaderText = "Upgrade?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.update)},
                 HeaderText = "Update?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.source)},
                 HeaderText = "Source?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.files)},
                 HeaderText = "Files?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.netinstall)},
                 HeaderText = "NetInstall?"
             });
 
-            treeOSes.AllowMultipleSelection = false;
+            treeApps.AllowMultipleSelection = false;
         }
 
-        public event OnAddedOSDelegate OnAddedOS;
+        public event OnAddedAppDelegate OnAddedApp;
 
         void UnarChangeStatus()
         {
@@ -293,8 +293,8 @@ namespace apprepodbmgr.Eto
                 Workers.Finished        += ChkFilesFinished;
                 Workers.UpdateProgress  += UpdateProgress;
                 Workers.UpdateProgress2 += UpdateProgress2;
-                Workers.AddFileForOS    += AddFile;
-                Workers.AddOS           += AddOs;
+                Workers.AddFileForApp    += AddFile;
+                Workers.AddApp           += AddApp;
                 thdCheckFiles.Start();
             });
         }
@@ -312,15 +312,15 @@ namespace apprepodbmgr.Eto
                 Workers.Finished        -= ChkFilesFinished;
                 Workers.UpdateProgress  -= UpdateProgress;
                 Workers.UpdateProgress2 -= UpdateProgress2;
-                Workers.AddFileForOS    -= AddFile;
-                Workers.AddOS           -= AddOs;
+                Workers.AddFileForApp    -= AddFile;
+                Workers.AddApp           -= AddApp;
                 thdCheckFiles?.Abort();
                 thdHashFiles = null;
                 fileView?.Clear();
-                if(osView == null) return;
+                if(appView == null) return;
 
-                tabOSes.Visible = false;
-                osView.Clear();
+                tabApps.Visible = false;
+                appView.Clear();
             });
         }
 
@@ -332,8 +332,8 @@ namespace apprepodbmgr.Eto
                 Workers.Finished        -= ChkFilesFinished;
                 Workers.UpdateProgress  -= UpdateProgress;
                 Workers.UpdateProgress2 -= UpdateProgress2;
-                Workers.AddFileForOS    -= AddFile;
-                Workers.AddOS           -= AddOs;
+                Workers.AddFileForApp    -= AddFile;
+                Workers.AddApp           -= AddApp;
 
                 thdCheckFiles?.Abort();
 
@@ -418,12 +418,12 @@ namespace apprepodbmgr.Eto
             });
         }
 
-        void AddOs(DbEntry os)
+        void AddApp(DbEntry app)
         {
             Application.Instance.Invoke(delegate
             {
-                tabOSes.Visible = true;
-                osView.Add(new DBEntryForEto(os));
+                tabApps.Visible = true;
+                appView.Add(new DBEntryForEto(app));
             });
         }
 
@@ -447,10 +447,10 @@ namespace apprepodbmgr.Eto
             btnRemoveFile.Visible  = false;
             btnToggleCrack.Visible = false;
             fileView?.Clear();
-            if(osView != null)
+            if(appView != null)
             {
-                tabOSes.Visible = false;
-                osView.Clear();
+                tabApps.Visible = false;
+                appView.Clear();
             }
 
             txtFormat.ReadOnly       = true;
@@ -560,8 +560,8 @@ namespace apprepodbmgr.Eto
         {
             stopped = true;
 
-            Workers.AddFileForOS     -= AddFile;
-            Workers.AddOS            -= AddOs;
+            Workers.AddFileForApp     -= AddFile;
+            Workers.AddApp            -= AddApp;
             Workers.Failed           -= AddFilesToDbFailed;
             Workers.Failed           -= ChkFilesFailed;
             Workers.Failed           -= ExtractArchiveFailed;
@@ -670,10 +670,10 @@ namespace apprepodbmgr.Eto
             Workers.UpdateProgress2  -= UpdateProgress2;
             btnStop.Visible          =  false;
             fileView?.Clear();
-            if(osView == null) return;
+            if(appView == null) return;
 
-            tabOSes.Visible = false;
-            osView.Clear();
+            tabApps.Visible = false;
+            appView.Clear();
         }
 
         void RemoveTempFilesFailed(string text)
@@ -776,16 +776,16 @@ namespace apprepodbmgr.Eto
 
                 long counter = 0;
                 fileView.Clear();
-                foreach(KeyValuePair<string, DbOsFile> kvp in Context.Hashes)
+                foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
                 {
                     UpdateProgress(null, "Updating table", counter, Context.Hashes.Count);
                     fileView.Add(new FileEntry {Path = kvp.Key, Hash = kvp.Value.Sha256, Known = true});
                     counter++;
                 }
 
-                // TODO: Update OS table
+                // TODO: Update application table
 
-                OnAddedOS?.Invoke(Context.DbInfo);
+                OnAddedApp?.Invoke(Context.DbInfo);
 
                 lblProgress.Visible = false;
                 prgProgress.Visible = false;
@@ -1118,14 +1118,14 @@ namespace apprepodbmgr.Eto
             string name  = ((FileEntry)treeFiles.SelectedItem).Path;
             bool   known = ((FileEntry)treeFiles.SelectedItem).Known;
 
-            if(!Context.Hashes.TryGetValue(name, out DbOsFile osfile)) return;
+            if(!Context.Hashes.TryGetValue(name, out DbAppFile appFile)) return;
 
-            osfile.Crack = !osfile.Crack;
+            appFile.Crack = !appFile.Crack;
             Context.Hashes.Remove(name);
-            Context.Hashes.Add(name, osfile);
-            ((FileEntry)treeFiles.SelectedItem).IsCrack = osfile.Crack;
+            Context.Hashes.Add(name, appFile);
+            ((FileEntry)treeFiles.SelectedItem).IsCrack = appFile.Crack;
             fileView.Remove((FileEntry)treeFiles.SelectedItem);
-            fileView.Add(new FileEntry {Path = name, Hash = osfile.Sha256, Known = known, IsCrack = osfile.Crack});
+            fileView.Add(new FileEntry {Path = name, Hash = appFile.Sha256, Known = known, IsCrack = appFile.Crack});
         }
 
         void treeFilesSelectionChanged(object sender, EventArgs e)
@@ -1160,8 +1160,8 @@ namespace apprepodbmgr.Eto
         CheckBox    chkSource;
         CheckBox    chkNetinstall;
         GridView    treeFiles;
-        TabPage     tabOSes;
-        GridView    treeOSes;
+        TabPage     tabApps;
+        GridView    treeApps;
         Label       lblProgress;
         ProgressBar prgProgress;
         Label       lblProgress2;

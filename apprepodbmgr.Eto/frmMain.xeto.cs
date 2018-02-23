@@ -42,14 +42,14 @@ namespace apprepodbmgr.Eto
         int                          infectedFiles;
         ObservableCollection<DbFile> lstFiles;
 
-        ObservableCollection<DBEntryForEto> lstOSes;
+        ObservableCollection<DBEntryForEto> lstApps;
         DbFile                              outIter;
         bool                                populatingFiles;
         bool                                scanningFiles;
         Thread                              thdCleanFiles;
         Thread                              thdCompressTo;
         Thread                              thdPopulateFiles;
-        Thread                              thdPopulateOSes;
+        Thread                              thdPopulateApps;
         Thread                              thdSaveAs;
         Thread                              thdScanFile;
 
@@ -59,81 +59,81 @@ namespace apprepodbmgr.Eto
 
             Workers.InitDB();
 
-            lstOSes = new ObservableCollection<DBEntryForEto>();
+            lstApps = new ObservableCollection<DBEntryForEto>();
 
-            treeOSes.DataStore = lstOSes;
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.DataStore = lstApps;
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.developer)},
                 HeaderText = "Developer"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.product)},
                 HeaderText = "Product"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.version)},
                 HeaderText = "Version"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.languages)},
                 HeaderText = "Languages"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.architecture)},
                 HeaderText = "Architecture"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.machine)},
                 HeaderText = "Machine"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.format)},
                 HeaderText = "Format"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.description)},
                 HeaderText = "Description"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.oem)},
                 HeaderText = "OEM?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.upgrade)},
                 HeaderText = "Upgrade?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.update)},
                 HeaderText = "Update?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.source)},
                 HeaderText = "Source?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.files)},
                 HeaderText = "Files?"
             });
-            treeOSes.Columns.Add(new GridColumn
+            treeApps.Columns.Add(new GridColumn
             {
                 DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.netinstall)},
                 HeaderText = "NetInstall?"
             });
 
-            treeOSes.AllowMultipleSelection = false;
+            treeApps.AllowMultipleSelection = false;
 
             lstFiles = new ObservableCollection<DbFile>();
 
@@ -206,60 +206,60 @@ namespace apprepodbmgr.Eto
                 mnuCompress.Enabled = false;
             }
 
-            Workers.Failed         += LoadOSesFailed;
-            Workers.Finished       += LoadOSesFinished;
+            Workers.Failed         += LoadAppsFailed;
+            Workers.Finished       += LoadAppsFinished;
             Workers.UpdateProgress += UpdateProgress;
-            Workers.AddOS          += AddOs;
+            Workers.AddApp          += AddApp;
             Workers.AddFile        += AddFile;
             Workers.AddFiles       += AddFiles;
-            thdPopulateOSes        =  new Thread(Workers.GetAllOSes);
-            thdPopulateOSes.Start();
+            thdPopulateApps        =  new Thread(Workers.GetAllApps);
+            thdPopulateApps.Start();
         }
 
-        void LoadOSesFailed(string text)
+        void LoadAppsFailed(string text)
         {
             Application.Instance.Invoke(delegate
             {
-                MessageBox.Show($"Error {text} when populating OSes file, exiting...", MessageBoxButtons.OK,
+                MessageBox.Show($"Error {text} when populating applications, exiting...", MessageBoxButtons.OK,
                                 MessageBoxType.Error, MessageBoxDefaultButton.OK);
-                if(thdPopulateOSes != null)
+                if(thdPopulateApps != null)
                 {
-                    thdPopulateOSes.Abort();
-                    thdPopulateOSes = null;
+                    thdPopulateApps.Abort();
+                    thdPopulateApps = null;
                 }
 
-                Workers.Failed         -= LoadOSesFailed;
-                Workers.Finished       -= LoadOSesFinished;
+                Workers.Failed         -= LoadAppsFailed;
+                Workers.Finished       -= LoadAppsFinished;
                 Workers.UpdateProgress -= UpdateProgress;
                 Application.Instance.Quit();
             });
         }
 
-        void LoadOSesFinished()
+        void LoadAppsFinished()
         {
             Application.Instance.Invoke(delegate
             {
-                Workers.Failed         -= LoadOSesFailed;
-                Workers.Finished       -= LoadOSesFinished;
+                Workers.Failed         -= LoadAppsFailed;
+                Workers.Finished       -= LoadAppsFinished;
                 Workers.UpdateProgress -= UpdateProgress;
-                Workers.AddOS          -= AddOs;
-                if(thdPopulateOSes != null)
+                Workers.AddApp          -= AddApp;
+                if(thdPopulateApps != null)
                 {
-                    thdPopulateOSes.Abort();
-                    thdPopulateOSes = null;
+                    thdPopulateApps.Abort();
+                    thdPopulateApps = null;
                 }
 
                 lblProgress.Visible = false;
                 prgProgress.Visible = false;
-                treeOSes.Enabled    = true;
+                treeApps.Enabled    = true;
                 btnAdd.Visible      = true;
                 btnRemove.Visible   = true;
                 btnCompress.Visible = Context.UsableDotNetZip;
                 btnSave.Visible     = true;
                 btnHelp.Enabled     = true;
                 btnSettings.Enabled = true;
-                lblOSStatus.Visible = true;
-                lblOSStatus.Text    = $"{lstOSes.Count} operating systems";
+                lblAppStatus.Visible = true;
+                lblAppStatus.Text    = $"{lstApps.Count} applications";
             });
         }
 
@@ -319,43 +319,43 @@ namespace apprepodbmgr.Eto
             });
         }
 
-        void AddOs(DbEntry os)
+        void AddApp(DbEntry app)
         {
-            Application.Instance.Invoke(delegate { lstOSes.Add(new DBEntryForEto(os)); });
+            Application.Instance.Invoke(delegate { lstApps.Add(new DBEntryForEto(app)); });
         }
 
         protected void OnBtnAddClicked(object sender, EventArgs e)
         {
             dlgAdd dlgAdd    = new dlgAdd();
-            dlgAdd.OnAddedOS += os => { lstOSes.Add(new DBEntryForEto(os)); };
+            dlgAdd.OnAddedApp += app => { lstApps.Add(new DBEntryForEto(app)); };
             dlgAdd.ShowModal(this);
         }
 
         protected void OnBtnRemoveClicked(object sender, EventArgs e)
         {
-            if(treeOSes.SelectedItem == null) return;
-            if(MessageBox.Show("Are you sure you want to remove the selected OS?", MessageBoxButtons.YesNo,
+            if(treeApps.SelectedItem == null) return;
+            if(MessageBox.Show("Are you sure you want to remove the selected application?", MessageBoxButtons.YesNo,
                                MessageBoxType.Question, MessageBoxDefaultButton.No) != DialogResult.Yes) return;
 
-            Workers.RemoveOS(((DBEntryForEto)treeOSes.SelectedItem).id, ((DBEntryForEto)treeOSes.SelectedItem).mdid);
-            lstOSes.Remove((DBEntryForEto)treeOSes.SelectedItem);
+            Workers.RemoveApp(((DBEntryForEto)treeApps.SelectedItem).id, ((DBEntryForEto)treeApps.SelectedItem).mdid);
+            lstApps.Remove((DBEntryForEto)treeApps.SelectedItem);
         }
 
         protected void OnBtnSaveClicked(object sender, EventArgs e)
         {
-            if(treeOSes.SelectedItem == null) return;
+            if(treeApps.SelectedItem == null) return;
 
             SelectFolderDialog dlgFolder = new SelectFolderDialog {Title = "Save to..."};
             if(dlgFolder.ShowDialog(this) != DialogResult.Ok) return;
 
-            Context.DbInfo.Id = ((DBEntryForEto)treeOSes.SelectedItem).id;
+            Context.DbInfo.Id = ((DBEntryForEto)treeApps.SelectedItem).id;
             Context.Path      = dlgFolder.Directory;
 
             lblProgress.Visible  = true;
             prgProgress.Visible  = true;
             lblProgress2.Visible = true;
             prgProgress2.Visible = true;
-            treeOSes.Enabled     = false;
+            treeApps.Enabled     = false;
             btnAdd.Visible       = false;
             btnRemove.Visible    = false;
             btnCompress.Visible  = false;
@@ -382,7 +382,7 @@ namespace apprepodbmgr.Eto
                 prgProgress.Visible  = false;
                 lblProgress2.Visible = false;
                 prgProgress2.Visible = false;
-                treeOSes.Enabled     = true;
+                treeApps.Enabled     = true;
                 btnAdd.Visible       = true;
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
@@ -414,7 +414,7 @@ namespace apprepodbmgr.Eto
                 prgProgress.Visible  = false;
                 lblProgress2.Visible = false;
                 prgProgress2.Visible = false;
-                treeOSes.Enabled     = true;
+                treeApps.Enabled     = true;
                 btnAdd.Visible       = true;
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
@@ -459,26 +459,26 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnStopClicked(object sender, EventArgs e)
         {
-            Workers.AddOS           -= AddOs;
+            Workers.AddApp           -= AddApp;
             Workers.Failed          -= CompressToFailed;
-            Workers.Failed          -= LoadOSesFailed;
+            Workers.Failed          -= LoadAppsFailed;
             Workers.Failed          -= SaveAsFailed;
             Workers.Finished        -= CompressToFinished;
-            Workers.Finished        -= LoadOSesFinished;
+            Workers.Finished        -= LoadAppsFinished;
             Workers.Finished        -= SaveAsFinished;
             Workers.UpdateProgress  -= UpdateProgress;
             Workers.UpdateProgress2 -= UpdateProgress2;
 
-            if(thdPopulateOSes != null)
+            if(thdPopulateApps != null)
             {
-                thdPopulateOSes.Abort();
-                thdPopulateOSes = null;
+                thdPopulateApps.Abort();
+                thdPopulateApps = null;
             }
 
             if(thdCompressTo != null)
             {
-                thdPopulateOSes.Abort();
-                thdPopulateOSes = null;
+                thdPopulateApps.Abort();
+                thdPopulateApps = null;
             }
 
             if(thdSaveAs == null) return;
@@ -494,20 +494,20 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnCompressClicked(object sender, EventArgs e)
         {
-            if(treeOSes.SelectedItem == null) return;
+            if(treeApps.SelectedItem == null) return;
 
             SaveFileDialog dlgFile = new SaveFileDialog {Title = "Compress to..."};
 
             if(dlgFile.ShowDialog(this) != DialogResult.Ok) return;
 
-            Context.DbInfo.Id = ((DBEntryForEto)treeOSes.SelectedItem).id;
+            Context.DbInfo.Id = ((DBEntryForEto)treeApps.SelectedItem).id;
             Context.Path      = dlgFile.FileName;
 
             lblProgress.Visible  = true;
             prgProgress.Visible  = true;
             lblProgress2.Visible = true;
             prgProgress2.Visible = true;
-            treeOSes.Enabled     = false;
+            treeApps.Enabled     = false;
             btnAdd.Visible       = false;
             btnRemove.Visible    = false;
             btnCompress.Visible  = false;
@@ -533,7 +533,7 @@ namespace apprepodbmgr.Eto
                 lblProgress2.Visible = false;
                 prgProgress.Visible  = false;
                 prgProgress2.Visible = false;
-                treeOSes.Enabled     = true;
+                treeApps.Enabled     = true;
                 btnAdd.Visible       = true;
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
@@ -565,7 +565,7 @@ namespace apprepodbmgr.Eto
                 lblProgress2.Visible = false;
                 prgProgress.Visible  = false;
                 prgProgress2.Visible = false;
-                treeOSes.Enabled     = true;
+                treeApps.Enabled     = true;
                 btnAdd.Visible       = true;
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
@@ -794,7 +794,7 @@ namespace apprepodbmgr.Eto
         protected void OnBtnPopulateFilesClicked(object sender, EventArgs e)
         {
             lstFiles.Clear();
-            tabOSes.Enabled          = false;
+            tabApps.Enabled          = false;
             btnStopFiles.Visible     = true;
             btnPopulateFiles.Visible = false;
 
@@ -908,7 +908,7 @@ namespace apprepodbmgr.Eto
                     thdPopulateFiles = null;
                 }
 
-                tabOSes.Enabled = true;
+                tabApps.Enabled = true;
                 lstFiles.Clear();
                 btnStopFiles.Visible     = false;
                 btnPopulateFiles.Visible = true;
@@ -941,7 +941,7 @@ namespace apprepodbmgr.Eto
                 btnPopulateFiles.Visible     = false;
                 populatingFiles              = false;
                 treeFiles.Enabled            = true;
-                tabOSes.Enabled              = true;
+                tabApps.Enabled              = true;
                 btnScanAllPending.Visible    = true;
                 btnCleanFiles.Visible        = true;
                 lblFileStatus.Visible        = true;
@@ -1012,7 +1012,7 @@ namespace apprepodbmgr.Eto
         protected void OnBtnCleanFilesClicked(object sender, EventArgs e)
         {
             DialogResult result =
-                MessageBox.Show("This option will search the database for any known file that doesn't\n" + "belong to any OS and remove it from the database.\n\n" + "It will then search the repository for any file not on the database and remove it.\n\n" + "THIS OPERATION MAY VERY LONG, CANNOT BE CANCELED AND REMOVES DATA ON DISK.\n\n" + "Are you sure to continue?",
+                MessageBox.Show("This option will search the database for any known file that doesn't\n" + "belong to any application and remove it from the database.\n\n" + "It will then search the repository for any file not on the database and remove it.\n\n" + "THIS OPERATION MAY VERY LONG, CANNOT BE CANCELED AND REMOVES DATA ON DISK.\n\n" + "Are you sure to continue?",
                                 MessageBoxButtons.YesNo, MessageBoxType.Question);
             if(result != DialogResult.Yes) return;
 
@@ -1021,7 +1021,7 @@ namespace apprepodbmgr.Eto
             btnScanWithClamd.Visible     =  false;
             btnScanAllPending.Visible    =  false;
             btnCheckInVirusTotal.Visible =  false;
-            tabOSes.Enabled              =  false;
+            tabApps.Enabled              =  false;
             treeFiles.Enabled            =  false;
             lblProgressFiles1.Visible    =  true;
             lblProgressFiles2.Visible    =  true;
@@ -1052,7 +1052,7 @@ namespace apprepodbmgr.Eto
                 btnScanWithClamd.Visible                =  true;
                 btnScanAllPending.Visible               =  true;
                 btnCheckInVirusTotal.Visible            =  true;
-                tabOSes.Enabled                         =  true;
+                tabApps.Enabled                         =  true;
                 treeFiles.Enabled                       =  true;
                 Workers.Finished                        -= CleanFilesFinished;
                 Workers.UpdateProgress                  -= UpdateFileProgress;
@@ -1074,7 +1074,7 @@ namespace apprepodbmgr.Eto
 
         #region XAML UI elements
         #pragma warning disable 0649
-        GridView       treeOSes;
+        GridView       treeApps;
         Label          lblProgress;
         ProgressBar    prgProgress;
         Label          lblProgress2;
@@ -1097,12 +1097,12 @@ namespace apprepodbmgr.Eto
         Button         btnScanWithClamd;
         Button         btnCheckInVirusTotal;
         Button         btnPopulateFiles;
-        TabPage        tabOSes;
+        TabPage        tabApps;
         Button         btnScanAllPending;
         Button         btnCleanFiles;
         ButtonMenuItem btnQuit;
         ButtonMenuItem mnuFile;
-        Label          lblOSStatus;
+        Label          lblAppStatus;
         Label          lblFileStatus;
         #pragma warning restore 0649
         #endregion XAML UI elements

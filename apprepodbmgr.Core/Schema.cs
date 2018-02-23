@@ -49,11 +49,11 @@ namespace apprepodbmgr.Core
                                             "CREATE INDEX `files_virus_idx` ON `files` (`virus` ASC);\n\n"             +
                                             "CREATE INDEX `files_length_idx` ON `files` (`length` ASC);";
 
-        public const string OSesTableSql = "-- -----------------------------------------------------\n"               +
-                                           "-- Table `oses`\n"                                                        +
+        public const string AppsTableSql = "-- -----------------------------------------------------\n"               +
+                                           "-- Table `apps`\n"                                                        +
                                            "-- -----------------------------------------------------\n"               +
-                                           "DROP TABLE IF EXISTS `oses` ;\n\n"                                        +
-                                           "CREATE TABLE IF NOT EXISTS `oses` (\n"                                    +
+                                           "DROP TABLE IF EXISTS `apps` ;\n\n"                                        +
+                                           "CREATE TABLE IF NOT EXISTS `apps` (\n"                                    +
                                            "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                              +
                                            "  `mdid` CHAR(40) NOT NULL,\n"                                            +
                                            "  `developer` VARCHAR(45) NOT NULL,\n"                                    +
@@ -72,14 +72,14 @@ namespace apprepodbmgr.Core
                                            "  `netinstall` BOOLEAN NOT NULL,\n"                                       +
                                            "  `xml` BLOB NULL,\n"                                                     +
                                            "  `json` BLOB NULL);\n\n"                                                 +
-                                           "CREATE UNIQUE INDEX `oses_id_UNIQUE` ON `oses` (`id` ASC);\n\n"           +
-                                           "CREATE UNIQUE INDEX `oses_mdid_UNIQUE` ON `oses` (`mdid` ASC);\n\n"       +
-                                           "CREATE INDEX `oses_developer_idx` ON `oses` (`developer` ASC);\n\n"       +
-                                           "CREATE INDEX `oses_product_idx` ON `oses` (`product` ASC);\n\n"           +
-                                           "CREATE INDEX `oses_version_idx` ON `oses` (`version` ASC);\n\n"           +
-                                           "CREATE INDEX `oses_architecture_idx` ON `oses` (`architecture` ASC);\n\n" +
-                                           "CREATE INDEX `oses_format_idx` ON `oses` (`format` ASC);\n\n"             +
-                                           "CREATE INDEX `oses_machine_idx` ON `oses` (`machine` ASC);\n\n"           +
-                                           "CREATE INDEX `oses_description_idx` ON `oses` (`description` ASC);";
+                                           "CREATE UNIQUE INDEX `apps_id_UNIQUE` ON `apps` (`id` ASC);\n\n"           +
+                                           "CREATE UNIQUE INDEX `apps_mdid_UNIQUE` ON `apps` (`mdid` ASC);\n\n"       +
+                                           "CREATE INDEX `apps_developer_idx` ON `apps` (`developer` ASC);\n\n"       +
+                                           "CREATE INDEX `apps_product_idx` ON `apps` (`product` ASC);\n\n"           +
+                                           "CREATE INDEX `apps_version_idx` ON `apps` (`version` ASC);\n\n"           +
+                                           "CREATE INDEX `apps_architecture_idx` ON `apps` (`architecture` ASC);\n\n" +
+                                           "CREATE INDEX `apps_format_idx` ON `apps` (`format` ASC);\n\n"             +
+                                           "CREATE INDEX `apps_machine_idx` ON `apps` (`machine` ASC);\n\n"           +
+                                           "CREATE INDEX `apps_description_idx` ON `apps` (`description` ASC);";
     }
 }

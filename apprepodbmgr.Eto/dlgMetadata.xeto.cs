@@ -208,7 +208,7 @@ namespace apprepodbmgr.Eto
 
         void FillFilesCombos()
         {
-            foreach(KeyValuePair<string, DbOsFile> files in Context.Hashes) lstFilesForMedia.Add(files.Key);
+            foreach(KeyValuePair<string, DbAppFile> files in Context.Hashes) lstFilesForMedia.Add(files.Key);
         }
 
         public void FillFields()

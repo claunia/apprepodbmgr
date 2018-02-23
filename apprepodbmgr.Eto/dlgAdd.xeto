@@ -102,8 +102,8 @@
 						<TabPage Text="Files">
 							<GridView ID="treeFiles" SelectionChanged="treeFilesSelectionChanged" />
 						</TabPage>
-						<TabPage Text="OSes" ID="tabOSes" Visible="False">
-							<GridView ID="treeOSes" />
+						<TabPage Text="Applications" ID="tabApps" Visible="False">
+							<GridView ID="treeApps" />
 						</TabPage>
 					</TabControl>
 				</StackLayoutItem>
