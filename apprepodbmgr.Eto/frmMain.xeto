@@ -74,7 +74,6 @@
 				<ButtonMenuItem Text="Save As" Click="OnBtnSaveClicked" Shortcut="CommonModifier+S" />
 				<ButtonMenuItem ID="mnuCompress" Text="Compress" Click="OnBtnCompressClicked" Shortcut="CommonModifier+E" />
 			</ButtonMenuItem>
-			<ButtonMenuItem Text="Help" ID="btnHelp" Click="OnBtnHelpClicked" />
 			<MenuBar.ApplicationItems>
 				<ButtonMenuItem ID="btnSettings" Text="Preferences..." Click="OnBtnSettingsClicked" Shortcut="{On Control+O, Mac=Application+Comma}" />
 			</MenuBar.ApplicationItems>

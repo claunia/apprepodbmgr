@@ -256,7 +256,6 @@ namespace apprepodbmgr.Eto
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
                 btnSave.Visible      = true;
-                btnHelp.Enabled      = true;
                 btnSettings.Enabled  = true;
                 lblAppStatus.Visible = true;
                 lblAppStatus.Text    = $"{lstApps.Count} applications";
@@ -360,7 +359,6 @@ namespace apprepodbmgr.Eto
             btnRemove.Visible    = false;
             btnCompress.Visible  = false;
             btnSave.Visible      = false;
-            btnHelp.Enabled      = true;
             btnSettings.Enabled  = false;
             btnStop.Visible      = true;
 
@@ -387,7 +385,6 @@ namespace apprepodbmgr.Eto
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
                 btnSave.Visible      = true;
-                btnHelp.Enabled      = true;
                 btnSettings.Enabled  = true;
                 btnStop.Visible      = false;
 
@@ -419,7 +416,6 @@ namespace apprepodbmgr.Eto
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
                 btnSave.Visible      = true;
-                btnHelp.Enabled      = true;
                 btnSettings.Enabled  = true;
                 btnStop.Visible      = false;
 
@@ -437,12 +433,6 @@ namespace apprepodbmgr.Eto
 
                 Context.Path = null;
             });
-        }
-
-        protected void OnBtnHelpClicked(object sender, EventArgs e)
-        {
-            dlgHelp _dlgHelp = new dlgHelp();
-            _dlgHelp.ShowModal();
         }
 
         protected void OnBtnSettingsClicked(object sender, EventArgs e)
@@ -512,7 +502,6 @@ namespace apprepodbmgr.Eto
             btnRemove.Visible    = false;
             btnCompress.Visible  = false;
             btnSave.Visible      = false;
-            //btnHelp.Visible = false;
             btnSettings.Enabled = false;
             btnStop.Visible     = true;
 
@@ -538,7 +527,6 @@ namespace apprepodbmgr.Eto
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
                 btnSave.Visible      = true;
-                btnHelp.Enabled      = true;
                 btnSettings.Enabled  = true;
                 btnStop.Visible      = false;
 
@@ -570,7 +558,6 @@ namespace apprepodbmgr.Eto
                 btnRemove.Visible    = true;
                 btnCompress.Visible  = Context.UsableDotNetZip;
                 btnSave.Visible      = true;
-                btnHelp.Enabled      = true;
                 btnSettings.Enabled  = true;
                 btnStop.Visible      = false;
 
@@ -1035,7 +1022,6 @@ namespace apprepodbmgr.Eto
             btnStopFiles.Visible         =  false;
             prgProgress2.Indeterminate   =  true;
             btnSettings.Enabled          =  false;
-            btnHelp.Enabled              =  false;
             mnuCompress.Enabled          =  false;
             btnQuit.Enabled              =  false;
             mnuFile.Enabled              =  false;
@@ -1062,7 +1048,6 @@ namespace apprepodbmgr.Eto
                 lblProgressFiles2.Text                  =  "";
                 prgProgressFiles2.Visible               =  false;
                 btnSettings.Enabled                     =  true;
-                btnHelp.Enabled                         =  true;
                 mnuCompress.Enabled                     =  true;
                 btnQuit.Enabled                         =  true;
                 mnuFile.Enabled                         =  true;
@@ -1085,7 +1070,6 @@ namespace apprepodbmgr.Eto
         Button         btnSave;
         Button         btnStop;
         ButtonMenuItem btnSettings;
-        ButtonMenuItem btnHelp;
         ButtonMenuItem mnuCompress;
         GridView       treeFiles;
         Label          lblProgressFiles1;

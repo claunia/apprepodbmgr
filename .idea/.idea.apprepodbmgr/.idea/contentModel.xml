@@ -574,8 +574,6 @@
         <e p="dlgBlockMedia.xeto.cs" t="Include" />
         <e p="dlgFilesystem.xeto" t="Include" />
         <e p="dlgFilesystem.xeto.cs" t="Include" />
-        <e p="dlgHelp.xeto" t="Include" />
-        <e p="dlgHelp.xeto.cs" t="Include" />
         <e p="dlgMetadata.xeto" t="Include" />
         <e p="dlgMetadata.xeto.cs" t="Include" />
         <e p="dlgOpticalDisc.xeto" t="Include" />

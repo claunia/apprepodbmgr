@@ -29,9 +29,6 @@
     <Compile Include="frmMain.xeto.cs">
       <DependentUpon>frmMain.xeto</DependentUpon>
     </Compile>
-    <Compile Include="dlgHelp.xeto.cs">
-      <DependentUpon>dlgHelp.xeto</DependentUpon>
-    </Compile>
     <Compile Include="dlgSettings.xeto.cs">
       <DependentUpon>dlgSettings.xeto</DependentUpon>
     </Compile>
@@ -73,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmMain.xeto" />
-    <EmbeddedResource Include="dlgHelp.xeto" />
     <EmbeddedResource Include="dlgSettings.xeto" />
     <EmbeddedResource Include="dlgAdd.xeto" />
     <EmbeddedResource Include="dlgMetadata.xeto" />
