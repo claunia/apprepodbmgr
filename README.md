@@ -1,6 +1,4 @@
-OS Repository Database Manager
+App Repository Database Manager
 ------------------------------
 
-This is a little application designed to manage a repository of operating system dumps for archival and digital museums.
-
-https://youtu.be/Vs8nAiXCZy8
+This is a little application designed to manage a repository of applications for archival and digital museums.

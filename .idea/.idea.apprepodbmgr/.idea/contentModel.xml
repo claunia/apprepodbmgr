@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.Rider2017.3/system/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_osrepodbmgr.1496349809.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.Rider2017.3/system/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_apprepodbmgr.1640228424.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="DiscImageChef/CICMMetadata/dotnet/cicm.cs" t="Include" />
       <e p="DiscImageChef/DiscImageChef.Checksums" t="IncludeRecursive">
@@ -526,11 +526,89 @@
       <e p="DiscImageChef/LICENSE" t="Include" />
       <e p="DiscImageChef/LICENSE.LGPL" t="Include" />
       <e p="DiscImageChef/LICENSE.MIT" t="Include" />
-      <e p="apprepodbmgr.Core/apprepodbmgr.Core.csproj" t="IncludeRecursive" />
-      <e p="apprepodbmgr.Eto/apprepodbmgr.Eto.csproj" t="IncludeRecursive" />
-      <e p="apprepodbmgr.Eto.Desktop/apprepodbmgr.Eto.Desktop.csproj" t="IncludeRecursive" />
-      <e p="apprepodbmgr.Eto.XamMac2/apprepodbmgr.Eto.XamMac2.csproj" t="IncludeRecursive" />
-      <e p="osrepodbmgr.sln" t="IncludeFlat" />
+      <e p="README.md" t="Include" />
+      <e p="apprepodbmgr.Core" t="IncludeRecursive">
+        <e p="AlgoEnum.cs" t="Include" />
+        <e p="Checksum.cs" t="Include" />
+        <e p="Context.cs" t="Include" />
+        <e p="DBCore.cs" t="Include" />
+        <e p="DBOps.cs" t="Include" />
+        <e p="DetectImageFormat.cs" t="Include" />
+        <e p="DetectOS.cs" t="Include" />
+        <e p="IO.cs" t="Include" />
+        <e p="PlatformID.cs" t="Include" />
+        <e p="PluginBase.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="SQLite.cs" t="Include" />
+        <e p="Schema.cs" t="Include" />
+        <e p="Settings.cs" t="Include" />
+        <e p="Symlinks.cs" t="Include" />
+        <e p="Workers" t="Include">
+          <e p="Clamd.cs" t="Include" />
+          <e p="Compression.cs" t="Include" />
+          <e p="Consts.cs" t="Include" />
+          <e p="Database.cs" t="Include" />
+          <e p="Delegates.cs" t="Include" />
+          <e p="DiscImageChef.cs" t="Include" />
+          <e p="Files.cs" t="Include" />
+          <e p="Miscellaneous.cs" t="Include" />
+          <e p="VirusTotal.cs" t="Include" />
+        </e>
+        <e p="apprepodbmgr.Core.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="apprepodbmgr.Eto" t="IncludeRecursive">
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="WrappersForEto.cs" t="Include" />
+        <e p="apprepodbmgr.Eto.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="dlgAdd.xeto" t="Include" />
+        <e p="dlgAdd.xeto.cs" t="Include" />
+        <e p="dlgBlockMedia.xeto" t="Include" />
+        <e p="dlgBlockMedia.xeto.cs" t="Include" />
+        <e p="dlgFilesystem.xeto" t="Include" />
+        <e p="dlgFilesystem.xeto.cs" t="Include" />
+        <e p="dlgHelp.xeto" t="Include" />
+        <e p="dlgHelp.xeto.cs" t="Include" />
+        <e p="dlgMetadata.xeto" t="Include" />
+        <e p="dlgMetadata.xeto.cs" t="Include" />
+        <e p="dlgOpticalDisc.xeto" t="Include" />
+        <e p="dlgOpticalDisc.xeto.cs" t="Include" />
+        <e p="dlgSettings.xeto" t="Include" />
+        <e p="dlgSettings.xeto.cs" t="Include" />
+        <e p="frmMain.xeto" t="Include" />
+        <e p="frmMain.xeto.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="apprepodbmgr.Eto.Desktop" t="IncludeRecursive">
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="apprepodbmgr.Eto.Desktop.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="apprepodbmgr.Eto.XamMac2" t="IncludeRecursive">
+        <e p="Info.plist" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Resources" t="Include" />
+        <e p="apprepodbmgr.Eto.XamMac2.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
+      <e p="apprepodbmgr.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
   </component>
