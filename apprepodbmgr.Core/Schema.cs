@@ -61,17 +61,18 @@ namespace apprepodbmgr.Core
                                            "  `version` VARCHAR(45) NULL,\n"                                          +
                                            "  `languages` VARCHAR(45) NULL,\n"                                        +
                                            "  `architecture` VARCHAR(45) NULL,\n"                                     +
-                                           "  `machine` VARCHAR(45) NULL,\n"                                          +
+                                           "  `targetos` VARCHAR(45) NULL,\n"                                         +
                                            "  `format` VARCHAR(45) NULL,\n"                                           +
-                                           "  `description` VARCHAR(45) NULL,\n"                                      +
+                                           "  `description` TEXT NULL,\n"                                             +
                                            "  `oem` BOOLEAN NOT NULL,\n"                                              +
                                            "  `upgrade` BOOLEAN NOT NULL,\n"                                          +
                                            "  `update` BOOLEAN NOT NULL,\n"                                           +
                                            "  `source` BOOLEAN NOT NULL,\n"                                           +
                                            "  `files` BOOLEAN NOT NULL,\n"                                            +
-                                           "  `netinstall` BOOLEAN NOT NULL,\n"                                       +
+                                           "  `installer` BOOLEAN NOT NULL,\n"                                        +
                                            "  `xml` BLOB NULL,\n"                                                     +
-                                           "  `json` BLOB NULL);\n\n"                                                 +
+                                           "  `json` BLOB NULL,\n"                                                    +
+                                           "  `icon` BLOB NULL);\n\n"                                                 +
                                            "CREATE UNIQUE INDEX `apps_id_UNIQUE` ON `apps` (`id` ASC);\n\n"           +
                                            "CREATE UNIQUE INDEX `apps_mdid_UNIQUE` ON `apps` (`mdid` ASC);\n\n"       +
                                            "CREATE INDEX `apps_developer_idx` ON `apps` (`developer` ASC);\n\n"       +
@@ -79,7 +80,7 @@ namespace apprepodbmgr.Core
                                            "CREATE INDEX `apps_version_idx` ON `apps` (`version` ASC);\n\n"           +
                                            "CREATE INDEX `apps_architecture_idx` ON `apps` (`architecture` ASC);\n\n" +
                                            "CREATE INDEX `apps_format_idx` ON `apps` (`format` ASC);\n\n"             +
-                                           "CREATE INDEX `apps_machine_idx` ON `apps` (`machine` ASC);\n\n"           +
+                                           "CREATE INDEX `apps_targetos_idx` ON `apps` (`targetos` ASC);\n\n"         +
                                            "CREATE INDEX `apps_description_idx` ON `apps` (`description` ASC);";
     }
 }

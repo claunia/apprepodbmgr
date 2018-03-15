@@ -69,16 +69,16 @@ namespace apprepodbmgr.Core
                 }
 
                 string destinationFolder = "";
-                destinationFolder        = Path.Combine(destinationFolder, Context.DbInfo.Developer);
-                destinationFolder        = Path.Combine(destinationFolder, Context.DbInfo.Product);
-                destinationFolder        = Path.Combine(destinationFolder, Context.DbInfo.Version);
+                destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Developer);
+                destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Product);
+                destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Version);
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Languages))
                     destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Languages);
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Architecture))
-                    destinationFolder                    = Path.Combine(destinationFolder, Context.DbInfo.Architecture);
+                    destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Architecture);
                 if(Context.DbInfo.Oem) destinationFolder = Path.Combine(destinationFolder, "oem");
-                if(!string.IsNullOrWhiteSpace(Context.DbInfo.Machine))
-                    destinationFolder = Path.Combine(destinationFolder, "for " + Context.DbInfo.Machine);
+                if(!string.IsNullOrWhiteSpace(Context.DbInfo.TargetOs))
+                    destinationFolder = Path.Combine(destinationFolder, "for " + Context.DbInfo.TargetOs);
 
                 string destinationFile = "";
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Format))
@@ -86,40 +86,39 @@ namespace apprepodbmgr.Core
                 if(Context.DbInfo.Files)
                 {
                     if(destinationFile != "") destinationFile += "_";
-                    destinationFile                           += "files";
+                    destinationFile += "files";
                 }
 
-                if(Context.DbInfo.Netinstall)
+                if(Context.DbInfo.Installer)
                 {
                     if(destinationFile != "") destinationFile += "_";
-                    destinationFile                           += "netinstall";
+                    destinationFile += "installer";
                 }
 
                 if(Context.DbInfo.Source)
                 {
                     if(destinationFile != "") destinationFile += "_";
-                    destinationFile                           += "source";
+                    destinationFile += "source";
                 }
 
                 if(Context.DbInfo.Update)
                 {
                     if(destinationFile != "") destinationFile += "_";
-                    destinationFile                           += "update";
+                    destinationFile += "update";
                 }
 
                 if(Context.DbInfo.Upgrade)
                 {
                     if(destinationFile != "") destinationFile += "_";
-                    destinationFile                           += "upgrade";
+                    destinationFile += "upgrade";
                 }
 
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Description))
                 {
                     if(destinationFile != "") destinationFile += "_";
-                    destinationFile                           += Context.DbInfo.Description;
+                    destinationFile += Context.DbInfo.Description;
                 }
-                else if(destinationFile == "")
-                    destinationFile = "archive";
+                else if(destinationFile == "") destinationFile = "archive";
 
                 string destination = Path.Combine(destinationFolder, destinationFile) + ".zip";
 
@@ -356,12 +355,12 @@ namespace apprepodbmgr.Core
                 while(jsReader.Read())
                     switch(jsReader.TokenType)
                     {
-                        case JsonToken.PropertyName when jsReader.Value            != null &&
-                                                         jsReader.Value.ToString() == "XADFileName":
+                        case JsonToken.PropertyName
+                            when jsReader.Value != null && jsReader.Value.ToString() == "XADFileName":
                             counter++;
                             break;
-                        case JsonToken.PropertyName when jsReader.Value            != null &&
-                                                         jsReader.Value.ToString() == "lsarFormatName":
+                        case JsonToken.PropertyName
+                            when jsReader.Value != null && jsReader.Value.ToString() == "lsarFormatName":
                             jsReader.Read();
                             if(jsReader.TokenType == JsonToken.String && jsReader.Value != null)
                                 format = jsReader.Value.ToString();
@@ -470,7 +469,7 @@ namespace apprepodbmgr.Core
                         #if DEBUG
                         stopwatch.Restart();
                         #endif
-                        ZipFile zf             = ZipFile.Read(Context.Path, new ReadOptions {Encoding = Encoding.UTF8});
+                        ZipFile zf = ZipFile.Read(Context.Path, new ReadOptions {Encoding = Encoding.UTF8});
                         zf.ExtractExistingFile =  ExtractExistingFileAction.OverwriteSilently;
                         zf.ExtractProgress     += Zf_ExtractProgress;
                         zipCounter             =  0;
@@ -506,11 +505,11 @@ namespace apprepodbmgr.Core
                             CreateNoWindow         = true,
                             RedirectStandardOutput = true,
                             UseShellExecute        = false,
-                            Arguments              =
+                            Arguments =
                                 $"-o \"\"\"{tmpFolder}\"\"\" -r -D -k hidden \"\"\"{Context.Path}\"\"\""
                         }
                     };
-                    long counter                           = 0;
+                    long counter = 0;
                     Context.UnarProcess.OutputDataReceived += (sender, e) =>
                     {
                         counter++;
@@ -629,7 +628,7 @@ namespace apprepodbmgr.Core
                 {
                     UpdateProgress2?.Invoke("", folder.Path, counter, folders.Count);
 
-                    ZipEntry zd     = zf.AddDirectoryByName(folder.Path);
+                    ZipEntry zd = zf.AddDirectoryByName(folder.Path);
                     zd.Attributes   = folder.Attributes;
                     zd.CreationTime = folder.CreationTimeUtc;
                     zd.AccessedTime = folder.LastAccessTimeUtc;
@@ -655,7 +654,7 @@ namespace apprepodbmgr.Core
 
                     Context.Hashes.Add(file.Path, file);
 
-                    ZipEntry zi     = zf.AddEntry(file.Path, Zf_HandleOpen, Zf_HandleClose);
+                    ZipEntry zi = zf.AddEntry(file.Path, Zf_HandleOpen, Zf_HandleClose);
                     zi.Attributes   = file.Attributes;
                     zi.CreationTime = file.CreationTimeUtc;
                     zi.AccessedTime = file.LastAccessTimeUtc;
@@ -689,7 +688,7 @@ namespace apprepodbmgr.Core
         static Stream Zf_HandleOpen(string entryName)
         {
             DbAppFile file;
-            if(!Context.Hashes.TryGetValue(entryName,                        out file))
+            if(!Context.Hashes.TryGetValue(entryName, out file))
                 if(!Context.Hashes.TryGetValue(entryName.Replace('/', '\\'), out file))
                     throw new ArgumentException("Cannot find requested zip entry in hashes dictionary");
 
@@ -739,8 +738,7 @@ namespace apprepodbmgr.Core
                                         file.Sha256[4].ToString(), file.Sha256 + ".lz");
                 algorithm = AlgoEnum.LZip;
             }
-            else
-                throw new ArgumentException($"Cannot find file with hash {file.Sha256} in the repository");
+            else throw new ArgumentException($"Cannot find file with hash {file.Sha256} in the repository");
 
             FileStream inFs = new FileStream(repoPath, FileMode.Open, FileAccess.Read);
 

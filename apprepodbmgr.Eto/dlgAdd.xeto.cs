@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
 using apprepodbmgr.Core;
@@ -130,8 +131,8 @@ namespace apprepodbmgr.Eto
             });
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.machine)},
-                HeaderText = "Machine"
+                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.targetos)},
+                HeaderText = "Target OS"
             });
             treeApps.Columns.Add(new GridColumn
             {
@@ -170,8 +171,8 @@ namespace apprepodbmgr.Eto
             });
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.netinstall)},
-                HeaderText = "NetInstall?"
+                DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.Installer)},
+                HeaderText = "Installer?"
             });
 
             treeApps.AllowMultipleSelection = false;
@@ -352,7 +353,7 @@ namespace apprepodbmgr.Eto
                 btnToggleCrack.Enabled = true;
 
                 txtFormat.ReadOnly       = false;
-                txtMachine.ReadOnly      = false;
+                txtTargetOs.ReadOnly     = false;
                 txtProduct.ReadOnly      = false;
                 txtVersion.ReadOnly      = false;
                 txtLanguages.ReadOnly    = false;
@@ -363,7 +364,7 @@ namespace apprepodbmgr.Eto
                 chkFiles.Enabled         = true;
                 chkUpdate.Enabled        = true;
                 chkUpgrade.Enabled       = true;
-                chkNetinstall.Enabled    = true;
+                chkInstaller.Enabled     = true;
                 chkSource.Enabled        = true;
 
                 btnMetadata.Visible = true;
@@ -373,7 +374,7 @@ namespace apprepodbmgr.Eto
                         foreach(string developer in Context.Metadata.Developer)
                         {
                             if(!string.IsNullOrWhiteSpace(txtDeveloper.Text)) txtDeveloper.Text += ",";
-                            txtDeveloper.Text                                                   += developer;
+                            txtDeveloper.Text += developer;
                         }
 
                     if(!string.IsNullOrWhiteSpace(Context.Metadata.Name)) txtProduct.Text    = Context.Metadata.Name;
@@ -383,21 +384,22 @@ namespace apprepodbmgr.Eto
                         foreach(LanguagesTypeLanguage language in Context.Metadata.Languages)
                         {
                             if(!string.IsNullOrWhiteSpace(txtLanguages.Text)) txtLanguages.Text += ",";
-                            txtLanguages.Text                                                   += language;
+                            txtLanguages.Text += language;
                         }
 
                     if(Context.Metadata.Architectures != null)
                         foreach(ArchitecturesTypeArchitecture architecture in Context.Metadata.Architectures)
                         {
                             if(!string.IsNullOrWhiteSpace(txtArchitecture.Text)) txtArchitecture.Text += ",";
-                            txtArchitecture.Text                                                      += architecture;
+                            txtArchitecture.Text += architecture;
                         }
 
-                    if(Context.Metadata.Systems != null)
-                        foreach(string machine in Context.Metadata.Systems)
+                    if(Context.Metadata.RequiredOperatingSystems != null)
+                        foreach(string targetos in Context
+                                                  .Metadata.RequiredOperatingSystems.Select(os => os.Name).Distinct())
                         {
-                            if(!string.IsNullOrWhiteSpace(txtMachine.Text)) txtMachine.Text += ",";
-                            txtMachine.Text                                                 += machine;
+                            if(!string.IsNullOrWhiteSpace(txtTargetOs.Text)) txtTargetOs.Text += ",";
+                            txtTargetOs.Text += targetos;
                         }
 
                     btnMetadata.BackgroundColor = Colors.Green;
@@ -414,7 +416,7 @@ namespace apprepodbmgr.Eto
             Application.Instance.Invoke(delegate
             {
                 fileView.Add(new FileEntry {Path = filename, Hash = hash, Known = known, IsCrack = isCrack});
-                btnPack.Enabled                  |= !known;
+                btnPack.Enabled |= !known;
                 if(known) knownFiles++;
             });
         }
@@ -455,7 +457,7 @@ namespace apprepodbmgr.Eto
             }
 
             txtFormat.ReadOnly       = true;
-            txtMachine.ReadOnly      = true;
+            txtTargetOs.ReadOnly     = true;
             txtProduct.ReadOnly      = true;
             txtVersion.ReadOnly      = true;
             txtLanguages.ReadOnly    = true;
@@ -466,10 +468,10 @@ namespace apprepodbmgr.Eto
             chkFiles.Enabled         = false;
             chkUpdate.Enabled        = false;
             chkUpgrade.Enabled       = false;
-            chkNetinstall.Enabled    = false;
+            chkInstaller.Enabled     = false;
             chkSource.Enabled        = false;
             txtFormat.Text           = "";
-            txtMachine.Text          = "";
+            txtTargetOs.Text         = "";
             txtProduct.Text          = "";
             txtVersion.Text          = "";
             txtLanguages.Text        = "";
@@ -480,7 +482,7 @@ namespace apprepodbmgr.Eto
             chkFiles.Checked         = false;
             chkUpdate.Checked        = false;
             chkUpgrade.Checked       = false;
-            chkNetinstall.Checked    = false;
+            chkInstaller.Checked     = false;
             chkSource.Checked        = false;
 
             if(Context.TmpFolder != null)
@@ -506,11 +508,9 @@ namespace apprepodbmgr.Eto
             Application.Instance.Invoke(delegate
             {
                 if(!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(inner))
-                    lblProgress.Text = $"{text}: {inner}";
-                else if(!string.IsNullOrWhiteSpace(inner))
-                    lblProgress.Text = inner;
-                else
-                    lblProgress.Text = text;
+                    lblProgress.Text                                        = $"{text}: {inner}";
+                else if(!string.IsNullOrWhiteSpace(inner)) lblProgress.Text = inner;
+                else lblProgress.Text                                       = text;
                 if(maximum > 0)
                 {
                     if(current < int.MinValue || current > int.MaxValue || maximum < int.MinValue ||
@@ -534,11 +534,9 @@ namespace apprepodbmgr.Eto
             Application.Instance.Invoke(delegate
             {
                 if(!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(inner))
-                    lblProgress2.Text = $"{text}: {inner}";
-                else if(!string.IsNullOrWhiteSpace(inner))
-                    lblProgress2.Text = inner;
-                else
-                    lblProgress2.Text = text;
+                    lblProgress2.Text                                        = $"{text}: {inner}";
+                else if(!string.IsNullOrWhiteSpace(inner)) lblProgress2.Text = inner;
+                else lblProgress2.Text                                       = text;
                 if(maximum > 0)
                 {
                     if(current < int.MinValue || current > int.MaxValue || maximum < int.MinValue ||
@@ -710,7 +708,7 @@ namespace apprepodbmgr.Eto
             btnClose.Enabled         = false;
             prgProgress.Visible      = true;
             txtFormat.ReadOnly       = true;
-            txtMachine.ReadOnly      = true;
+            txtTargetOs.ReadOnly     = true;
             txtProduct.ReadOnly      = true;
             txtVersion.ReadOnly      = true;
             txtLanguages.ReadOnly    = true;
@@ -721,7 +719,7 @@ namespace apprepodbmgr.Eto
             chkFiles.Enabled         = false;
             chkUpdate.Enabled        = false;
             chkUpgrade.Enabled       = false;
-            chkNetinstall.Enabled    = false;
+            chkInstaller.Enabled     = false;
             chkSource.Enabled        = false;
 
             Workers.UpdateProgress += UpdateProgress;
@@ -733,11 +731,11 @@ namespace apprepodbmgr.Eto
             Context.DbInfo.Developer    = txtDeveloper.Text;
             Context.DbInfo.Format       = txtFormat.Text;
             Context.DbInfo.Languages    = txtLanguages.Text;
-            Context.DbInfo.Machine      = txtMachine.Text;
+            Context.DbInfo.TargetOs     = txtTargetOs.Text;
             Context.DbInfo.Product      = txtProduct.Text;
             Context.DbInfo.Version      = txtVersion.Text;
             Context.DbInfo.Files        = chkFiles.Checked.Value;
-            Context.DbInfo.Netinstall   = chkNetinstall.Checked.Value;
+            Context.DbInfo.Installer    = chkInstaller.Checked.Value;
             Context.DbInfo.Oem          = chkOem.Checked.Value;
             Context.DbInfo.Source       = chkSource.Checked.Value;
             Context.DbInfo.Update       = chkUpdate.Checked.Value;
@@ -749,9 +747,9 @@ namespace apprepodbmgr.Eto
                 XmlSerializer xs = new XmlSerializer(typeof(CICMMetadataType));
                 xs.Serialize(ms, Context.Metadata);
                 Context.DbInfo.Xml = ms.ToArray();
-                JsonSerializer js  = new JsonSerializer();
-                ms                 = new MemoryStream();
-                StreamWriter sw    = new StreamWriter(ms);
+                JsonSerializer js = new JsonSerializer();
+                ms = new MemoryStream();
+                StreamWriter sw = new StreamWriter(ms);
                 js.Serialize(sw, Context.Metadata, typeof(CICMMetadataType));
                 Context.DbInfo.Json = ms.ToArray();
             }
@@ -821,7 +819,7 @@ namespace apprepodbmgr.Eto
             lblProgress.Visible      = true;
             lblProgress2.Visible     = true;
             txtFormat.ReadOnly       = true;
-            txtMachine.ReadOnly      = true;
+            txtTargetOs.ReadOnly     = true;
             txtProduct.ReadOnly      = true;
             txtVersion.ReadOnly      = true;
             txtLanguages.ReadOnly    = true;
@@ -832,7 +830,7 @@ namespace apprepodbmgr.Eto
             chkFiles.Enabled         = false;
             chkUpdate.Enabled        = false;
             chkUpgrade.Enabled       = false;
-            chkNetinstall.Enabled    = false;
+            chkInstaller.Enabled     = false;
             chkSource.Enabled        = false;
 
             Workers.UpdateProgress   += UpdateProgress;
@@ -845,11 +843,11 @@ namespace apprepodbmgr.Eto
             Context.DbInfo.Developer    = txtDeveloper.Text;
             Context.DbInfo.Format       = txtFormat.Text;
             Context.DbInfo.Languages    = txtLanguages.Text;
-            Context.DbInfo.Machine      = txtMachine.Text;
+            Context.DbInfo.TargetOs     = txtTargetOs.Text;
             Context.DbInfo.Product      = txtProduct.Text;
             Context.DbInfo.Version      = txtVersion.Text;
             Context.DbInfo.Files        = chkFiles.Checked.Value;
-            Context.DbInfo.Netinstall   = chkNetinstall.Checked.Value;
+            Context.DbInfo.Installer    = chkInstaller.Checked.Value;
             Context.DbInfo.Oem          = chkOem.Checked.Value;
             Context.DbInfo.Source       = chkSource.Checked.Value;
             Context.DbInfo.Update       = chkUpdate.Checked.Value;
@@ -900,7 +898,7 @@ namespace apprepodbmgr.Eto
                 lblProgress.Visible      = false;
                 lblProgress2.Visible     = false;
                 txtFormat.ReadOnly       = false;
-                txtMachine.ReadOnly      = false;
+                txtTargetOs.ReadOnly     = false;
                 txtProduct.ReadOnly      = false;
                 txtVersion.ReadOnly      = false;
                 txtLanguages.ReadOnly    = false;
@@ -911,7 +909,7 @@ namespace apprepodbmgr.Eto
                 chkFiles.Enabled         = true;
                 chkUpdate.Enabled        = true;
                 chkUpgrade.Enabled       = true;
-                chkNetinstall.Enabled    = true;
+                chkInstaller.Enabled     = true;
                 chkSource.Enabled        = true;
             });
         }
@@ -1058,7 +1056,7 @@ namespace apprepodbmgr.Eto
                     foreach(string developer in Context.Metadata.Developer)
                     {
                         if(!string.IsNullOrWhiteSpace(txtDeveloper.Text)) txtDeveloper.Text += ",";
-                        txtDeveloper.Text                                                   += developer;
+                        txtDeveloper.Text += developer;
                     }
 
             if(string.IsNullOrWhiteSpace(txtProduct.Text))
@@ -1074,7 +1072,7 @@ namespace apprepodbmgr.Eto
                     foreach(LanguagesTypeLanguage language in Context.Metadata.Languages)
                     {
                         if(!string.IsNullOrWhiteSpace(txtLanguages.Text)) txtLanguages.Text += ",";
-                        txtLanguages.Text                                                   += language;
+                        txtLanguages.Text += language;
                     }
 
             if(string.IsNullOrWhiteSpace(txtArchitecture.Text))
@@ -1082,15 +1080,16 @@ namespace apprepodbmgr.Eto
                     foreach(ArchitecturesTypeArchitecture architecture in Context.Metadata.Architectures)
                     {
                         if(!string.IsNullOrWhiteSpace(txtArchitecture.Text)) txtArchitecture.Text += ",";
-                        txtArchitecture.Text                                                      += architecture;
+                        txtArchitecture.Text += architecture;
                     }
 
-            if(string.IsNullOrWhiteSpace(txtMachine.Text))
-                if(Context.Metadata.Systems != null)
-                    foreach(string machine in Context.Metadata.Systems)
+            if(string.IsNullOrWhiteSpace(txtTargetOs.Text))
+                if(Context.Metadata.RequiredOperatingSystems != null)
+                    foreach(string targetos in Context.Metadata.RequiredOperatingSystems.Select(os => os.Name)
+                                                      .Distinct())
                     {
-                        if(!string.IsNullOrWhiteSpace(txtMachine.Text)) txtMachine.Text += ",";
-                        txtMachine.Text                                                 += machine;
+                        if(!string.IsNullOrWhiteSpace(txtTargetOs.Text)) txtTargetOs.Text += ",";
+                        txtTargetOs.Text += targetos;
                     }
 
             btnMetadata.BackgroundColor = Colors.Green;
@@ -1151,7 +1150,7 @@ namespace apprepodbmgr.Eto
         TextBox     txtVersion;
         TextBox     txtLanguages;
         TextBox     txtArchitecture;
-        TextBox     txtMachine;
+        TextBox     txtTargetOs;
         TextBox     txtFormat;
         TextBox     txtDescription;
         CheckBox    chkOem;
@@ -1159,7 +1158,7 @@ namespace apprepodbmgr.Eto
         CheckBox    chkUpgrade;
         CheckBox    chkFiles;
         CheckBox    chkSource;
-        CheckBox    chkNetinstall;
+        CheckBox    chkInstaller;
         GridView    treeFiles;
         TabPage     tabApps;
         GridView    treeApps;

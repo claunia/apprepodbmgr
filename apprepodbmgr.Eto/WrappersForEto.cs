@@ -70,9 +70,9 @@ namespace apprepodbmgr.Eto
             get { return _item.Architecture; }
             set { }
         }
-        public string machine
+        public string targetos
         {
-            get { return _item.Machine; }
+            get { return _item.TargetOs; }
             set { }
         }
         public string format
@@ -110,9 +110,9 @@ namespace apprepodbmgr.Eto
             get { return _item.Files; }
             set { }
         }
-        public bool netinstall
+        public bool Installer
         {
-            get { return _item.Netinstall; }
+            get { return _item.Installer; }
             set { }
         }
         public byte[] xml

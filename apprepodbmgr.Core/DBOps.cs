@@ -41,7 +41,7 @@ namespace apprepodbmgr.Core
         public string Version;
         public string Languages;
         public string Architecture;
-        public string Machine;
+        public string TargetOs;
         public string Format;
         public string Description;
         public bool   Oem;
@@ -49,10 +49,11 @@ namespace apprepodbmgr.Core
         public bool   Update;
         public bool   Source;
         public bool   Files;
-        public bool   Netinstall;
+        public bool   Installer;
         public byte[] Xml;
         public byte[] Json;
         public string Mdid;
+        public byte[] Icon;
     }
 
     public class DbFile
@@ -109,9 +110,9 @@ namespace apprepodbmgr.Core
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dbcmd.CommandText          = SQL;
-            DataSet dataSet            = new DataSet();
-            dataAdapter.SelectCommand  = dbcmd;
+            dbcmd.CommandText = SQL;
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -125,7 +126,7 @@ namespace apprepodbmgr.Core
                     Version      = dRow["version"].ToString(),
                     Languages    = dRow["languages"].ToString(),
                     Architecture = dRow["architecture"].ToString(),
-                    Machine      = dRow["machine"].ToString(),
+                    TargetOs     = dRow["targetos"].ToString(),
                     Format       = dRow["format"].ToString(),
                     Description  = dRow["description"].ToString(),
                     Oem          = bool.Parse(dRow["oem"].ToString()),
@@ -133,12 +134,13 @@ namespace apprepodbmgr.Core
                     Update       = bool.Parse(dRow["update"].ToString()),
                     Source       = bool.Parse(dRow["source"].ToString()),
                     Files        = bool.Parse(dRow["files"].ToString()),
-                    Netinstall   = bool.Parse(dRow["netinstall"].ToString()),
+                    Installer    = bool.Parse(dRow["installer"].ToString()),
                     Mdid         = dRow["mdid"].ToString()
                 };
 
                 if(dRow["xml"]  != DBNull.Value) fEntry.Xml  = (byte[])dRow["xml"];
                 if(dRow["json"] != DBNull.Value) fEntry.Json = (byte[])dRow["json"];
+                if(dRow["icon"] != DBNull.Value) fEntry.Icon = (byte[])dRow["icon"];
                 entries.Add(fEntry);
             }
 
@@ -166,13 +168,14 @@ namespace apprepodbmgr.Core
             IDbDataParameter param15 = dbcmd.CreateParameter();
             IDbDataParameter param16 = dbcmd.CreateParameter();
             IDbDataParameter param17 = dbcmd.CreateParameter();
+            IDbDataParameter param18 = dbcmd.CreateParameter();
 
             param1.ParameterName  = "@developer";
             param2.ParameterName  = "@product";
             param3.ParameterName  = "@version";
             param4.ParameterName  = "@languages";
             param5.ParameterName  = "@architecture";
-            param6.ParameterName  = "@machine";
+            param6.ParameterName  = "@targetos";
             param7.ParameterName  = "@format";
             param8.ParameterName  = "@description";
             param9.ParameterName  = "@oem";
@@ -180,10 +183,11 @@ namespace apprepodbmgr.Core
             param11.ParameterName = "@update";
             param12.ParameterName = "@source";
             param13.ParameterName = "@files";
-            param14.ParameterName = "@netinstall";
+            param14.ParameterName = "@installer";
             param15.ParameterName = "@xml";
             param16.ParameterName = "@json";
             param17.ParameterName = "@mdid";
+            param18.ParameterName = "@icon";
 
             param1.DbType  = DbType.String;
             param2.DbType  = DbType.String;
@@ -201,13 +205,14 @@ namespace apprepodbmgr.Core
             param15.DbType = DbType.Object;
             param16.DbType = DbType.Object;
             param17.DbType = DbType.String;
+            param18.DbType = DbType.Object;
 
             param1.Value  = entry.Developer;
             param2.Value  = entry.Product;
             param3.Value  = entry.Version;
             param4.Value  = entry.Languages;
             param5.Value  = entry.Architecture;
-            param6.Value  = entry.Machine;
+            param6.Value  = entry.TargetOs;
             param7.Value  = entry.Format;
             param8.Value  = entry.Description;
             param9.Value  = entry.Oem;
@@ -215,10 +220,11 @@ namespace apprepodbmgr.Core
             param11.Value = entry.Update;
             param12.Value = entry.Source;
             param13.Value = entry.Files;
-            param14.Value = entry.Netinstall;
+            param14.Value = entry.Installer;
             param15.Value = entry.Xml;
             param16.Value = entry.Json;
             param17.Value = entry.Mdid;
+            param18.Value = entry.Icon;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -237,6 +243,7 @@ namespace apprepodbmgr.Core
             dbcmd.Parameters.Add(param15);
             dbcmd.Parameters.Add(param16);
             dbcmd.Parameters.Add(param17);
+            dbcmd.Parameters.Add(param18);
 
             return dbcmd;
         }
@@ -245,11 +252,11 @@ namespace apprepodbmgr.Core
         {
             IDbCommand     dbcmd = GetAppCommand(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO apps (developer, product, version, languages, architecture, machine, format, description, oem, upgrade, `update`, source, files, netinstall, xml, json, mdid)" +
-                " VALUES (@developer, @product, @version, @languages, @architecture, @machine, @format, @description, @oem, @upgrade, @update, @source, @files, @netinstall, @xml, @json, @mdid)";
+                "INSERT INTO apps (developer, product, version, languages, architecture, targetos, format, description, oem, upgrade, `update`, source, files, installer, xml, json, mdid, icon)" +
+                " VALUES (@developer, @product, @version, @languages, @architecture, @targetos, @format, @description, @oem, @upgrade, @update, @source, @files, @installer, @xml, @json, @mdid, @icon)";
 
             dbcmd.CommandText = SQL;
 
@@ -312,7 +319,7 @@ namespace apprepodbmgr.Core
         {
             IDbCommand     dbcmd = GetFileCommand(file);
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             const string SQL =
                 "UPDATE files SET crack = @crack, hasvirus = @hasvirus, clamtime = @clamtime, vtotaltime = @vtotaltime, virus = @virus, length = @length " +
@@ -331,7 +338,7 @@ namespace apprepodbmgr.Core
         {
             IDbCommand     dbcmd = GetFileCommand(file);
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             const string SQL =
                 "INSERT INTO `files` (`sha256`, `crack`, `hasvirus`, `clamtime`, `vtotaltime`, `virus`, `length`)" +
@@ -355,10 +362,10 @@ namespace apprepodbmgr.Core
             param1.DbType        = DbType.String;
             param1.Value         = hash;
             dbcmd.Parameters.Add(param1);
-            dbcmd.CommandText          = "SELECT * FROM files WHERE sha256 = @hash";
+            dbcmd.CommandText = "SELECT * FROM files WHERE sha256 = @hash";
             DataSet        dataSet     = new DataSet();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dataAdapter.SelectCommand  = dbcmd;
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -369,9 +376,9 @@ namespace apprepodbmgr.Core
 
         public ulong GetFilesCount()
         {
-            IDbCommand dbcmd  = dbCon.CreateCommand();
+            IDbCommand dbcmd = dbCon.CreateCommand();
             dbcmd.CommandText = "SELECT COUNT(*) FROM files";
-            object count      = dbcmd.ExecuteScalar();
+            object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToUInt64(count); }
             catch { return 0; }
@@ -383,9 +390,9 @@ namespace apprepodbmgr.Core
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dbcmd.CommandText          = sql;
-            DataSet dataSet            = new DataSet();
-            dataAdapter.SelectCommand  = dbcmd;
+            dbcmd.CommandText = sql;
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -403,9 +410,7 @@ namespace apprepodbmgr.Core
                 if(dRow["hasvirus"] == DBNull.Value) fEntry.HasVirus = null;
                 else fEntry.HasVirus                                 = bool.Parse(dRow["hasvirus"].ToString());
                 if(dRow["clamtime"] == DBNull.Value) fEntry.ClamTime = null;
-                else
-                    fEntry.ClamTime =
-                        DateTime.Parse(dRow["clamtime"].ToString());
+                else fEntry.ClamTime                                 = DateTime.Parse(dRow["clamtime"].ToString());
                 if(dRow["vtotaltime"] == DBNull.Value) fEntry.VirusTotalTime = null;
                 else
                     fEntry.VirusTotalTime =
@@ -425,9 +430,9 @@ namespace apprepodbmgr.Core
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dbcmd.CommandText          = sql;
-            DataSet dataSet            = new DataSet();
-            dataAdapter.SelectCommand  = dbcmd;
+            dbcmd.CommandText = sql;
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -445,9 +450,7 @@ namespace apprepodbmgr.Core
                 if(dRow["hasvirus"] == DBNull.Value) fEntry.HasVirus = null;
                 else fEntry.HasVirus                                 = bool.Parse(dRow["hasvirus"].ToString());
                 if(dRow["clamtime"] == DBNull.Value) fEntry.ClamTime = null;
-                else
-                    fEntry.ClamTime =
-                        DateTime.Parse(dRow["clamtime"].ToString());
+                else fEntry.ClamTime                                 = DateTime.Parse(dRow["clamtime"].ToString());
                 if(dRow["vtotaltime"] == DBNull.Value) fEntry.VirusTotalTime = null;
                 else
                     fEntry.VirusTotalTime =
@@ -467,9 +470,9 @@ namespace apprepodbmgr.Core
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dbcmd.CommandText          = SQL;
-            DataSet dataSet            = new DataSet();
-            dataAdapter.SelectCommand  = dbcmd;
+            dbcmd.CommandText = SQL;
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -487,9 +490,7 @@ namespace apprepodbmgr.Core
                 if(dRow["hasvirus"] == DBNull.Value) fEntry.HasVirus = null;
                 else fEntry.HasVirus                                 = bool.Parse(dRow["hasvirus"].ToString());
                 if(dRow["clamtime"] == DBNull.Value) fEntry.ClamTime = null;
-                else
-                    fEntry.ClamTime =
-                        DateTime.Parse(dRow["clamtime"].ToString());
+                else fEntry.ClamTime                                 = DateTime.Parse(dRow["clamtime"].ToString());
                 if(dRow["vtotaltime"] == DBNull.Value) fEntry.VirusTotalTime = null;
                 else
                     fEntry.VirusTotalTime =
@@ -552,7 +553,7 @@ namespace apprepodbmgr.Core
         {
             IDbCommand     dbcmd = GetAppFileCommand(file);
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             string sql =
                 $"INSERT INTO `app_{app}` (`path`, `sha256`, `length`, `creation`, `access`, `modification`, `attributes`)" +
@@ -608,7 +609,7 @@ namespace apprepodbmgr.Core
         {
             IDbCommand     dbcmd = GetFolderCommand(folder);
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             string sql =
                 $"INSERT INTO `app_{app}_folders` (`path`, `creation`, `access`, `modification`, `attributes`)" +
@@ -627,7 +628,7 @@ namespace apprepodbmgr.Core
         {
             IDbCommand     dbcmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             string sql = $"DROP TABLE IF EXISTS `app_{id}`;";
 
@@ -680,7 +681,7 @@ namespace apprepodbmgr.Core
         {
             IDbCommand     dbcmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             string sql = $"DROP TABLE IF EXISTS `app_{id}`;\n\n"                                   +
                          $"CREATE TABLE IF NOT EXISTS `app_{id}` (\n"                              +
@@ -734,10 +735,10 @@ namespace apprepodbmgr.Core
             param1.DbType        = DbType.String;
             param1.Value         = hash;
             dbcmd.Parameters.Add(param1);
-            dbcmd.CommandText          = $"SELECT * FROM `app_{appId}` WHERE sha256 = @hash";
+            dbcmd.CommandText = $"SELECT * FROM `app_{appId}` WHERE sha256 = @hash";
             DataSet        dataSet     = new DataSet();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dataAdapter.SelectCommand  = dbcmd;
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -755,10 +756,10 @@ namespace apprepodbmgr.Core
             param1.DbType        = DbType.String;
             param1.Value         = mdid;
             dbcmd.Parameters.Add(param1);
-            dbcmd.CommandText          = "SELECT * FROM `apps` WHERE mdid = @mdid";
+            dbcmd.CommandText = "SELECT * FROM `apps` WHERE mdid = @mdid";
             DataSet        dataSet     = new DataSet();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dataAdapter.SelectCommand  = dbcmd;
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -775,9 +776,9 @@ namespace apprepodbmgr.Core
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dbcmd.CommandText          = sql;
-            DataSet dataSet            = new DataSet();
-            dataAdapter.SelectCommand  = dbcmd;
+            dbcmd.CommandText = sql;
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -809,9 +810,9 @@ namespace apprepodbmgr.Core
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dbcmd.CommandText          = sql;
-            DataSet dataSet            = new DataSet();
-            dataAdapter.SelectCommand  = dbcmd;
+            dbcmd.CommandText = sql;
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
@@ -873,7 +874,7 @@ namespace apprepodbmgr.Core
 
         public bool HasSymlinks(long appId)
         {
-            IDbCommand dbcmd  = dbCon.CreateCommand();
+            IDbCommand dbcmd = dbCon.CreateCommand();
             dbcmd.CommandText =
                 $"SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'app_{appId}_symlinks'";
             object count = dbcmd.ExecuteScalar();
@@ -886,7 +887,7 @@ namespace apprepodbmgr.Core
         {
             IDbCommand     dbcmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             dbcmd.CommandText =
                 $"DROP TABLE IF EXISTS `app_{id}_symlinks`;\n\n"                                                +
@@ -923,7 +924,7 @@ namespace apprepodbmgr.Core
             dbcmd.Parameters.Add(param2);
 
             IDbTransaction trans = dbCon.BeginTransaction();
-            dbcmd.Transaction    = trans;
+            dbcmd.Transaction = trans;
 
             string sql = $"INSERT INTO `app_{app}_symlinks` (`path`, `target`)" + " VALUES (@path, @target)";
 
@@ -944,9 +945,9 @@ namespace apprepodbmgr.Core
 
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-            dbcmd.CommandText          = sql;
-            DataSet dataSet            = new DataSet();
-            dataAdapter.SelectCommand  = dbcmd;
+            dbcmd.CommandText = sql;
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 

@@ -43,9 +43,9 @@
 		</StackLayoutItem>
 		<StackLayoutItem HorizontalAlignment="Stretch">
 			<StackLayout Orientation="Horizontal">
-				<Label>Machine</Label>
+				<Label>Target OS</Label>
 				<StackLayoutItem Expand="True">
-					<TextBox ID="txtMachine" />
+					<TextBox ID="txtTargetOs" />
 				</StackLayoutItem>
 			</StackLayout>
 		</StackLayoutItem>
@@ -91,7 +91,7 @@
 					<CheckBox ID="chkSource">source</CheckBox>
 				</StackLayoutItem>
 				<StackLayoutItem Expand="True" HorizontalAlignment="Right">
-					<CheckBox ID="chkNetinstall">netinstall</CheckBox>
+					<CheckBox ID="chkInstaller">installer</CheckBox>
 				</StackLayoutItem>
 			</StackLayout>
 		</StackLayoutItem>
