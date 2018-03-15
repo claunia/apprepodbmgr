@@ -183,6 +183,16 @@ namespace apprepodbmgr.Eto
             FillLanguagesCombo();
             FillArchitecturesCombo();
             FillFilesCombos();
+
+            txtDeveloper.ToolTip  = "Who developed the application.";
+            txtPublisher.ToolTip  = "Who published the application.";
+            txtAuthor.ToolTip     = "Author of the audiovisual media.";
+            txtPerformer.ToolTip  = "Performer of the audiovisual media.";
+            txtName.ToolTip       = "Application name.";
+            txtVersion.ToolTip    = "Application version.";
+            txtPartNumber.ToolTip = "Part number of the application distribution.";
+            txtSerialNumber.ToolTip =
+                "Serial number of the application distribution. Not to be confused with serial number required to install.";
         }
 
         void FillBarcodeCombo()

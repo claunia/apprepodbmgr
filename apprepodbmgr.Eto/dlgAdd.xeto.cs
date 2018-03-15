@@ -176,6 +176,28 @@ namespace apprepodbmgr.Eto
             });
 
             treeApps.AllowMultipleSelection = false;
+
+            txtArchitecture.ToolTip = "This field contains a comma separated list of architectures the application can run on. To edit its contents use the metadata editor.";
+            txtDescription.ToolTip = "This field contains a free-form text description of this application.";
+            txtDeveloper.ToolTip = "This field contains the developer of the application.";
+            txtFormat.ToolTip = "This field is contains the name of the format of the disk images, when it is not a byte-by-byte format like .iso or .img.";
+            txtLanguages.ToolTip = "This field contains a comma separated list of languages the application includes.";
+            txtProduct.ToolTip = "This field contains the application name.";
+            txtTargetOs.ToolTip = "This field contains a comma separated list of operating systems this application can run on.";
+            txtVersion.ToolTip = "This field contains the application version.";
+            chkFiles.ToolTip = "If this field is checked it indicates the application is already installed.";
+            chkInstaller.ToolTip = "If this field is checked it indicates the application comes as an installer (one or several files), but it's not installed neither disk images.";
+            chkOem.ToolTip = "If this field is checked it indicates the application came bundled with hardware (aka OEM distributed).";
+            chkSource.ToolTip = "If this field is checked it indicates this is the source code for the application.";
+            chkUpdate.ToolTip = "If this field is checked it indicates this version is a minor version update that requires a previous version of the application already installed.";
+            chkUpgrade.ToolTip = "If this field is checked it indicates this version is a major version upgrade that requires a previous version of the application already installed.";
+            txtArchitecture.ReadOnly = true;
+            txtDeveloper.ReadOnly = true;
+            txtFormat.ReadOnly = true;
+            txtLanguages.ReadOnly = true;
+            txtProduct.ReadOnly = true;
+            txtTargetOs.ReadOnly = true;
+            txtVersion.ReadOnly = true;
         }
 
         public event OnAddedAppDelegate OnAddedApp;
@@ -1152,7 +1174,7 @@ namespace apprepodbmgr.Eto
         TextBox     txtArchitecture;
         TextBox     txtTargetOs;
         TextBox     txtFormat;
-        TextBox     txtDescription;
+        TextArea    txtDescription;
         CheckBox    chkOem;
         CheckBox    chkUpdate;
         CheckBox    chkUpgrade;

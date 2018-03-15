@@ -61,7 +61,7 @@
 			<StackLayout Orientation="Horizontal">
 				<Label>Description</Label>
 				<StackLayoutItem Expand="True">
-					<TextBox ID="txtDescription" />
+					<TextArea ID="txtDescription" />
 				</StackLayoutItem>
 			</StackLayout>
 		</StackLayoutItem>
