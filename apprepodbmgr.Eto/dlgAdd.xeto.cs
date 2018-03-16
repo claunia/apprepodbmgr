@@ -177,27 +177,37 @@ namespace apprepodbmgr.Eto
 
             treeApps.AllowMultipleSelection = false;
 
-            txtArchitecture.ToolTip = "This field contains a comma separated list of architectures the application can run on. To edit its contents use the metadata editor.";
+            txtArchitecture.ToolTip =
+                "This field contains a comma separated list of architectures the application can run on. To edit its contents use the metadata editor.";
             txtDescription.ToolTip = "This field contains a free-form text description of this application.";
-            txtDeveloper.ToolTip = "This field contains the developer of the application.";
-            txtFormat.ToolTip = "This field is contains the name of the format of the disk images, when it is not a byte-by-byte format like .iso or .img.";
-            txtLanguages.ToolTip = "This field contains a comma separated list of languages the application includes.";
-            txtProduct.ToolTip = "This field contains the application name.";
-            txtTargetOs.ToolTip = "This field contains a comma separated list of operating systems this application can run on.";
-            txtVersion.ToolTip = "This field contains the application version.";
+            txtDeveloper.ToolTip =
+                "This field contains the developer of the application. To edit its contents use the metadata editor.";
+            txtFormat.ToolTip =
+                "This field is contains the name of the format of the disk images, when it is not a byte-by-byte format like .iso or .img.";
+            txtLanguages.ToolTip =
+                "This field contains a comma separated list of languages the application includes. To edit its contents use the metadata editor.";
+            txtProduct.ToolTip =
+                "This field contains the application name. To edit its contents use the metadata editor.";
+            txtTargetOs.ToolTip =
+                "This field contains a comma separated list of operating systems this application can run on. To edit its contents use the metadata editor.";
+            txtVersion.ToolTip =
+                "This field contains the application version. To edit its contents use the metadata editor.";
             chkFiles.ToolTip = "If this field is checked it indicates the application is already installed.";
-            chkInstaller.ToolTip = "If this field is checked it indicates the application comes as an installer (one or several files), but it's not installed neither disk images.";
-            chkOem.ToolTip = "If this field is checked it indicates the application came bundled with hardware (aka OEM distributed).";
+            chkInstaller.ToolTip =
+                "If this field is checked it indicates the application comes as an installer (one or several files), but it's not installed neither disk images.";
+            chkOem.ToolTip =
+                "If this field is checked it indicates the application came bundled with hardware (aka OEM distributed).";
             chkSource.ToolTip = "If this field is checked it indicates this is the source code for the application.";
-            chkUpdate.ToolTip = "If this field is checked it indicates this version is a minor version update that requires a previous version of the application already installed.";
-            chkUpgrade.ToolTip = "If this field is checked it indicates this version is a major version upgrade that requires a previous version of the application already installed.";
+            chkUpdate.ToolTip =
+                "If this field is checked it indicates this version is a minor version update that requires a previous version of the application already installed.";
+            chkUpgrade.ToolTip =
+                "If this field is checked it indicates this version is a major version upgrade that requires a previous version of the application already installed.";
             txtArchitecture.ReadOnly = true;
-            txtDeveloper.ReadOnly = true;
-            txtFormat.ReadOnly = true;
-            txtLanguages.ReadOnly = true;
-            txtProduct.ReadOnly = true;
-            txtTargetOs.ReadOnly = true;
-            txtVersion.ReadOnly = true;
+            txtDeveloper.ReadOnly    = true;
+            txtLanguages.ReadOnly    = true;
+            txtProduct.ReadOnly      = true;
+            txtTargetOs.ReadOnly     = true;
+            txtVersion.ReadOnly      = true;
         }
 
         public event OnAddedAppDelegate OnAddedApp;
@@ -374,20 +384,14 @@ namespace apprepodbmgr.Eto
                 btnRemoveFile.Enabled  = true;
                 btnToggleCrack.Enabled = true;
 
-                txtFormat.ReadOnly       = false;
-                txtTargetOs.ReadOnly     = false;
-                txtProduct.ReadOnly      = false;
-                txtVersion.ReadOnly      = false;
-                txtLanguages.ReadOnly    = false;
-                txtDeveloper.ReadOnly    = false;
-                txtDescription.ReadOnly  = false;
-                txtArchitecture.ReadOnly = false;
-                chkOem.Enabled           = true;
-                chkFiles.Enabled         = true;
-                chkUpdate.Enabled        = true;
-                chkUpgrade.Enabled       = true;
-                chkInstaller.Enabled     = true;
-                chkSource.Enabled        = true;
+                txtFormat.ReadOnly      = false;
+                txtDescription.ReadOnly = false;
+                chkOem.Enabled          = true;
+                chkFiles.Enabled        = true;
+                chkUpdate.Enabled       = true;
+                chkUpgrade.Enabled      = true;
+                chkInstaller.Enabled    = true;
+                chkSource.Enabled       = true;
 
                 btnMetadata.Visible = true;
                 if(Context.Metadata != null)
@@ -478,34 +482,28 @@ namespace apprepodbmgr.Eto
                 appView.Clear();
             }
 
-            txtFormat.ReadOnly       = true;
-            txtTargetOs.ReadOnly     = true;
-            txtProduct.ReadOnly      = true;
-            txtVersion.ReadOnly      = true;
-            txtLanguages.ReadOnly    = true;
-            txtDeveloper.ReadOnly    = true;
-            txtDescription.ReadOnly  = true;
-            txtArchitecture.ReadOnly = true;
-            chkOem.Enabled           = false;
-            chkFiles.Enabled         = false;
-            chkUpdate.Enabled        = false;
-            chkUpgrade.Enabled       = false;
-            chkInstaller.Enabled     = false;
-            chkSource.Enabled        = false;
-            txtFormat.Text           = "";
-            txtTargetOs.Text         = "";
-            txtProduct.Text          = "";
-            txtVersion.Text          = "";
-            txtLanguages.Text        = "";
-            txtDeveloper.Text        = "";
-            txtDescription.Text      = "";
-            txtArchitecture.Text     = "";
-            chkOem.Checked           = false;
-            chkFiles.Checked         = false;
-            chkUpdate.Checked        = false;
-            chkUpgrade.Checked       = false;
-            chkInstaller.Checked     = false;
-            chkSource.Checked        = false;
+            txtFormat.ReadOnly      = true;
+            txtDescription.ReadOnly = true;
+            chkOem.Enabled          = false;
+            chkFiles.Enabled        = false;
+            chkUpdate.Enabled       = false;
+            chkUpgrade.Enabled      = false;
+            chkInstaller.Enabled    = false;
+            chkSource.Enabled       = false;
+            txtFormat.Text          = "";
+            txtTargetOs.Text        = "";
+            txtProduct.Text         = "";
+            txtVersion.Text         = "";
+            txtLanguages.Text       = "";
+            txtDeveloper.Text       = "";
+            txtDescription.Text     = "";
+            txtArchitecture.Text    = "";
+            chkOem.Checked          = false;
+            chkFiles.Checked        = false;
+            chkUpdate.Checked       = false;
+            chkUpgrade.Checked      = false;
+            chkInstaller.Checked    = false;
+            chkSource.Checked       = false;
 
             if(Context.TmpFolder != null)
             {
@@ -724,25 +722,19 @@ namespace apprepodbmgr.Eto
 
         void AddToDatabase()
         {
-            btnRemoveFile.Enabled    = false;
-            btnToggleCrack.Enabled   = false;
-            btnPack.Enabled          = false;
-            btnClose.Enabled         = false;
-            prgProgress.Visible      = true;
-            txtFormat.ReadOnly       = true;
-            txtTargetOs.ReadOnly     = true;
-            txtProduct.ReadOnly      = true;
-            txtVersion.ReadOnly      = true;
-            txtLanguages.ReadOnly    = true;
-            txtDeveloper.ReadOnly    = true;
-            txtDescription.ReadOnly  = true;
-            txtArchitecture.ReadOnly = true;
-            chkOem.Enabled           = false;
-            chkFiles.Enabled         = false;
-            chkUpdate.Enabled        = false;
-            chkUpgrade.Enabled       = false;
-            chkInstaller.Enabled     = false;
-            chkSource.Enabled        = false;
+            btnRemoveFile.Enabled   = false;
+            btnToggleCrack.Enabled  = false;
+            btnPack.Enabled         = false;
+            btnClose.Enabled        = false;
+            prgProgress.Visible     = true;
+            txtFormat.ReadOnly      = true;
+            txtDescription.ReadOnly = true;
+            chkOem.Enabled          = false;
+            chkFiles.Enabled        = false;
+            chkUpdate.Enabled       = false;
+            chkUpgrade.Enabled      = false;
+            chkInstaller.Enabled    = false;
+            chkSource.Enabled       = false;
 
             Workers.UpdateProgress += UpdateProgress;
             Workers.Finished       += AddFilesToDbFinished;
@@ -832,28 +824,22 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnPackClicked(object sender, EventArgs e)
         {
-            btnRemoveFile.Enabled    = false;
-            btnToggleCrack.Enabled   = false;
-            btnPack.Enabled          = false;
-            btnClose.Enabled         = false;
-            prgProgress.Visible      = true;
-            prgProgress2.Visible     = true;
-            lblProgress.Visible      = true;
-            lblProgress2.Visible     = true;
-            txtFormat.ReadOnly       = true;
-            txtTargetOs.ReadOnly     = true;
-            txtProduct.ReadOnly      = true;
-            txtVersion.ReadOnly      = true;
-            txtLanguages.ReadOnly    = true;
-            txtDeveloper.ReadOnly    = true;
-            txtDescription.ReadOnly  = true;
-            txtArchitecture.ReadOnly = true;
-            chkOem.Enabled           = false;
-            chkFiles.Enabled         = false;
-            chkUpdate.Enabled        = false;
-            chkUpgrade.Enabled       = false;
-            chkInstaller.Enabled     = false;
-            chkSource.Enabled        = false;
+            btnRemoveFile.Enabled   = false;
+            btnToggleCrack.Enabled  = false;
+            btnPack.Enabled         = false;
+            btnClose.Enabled        = false;
+            prgProgress.Visible     = true;
+            prgProgress2.Visible    = true;
+            lblProgress.Visible     = true;
+            lblProgress2.Visible    = true;
+            txtFormat.ReadOnly      = true;
+            txtDescription.ReadOnly = true;
+            chkOem.Enabled          = false;
+            chkFiles.Enabled        = false;
+            chkUpdate.Enabled       = false;
+            chkUpgrade.Enabled      = false;
+            chkInstaller.Enabled    = false;
+            chkSource.Enabled       = false;
 
             Workers.UpdateProgress   += UpdateProgress;
             Workers.UpdateProgress2  += UpdateProgress2;
@@ -911,28 +897,22 @@ namespace apprepodbmgr.Eto
 
                 thdPackFiles?.Abort();
 
-                btnRemoveFile.Enabled    = true;
-                btnToggleCrack.Enabled   = true;
-                btnPack.Enabled          = true;
-                btnClose.Enabled         = true;
-                prgProgress.Visible      = false;
-                prgProgress2.Visible     = false;
-                lblProgress.Visible      = false;
-                lblProgress2.Visible     = false;
-                txtFormat.ReadOnly       = false;
-                txtTargetOs.ReadOnly     = false;
-                txtProduct.ReadOnly      = false;
-                txtVersion.ReadOnly      = false;
-                txtLanguages.ReadOnly    = false;
-                txtDeveloper.ReadOnly    = false;
-                txtDescription.ReadOnly  = false;
-                txtArchitecture.ReadOnly = false;
-                chkOem.Enabled           = true;
-                chkFiles.Enabled         = true;
-                chkUpdate.Enabled        = true;
-                chkUpgrade.Enabled       = true;
-                chkInstaller.Enabled     = true;
-                chkSource.Enabled        = true;
+                btnRemoveFile.Enabled   = true;
+                btnToggleCrack.Enabled  = true;
+                btnPack.Enabled         = true;
+                btnClose.Enabled        = true;
+                prgProgress.Visible     = false;
+                prgProgress2.Visible    = false;
+                lblProgress.Visible     = false;
+                lblProgress2.Visible    = false;
+                txtFormat.ReadOnly      = false;
+                txtDescription.ReadOnly = false;
+                chkOem.Enabled          = true;
+                chkFiles.Enabled        = true;
+                chkUpdate.Enabled       = true;
+                chkUpgrade.Enabled      = true;
+                chkInstaller.Enabled    = true;
+                chkSource.Enabled       = true;
             });
         }
 
