@@ -80,6 +80,31 @@
 						</StackLayoutItem>
 					</StackLayout>
 				</TabPage>
+                <TabPage Text="Required operating systems" ID="tabTargetOs">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>New operating system:</Label>
+                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                    <TextBox ID="txtNewOsName" />
+                                </StackLayoutItem>
+                                <Label>version:</Label>
+                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                    <TextBox ID="txtNewOsVersion" />
+                                </StackLayoutItem>
+                                <Button ID="btnAddNewOs" Click="OnBtnAddNewOsClicked">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                            <GridView ID="treeOses">
+                            </GridView>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal">
+                            <Button ID="btnClearOses" Click="OnBtnClearOsesClicked">Clear</Button>
+                            <Button ID="btnRemoveRemoveOs" Click="OnBtnRemoveOsClicked">Remove</Button>
+                        </StackLayout>
+                    </StackLayout>
+                </TabPage>
 				<TabPage Text="Keywords" ID="tabKeywords">
 					<StackLayout Orientation="Vertical">
 						<StackLayoutItem HorizontalAlignment="Stretch">
@@ -188,27 +213,6 @@
 						<StackLayout Orientation="Horizontal">
 							<Button ID="btnClearLanguages" Click="OnBtnClearLanguagesClicked">Clear</Button>
 							<Button ID="btnRemoveLanguage" Click="OnBtnRemoveLanguageClicked">Remove</Button>
-						</StackLayout>
-					</StackLayout>
-				</TabPage>
-				<TabPage Text="Systems" ID="tabSystems">
-					<StackLayout Orientation="Vertical">
-						<StackLayoutItem HorizontalAlignment="Stretch">
-							<StackLayout Orientation="Horizontal">
-								<Label>New system:</Label>
-								<StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
-									<TextBox ID="txtNewSystem" />
-								</StackLayoutItem>
-								<Button ID="btnAddSystem" Click="OnBtnAddSystemClicked">Add</Button>
-							</StackLayout>
-						</StackLayoutItem>
-						<StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
-							<GridView ID="treeSystems">
-							</GridView>
-						</StackLayoutItem>
-						<StackLayout Orientation="Horizontal">
-							<Button ID="btnClearSystems" Click="OnBtnClearSystemsClicked">Clear</Button>
-							<Button ID="btnRemoveSystem" Click="OnBtnRemoveSystemClicked">Remove</Button>
 						</StackLayout>
 					</StackLayout>
 				</TabPage>

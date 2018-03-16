@@ -160,4 +160,10 @@ namespace apprepodbmgr.Eto
         public string         path { get; set; }
         public BlockMediaType disk { get; set; }
     }
+
+    class TargetOsEntry
+    {
+        public string name { get; set; }
+        public string version { get; set; }
+    }
 }

@@ -55,20 +55,19 @@ namespace apprepodbmgr.Eto
         ObservableCollection<DiskEntry>   lstDisks;
         ObservableCollection<string>      lstFilesForMedia;
 
-        ObservableCollection<StringEntry> lstKeywords;
-        ObservableCollection<StringEntry> lstLanguages;
-        ObservableCollection<string>      lstLanguageTypes;
-        ObservableCollection<StringEntry> lstSubcategories;
-        ObservableCollection<StringEntry> lstSystems;
+        ObservableCollection<StringEntry>   lstKeywords;
+        ObservableCollection<StringEntry>   lstLanguages;
+        ObservableCollection<string>        lstLanguageTypes;
+        ObservableCollection<TargetOsEntry> lstOses;
+        ObservableCollection<StringEntry>   lstSubcategories;
 
         // TODO: Add the options to edit these fields
         MagazineType[]          magazines;
         public CICMMetadataType Metadata;
 
-        public bool                   Modified;
-        PCIType[]                     pcis;
-        RequiredOperatingSystemType[] requiredOses;
-        bool                          stopped;
+        public bool Modified;
+        PCIType[]   pcis;
+        bool        stopped;
 
         Thread           thdDisc;
         Thread           thdDisk;
@@ -80,7 +79,7 @@ namespace apprepodbmgr.Eto
 
             Modified = false;
 
-            cmbReleaseType                                        = new EnumDropDown<CICMMetadataTypeReleaseType>();
+            cmbReleaseType = new EnumDropDown<CICMMetadataTypeReleaseType>();
             stkReleaseType.Items.Add(new StackLayoutItem {Control = cmbReleaseType, Expand = true});
 
             lstKeywords      = new ObservableCollection<StringEntry>();
@@ -88,7 +87,7 @@ namespace apprepodbmgr.Eto
             lstCategories    = new ObservableCollection<StringEntry>();
             lstSubcategories = new ObservableCollection<StringEntry>();
             lstLanguages     = new ObservableCollection<StringEntry>();
-            lstSystems       = new ObservableCollection<StringEntry>();
+            lstOses          = new ObservableCollection<TargetOsEntry>();
             lstArchitectures = new ObservableCollection<StringEntry>();
             lstDiscs         = new ObservableCollection<DiscEntry>();
             lstDisks         = new ObservableCollection<DiskEntry>();
@@ -126,10 +125,15 @@ namespace apprepodbmgr.Eto
                 DataCell   = new TextBoxCell {Binding = Binding.Property<StringEntry, string>(r => r.str)},
                 HeaderText = "Language"
             });
-            treeSystems.Columns.Add(new GridColumn
+            treeOses.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<StringEntry, string>(r => r.str)},
-                HeaderText = "System"
+                DataCell   = new TextBoxCell {Binding = Binding.Property<TargetOsEntry, string>(r => r.name)},
+                HeaderText = "Name"
+            });
+            treeOses.Columns.Add(new GridColumn
+            {
+                DataCell   = new TextBoxCell {Binding = Binding.Property<TargetOsEntry, string>(r => r.version)},
+                HeaderText = "Version"
             });
             treeArchitectures.Columns.Add(new GridColumn
             {
@@ -152,7 +156,7 @@ namespace apprepodbmgr.Eto
             treeCategories.DataStore    = lstCategories;
             treeSubcategories.DataStore = lstSubcategories;
             treeLanguages.DataStore     = lstLanguages;
-            treeSystems.DataStore       = lstSystems;
+            treeOses.DataStore          = lstOses;
             treeArchitectures.DataStore = lstArchitectures;
             treeDiscs.DataStore         = lstDiscs;
             treeDisks.DataStore         = lstDisks;
@@ -162,7 +166,7 @@ namespace apprepodbmgr.Eto
             treeCategories.AllowMultipleSelection    = false;
             treeSubcategories.AllowMultipleSelection = false;
             treeLanguages.AllowMultipleSelection     = false;
-            treeSystems.AllowMultipleSelection       = false;
+            treeOses.AllowMultipleSelection          = false;
             treeArchitectures.AllowMultipleSelection = false;
             treeDiscs.AllowMultipleSelection         = false;
             treeDisks.AllowMultipleSelection         = false;
@@ -229,28 +233,28 @@ namespace apprepodbmgr.Eto
                 foreach(string developer in Metadata.Developer)
                 {
                     if(!string.IsNullOrWhiteSpace(txtDeveloper.Text)) txtDeveloper.Text += ",";
-                    txtDeveloper.Text                                                   += developer;
+                    txtDeveloper.Text += developer;
                 }
 
             if(Metadata.Publisher != null)
                 foreach(string publisher in Metadata.Publisher)
                 {
                     if(!string.IsNullOrWhiteSpace(txtPublisher.Text)) txtPublisher.Text += ",";
-                    txtPublisher.Text                                                   += publisher;
+                    txtPublisher.Text += publisher;
                 }
 
             if(Metadata.Author != null)
                 foreach(string author in Metadata.Author)
                 {
                     if(!string.IsNullOrWhiteSpace(txtPublisher.Text)) txtPublisher.Text += ",";
-                    txtPublisher.Text                                                   += author;
+                    txtPublisher.Text += author;
                 }
 
             if(Metadata.Performer != null)
                 foreach(string performer in Metadata.Performer)
                 {
                     if(!string.IsNullOrWhiteSpace(txtPublisher.Text)) txtPublisher.Text += ",";
-                    txtPublisher.Text                                                   += performer;
+                    txtPublisher.Text += performer;
                 }
 
             txtName.Text         = Metadata.Name;
@@ -289,9 +293,10 @@ namespace apprepodbmgr.Eto
                     lstLanguageTypes.Remove(language.ToString());
                 }
 
-            if(Metadata.Systems != null)
-                foreach(string system in Metadata.Systems)
-                    lstSystems.Add(new StringEntry {str = system});
+            if(Metadata.RequiredOperatingSystems != null)
+                foreach(RequiredOperatingSystemType reqos in Metadata.RequiredOperatingSystems)
+                    foreach(string reqver in reqos.Version)
+                        lstOses.Add(new TargetOsEntry {name = reqos.Name, version = reqver});
 
             if(Metadata.Architectures != null)
                 foreach(ArchitecturesTypeArchitecture architecture in Metadata.Architectures)
@@ -304,7 +309,7 @@ namespace apprepodbmgr.Eto
                 foreach(OpticalDiscType disc in Metadata.OpticalDisc)
                 {
                     lstDiscs.Add(new DiscEntry {path = disc.Image.Value, disc = disc});
-                    List<string> files               = new List<string> {disc.Image.Value};
+                    List<string> files = new List<string> {disc.Image.Value};
                     if(disc.ADIP    != null) files.Add(disc.ADIP.Image);
                     if(disc.ATIP    != null) files.Add(disc.ATIP.Image);
                     if(disc.BCA     != null) files.Add(disc.BCA.Image);
@@ -313,11 +318,11 @@ namespace apprepodbmgr.Eto
                     if(disc.DDS     != null) files.Add(disc.DDS.Image);
                     if(disc.DMI     != null) files.Add(disc.DMI.Image);
                     if(disc.LastRMD != null) files.Add(disc.LastRMD.Image);
-                    if(disc.LeadIn  != null)
+                    if(disc.LeadIn != null)
                         foreach(BorderType border in disc.LeadIn)
                             files.Add(border.Image);
                     if(disc.LeadInCdText != null) files.Add(disc.LeadInCdText.Image);
-                    if(disc.LeadOut      != null)
+                    if(disc.LeadOut != null)
                         foreach(BorderType border in disc.LeadOut)
                             files.Add(border.Image);
                     if(disc.MediaID != null) files.Add(disc.MediaID.Image);
@@ -339,12 +344,12 @@ namespace apprepodbmgr.Eto
                 foreach(BlockMediaType disk in Metadata.BlockMedia)
                 {
                     lstDisks.Add(new DiskEntry {path = disk.Image.Value, disk = disk});
-                    List<string> files               = new List<string> {disk.Image.Value};
+                    List<string> files = new List<string> {disk.Image.Value};
                     if(disk.ATA?.Identify     != null) files.Add(disk.ATA.Identify.Image);
                     if(disk.MAM               != null) files.Add(disk.MAM.Image);
                     if(disk.PCI?.ExpansionROM != null) files.Add(disk.PCI.ExpansionROM.Image.Value);
                     if(disk.PCMCIA?.CIS       != null) files.Add(disk.PCMCIA.CIS.Image);
-                    if(disk.SCSI              != null)
+                    if(disk.SCSI != null)
                     {
                         if(disk.SCSI.Inquiry     != null) files.Add(disk.SCSI.Inquiry.Image);
                         if(disk.SCSI.LogSense    != null) files.Add(disk.SCSI.LogSense.Image);
@@ -372,7 +377,6 @@ namespace apprepodbmgr.Eto
 
             magazines    = Metadata.Magazine;
             books        = Metadata.Book;
-            requiredOses = Metadata.RequiredOperatingSystems;
             usermanuals  = Metadata.UserManual;
             adverts      = Metadata.Advertisement;
             linearmedias = Metadata.LinearMedia;
@@ -393,7 +397,7 @@ namespace apprepodbmgr.Eto
         protected void OnBtnAddKeywordClicked(object sender, EventArgs e)
         {
             lstKeywords.Add(new StringEntry {str = txtNewKeyword.Text});
-            txtNewKeyword.Text                   = "";
+            txtNewKeyword.Text = "";
         }
 
         protected void OnBtnRemoveKeywordClicked(object sender, EventArgs e)
@@ -431,13 +435,13 @@ namespace apprepodbmgr.Eto
         protected void OnBtnAddCategoryClicked(object sender, EventArgs e)
         {
             lstCategories.Add(new StringEntry {str = txtNewCategory.Text});
-            txtNewCategory.Text                    = "";
+            txtNewCategory.Text = "";
         }
 
         protected void OnBtnAddSubcategoryClicked(object sender, EventArgs e)
         {
             lstSubcategories.Add(new StringEntry {str = txtNewSubcategory.Text});
-            txtNewSubcategory.Text                    = "";
+            txtNewSubcategory.Text = "";
         }
 
         protected void OnBtnRemoveSubcategoryClicked(object sender, EventArgs e)
@@ -483,20 +487,33 @@ namespace apprepodbmgr.Eto
             FillLanguagesCombo();
         }
 
-        protected void OnBtnAddSystemClicked(object sender, EventArgs e)
+        protected void OnBtnAddNewOsClicked(object sender, EventArgs e)
         {
-            lstSystems.Add(new StringEntry {str = txtNewSystem.Text});
-            txtNewSystem.Text                   = "";
+            if(string.IsNullOrWhiteSpace(txtNewOsName.Text))
+            {
+                MessageBox.Show("Operating system name cannot be empty.", MessageBoxType.Error);
+                return;
+            }
+
+            if(string.IsNullOrWhiteSpace(txtNewOsVersion.Text))
+            {
+                MessageBox.Show("Operating system version cannot be empty.", MessageBoxType.Error);
+                return;
+            }
+
+            lstOses.Add(new TargetOsEntry {name = txtNewOsName.Text, version = txtNewOsVersion.Text});
+            txtNewOsName.Text    = "";
+            txtNewOsVersion.Text = "";
         }
 
-        protected void OnBtnClearSystemsClicked(object sender, EventArgs e)
+        protected void OnBtnClearOsesClicked(object sender, EventArgs e)
         {
-            lstSystems.Clear();
+            lstOses.Clear();
         }
 
-        protected void OnBtnRemoveSystemClicked(object sender, EventArgs e)
+        protected void OnBtnRemoveOsClicked(object sender, EventArgs e)
         {
-            if(treeSystems.SelectedItem != null) lstSystems.Remove((StringEntry)treeSystems.SelectedItem);
+            if(treeOses.SelectedItem != null) lstOses.Remove((TargetOsEntry)treeOses.SelectedItem);
         }
 
         protected void OnBtnAddArchitectureClicked(object sender, EventArgs e)
@@ -529,7 +546,7 @@ namespace apprepodbmgr.Eto
             tabBarcodes.Visible      =  false;
             tabCategories.Visible    =  false;
             tabLanguages.Visible     =  false;
-            tabSystems.Visible       =  false;
+            tabTargetOs.Visible      =  false;
             tabArchitectures.Visible =  false;
             tabDisks.Visible         =  false;
             prgAddDisc1.Visible      =  true;
@@ -616,7 +633,7 @@ namespace apprepodbmgr.Eto
                 tabBarcodes.Visible      =  true;
                 tabCategories.Visible    =  true;
                 tabLanguages.Visible     =  true;
-                tabSystems.Visible       =  true;
+                tabTargetOs.Visible      =  true;
                 tabArchitectures.Visible =  true;
                 tabDisks.Visible         =  true;
                 prgAddDisc1.Visible      =  false;
@@ -648,7 +665,7 @@ namespace apprepodbmgr.Eto
                 OpticalDiscType disc = Context.WorkingDisc;
 
                 lstDiscs.Add(new DiscEntry {path = Context.SelectedFile, disc = disc});
-                List<string> files               = new List<string> {disc.Image.Value};
+                List<string> files = new List<string> {disc.Image.Value};
                 if(disc.ADIP         != null) files.Add(disc.ADIP.Image);
                 if(disc.ATIP         != null) files.Add(disc.ATIP.Image);
                 if(disc.BCA          != null) files.Add(disc.BCA.Image);
@@ -678,7 +695,7 @@ namespace apprepodbmgr.Eto
                 tabBarcodes.Visible      =  true;
                 tabCategories.Visible    =  true;
                 tabLanguages.Visible     =  true;
-                tabSystems.Visible       =  true;
+                tabTargetOs.Visible      =  true;
                 tabArchitectures.Visible =  true;
                 tabDisks.Visible         =  true;
                 prgAddDisc1.Visible      =  false;
@@ -724,7 +741,7 @@ namespace apprepodbmgr.Eto
             tabBarcodes.Visible      =  false;
             tabCategories.Visible    =  false;
             tabLanguages.Visible     =  false;
-            tabSystems.Visible       =  false;
+            tabTargetOs.Visible      =  false;
             tabArchitectures.Visible =  false;
             tabDiscs.Visible         =  false;
             prgAddDisk1.Visible      =  true;
@@ -811,7 +828,7 @@ namespace apprepodbmgr.Eto
                 tabBarcodes.Visible      =  true;
                 tabCategories.Visible    =  true;
                 tabLanguages.Visible     =  true;
-                tabSystems.Visible       =  true;
+                tabTargetOs.Visible      =  true;
                 tabArchitectures.Visible =  true;
                 tabDiscs.Visible         =  true;
                 prgAddDisk1.Visible      =  false;
@@ -843,12 +860,12 @@ namespace apprepodbmgr.Eto
                 BlockMediaType disk = Context.WorkingDisk;
 
                 lstDisks.Add(new DiskEntry {path = disk.Image.Value, disk = disk});
-                List<string> files               = new List<string> {disk.Image.Value};
+                List<string> files = new List<string> {disk.Image.Value};
                 if(disk.ATA?.Identify     != null) files.Add(disk.ATA.Identify.Image);
                 if(disk.MAM               != null) files.Add(disk.MAM.Image);
                 if(disk.PCI?.ExpansionROM != null) files.Add(disk.PCI.ExpansionROM.Image.Value);
                 if(disk.PCMCIA?.CIS       != null) files.Add(disk.PCMCIA.CIS.Image);
-                if(disk.SCSI              != null)
+                if(disk.SCSI != null)
                 {
                     if(disk.SCSI.Inquiry     != null) files.Add(disk.SCSI.Inquiry.Image);
                     if(disk.SCSI.LogSense    != null) files.Add(disk.SCSI.LogSense.Image);
@@ -877,7 +894,7 @@ namespace apprepodbmgr.Eto
                 tabBarcodes.Visible      =  true;
                 tabCategories.Visible    =  true;
                 tabLanguages.Visible     =  true;
-                tabSystems.Visible       =  true;
+                tabTargetOs.Visible      =  true;
                 tabArchitectures.Visible =  true;
                 tabDiscs.Visible         =  true;
                 prgAddDisk1.Visible      =  false;
@@ -923,7 +940,7 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnOKClicked(object sender, EventArgs e)
         {
-            Metadata                                          = new CICMMetadataType();
+            Metadata = new CICMMetadataType();
             List<ArchitecturesTypeArchitecture> architectures = new List<ArchitecturesTypeArchitecture>();
             List<BarcodeType>                   barcodes      = new List<BarcodeType>();
             List<BlockMediaType>                disks         = new List<BlockMediaType>();
@@ -977,7 +994,31 @@ namespace apprepodbmgr.Eto
 
             foreach(StringEntry entry in lstSubcategories) subcategories.Add(entry.str);
 
-            foreach(StringEntry entry in lstSystems) systems.Add(entry.str);
+            if(lstOses.Count > 0)
+            {
+                Dictionary<string, List<string>> osesDict = new Dictionary<string, List<string>>();
+                foreach(TargetOsEntry entry in lstOses.OrderBy(t => t.name).ThenBy(t => t.version))
+                {
+                    osesDict.TryGetValue(entry.name, out List<string> versList);
+
+                    if(versList == null) versList = new List<string>();
+
+                    if(versList.Contains(entry.version)) continue;
+
+                    versList.Add(entry.version);
+                    versList.Sort();
+                    osesDict.Remove(entry.name);
+                    osesDict.Add(entry.name, versList);
+                }
+
+                Metadata.RequiredOperatingSystems = osesDict
+                                                   .OrderBy(t => t.Key)
+                                                   .Select(entry => new RequiredOperatingSystemType
+                                                    {
+                                                        Name    = entry.Key,
+                                                        Version = entry.Value.ToArray()
+                                                    }).ToArray();
+            }
 
             if(architectures.Count > 0) Metadata.Architectures = architectures.ToArray();
             if(barcodes.Count      > 0) Metadata.Barcodes      = barcodes.ToArray();
@@ -989,14 +1030,13 @@ namespace apprepodbmgr.Eto
             if(subcategories.Count > 0) Metadata.Subcategories = subcategories.ToArray();
             if(systems.Count       > 0) Metadata.Systems       = systems.ToArray();
 
-            Metadata.Magazine                 = magazines;
-            Metadata.Book                     = books;
-            Metadata.RequiredOperatingSystems = requiredOses;
-            Metadata.UserManual               = usermanuals;
-            Metadata.Advertisement            = adverts;
-            Metadata.LinearMedia              = linearmedias;
-            Metadata.PCICard                  = pcis;
-            Metadata.AudioMedia               = audiomedias;
+            Metadata.Magazine      = magazines;
+            Metadata.Book          = books;
+            Metadata.UserManual    = usermanuals;
+            Metadata.Advertisement = adverts;
+            Metadata.LinearMedia   = linearmedias;
+            Metadata.PCICard       = pcis;
+            Metadata.AudioMedia    = audiomedias;
 
             Modified = true;
             Close();
@@ -1069,9 +1109,10 @@ namespace apprepodbmgr.Eto
         TabPage                                   tabLanguages;
         ComboBox                                  cmbLanguages;
         GridView                                  treeLanguages;
-        TabPage                                   tabSystems;
-        TextBox                                   txtNewSystem;
-        GridView                                  treeSystems;
+        TabPage                                   tabTargetOs;
+        TextBox                                   txtNewOsName;
+        TextBox                                   txtNewOsVersion;
+        GridView                                  treeOses;
         TabPage                                   tabArchitectures;
         ComboBox                                  cmbArchitectures;
         GridView                                  treeArchitectures;
