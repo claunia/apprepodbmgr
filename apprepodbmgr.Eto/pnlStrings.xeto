@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<StackLayout Orientation="Horizontal">
+		<StackLayoutItem VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Expand="True">
+            <StackLayout Orientation="Vertical">
+                <StackLayoutItem>
+                    <Label>Strings found in executables</Label>
+                </StackLayoutItem>
+                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <GridView ID="treeStrings"/>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+        <StackLayoutItem>
+            <StackLayout Orientation="Vertical">
+                <StackLayoutItem>
+                    <Button Click="OnBtnDeveloperClick">Set as developer</Button>
+                </StackLayoutItem>
+                <StackLayoutItem>
+                    <Button Click="OnBtnPublisherClick">Set as publisher</Button>
+                </StackLayoutItem>
+                <StackLayoutItem>
+                    <Button Click="OnBtnProductClick">Set as product</Button>
+                </StackLayoutItem>
+                <StackLayoutItem>
+                    <Button Click="OnBtnVersionClick">Set as version</Button>
+                </StackLayoutItem>
+                <StackLayoutItem>
+                    <Label>Developer</Label>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                    <TextBox ID="txtDeveloper" ReadOnly="True" />
+                </StackLayoutItem>
+                <StackLayoutItem>
+                    <Label>Publisher</Label>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                    <TextBox ID="txtPublisher" ReadOnly="True" />
+                </StackLayoutItem>
+                <StackLayoutItem>
+                    <Label>Product</Label>
+                </StackLayoutItem>
+                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                    <TextBox ID="txtProduct" ReadOnly="True" />
+                </StackLayoutItem>
+                <StackLayoutItem>
+                    <Label>Version</Label>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                    <TextBox ID="txtVersion" ReadOnly="True" />
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+	</StackLayout>
+</Panel>

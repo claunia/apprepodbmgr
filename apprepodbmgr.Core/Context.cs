@@ -37,29 +37,31 @@ namespace apprepodbmgr.Core
     {
         public delegate void UnarChangeStatusDelegate();
 
-        public static       List<string>                  Files;
-        public static       List<string>                  Folders;
-        public static       List<string>                  Symlinks;
-        public static       Dictionary<string, DbAppFile> Hashes;
-        public static       Dictionary<string, DbFolder>  FoldersDict;
-        public static       Dictionary<string, string>    SymlinksDict;
-        public static       string                        Path;
-        public static       DbEntry                       DbInfo;
-        public static       bool                          UnarUsable;
-        public static       string                        TmpFolder;
-        public static       long                          NoFilesInArchive;
-        public static       string                        ArchiveFormat;
-        public static       Process                       UnarProcess;
-        public static       bool                          UnzipWithUnAr;
-        public static       string                        SelectedFile;
-        public static       OpticalDiscType               WorkingDisc;
-        public static       BlockMediaType                WorkingDisk;
-        public static       CICMMetadataType              Metadata;
-        public static       bool                          UserExtracting;
-        public static       bool                          UsableDotNetZip;
-        public static       string                        ClamdVersion;
-        public static       bool                          VirusTotalEnabled;
-        public static event UnarChangeStatusDelegate      UnarChangeStatus;
+        public static List<string>                   Files;
+        public static List<string>                   Folders;
+        public static List<string>                   Symlinks;
+        public static Dictionary<string, DbAppFile>  Hashes;
+        public static Dictionary<string, DbFolder>   FoldersDict;
+        public static Dictionary<string, string>     SymlinksDict;
+        public static string                         Path;
+        public static DbEntry                        DbInfo;
+        public static bool                           UnarUsable;
+        public static string                         TmpFolder;
+        public static long                           NoFilesInArchive;
+        public static string                         ArchiveFormat;
+        public static Process                        UnarProcess;
+        public static bool                           UnzipWithUnAr;
+        public static string                         SelectedFile;
+        public static OpticalDiscType                WorkingDisc;
+        public static BlockMediaType                 WorkingDisk;
+        public static CICMMetadataType               Metadata;
+        public static bool                           UserExtracting;
+        public static bool                           UsableDotNetZip;
+        public static string                         ClamdVersion;
+        public static bool                           VirusTotalEnabled;
+        public static List<string>                   Executables;
+        public static List<string>                   Readmes;
+        public static event UnarChangeStatusDelegate UnarChangeStatus;
 
         public static void CheckUnar()
         {

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<StackLayout Orientation="Horizontal">
+		<StackLayoutItem Expand="True" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+            <StackLayout Orientation="Vertical">
+                <StackLayoutItem HorizontalAlignment="Center">
+                    <Label>Files with description</Label>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True" VerticalAlignment="Stretch">
+                    <GridView ID="treeFiles"/>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+        <StackLayoutItem Expand="True" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+            <StackLayout>
+                <StackLayoutItem HorizontalAlignment="Center">
+                    <Label>Description</Label>
+                </StackLayoutItem>
+                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <TextArea ID="txtDescription" ReadOnly="True"/>
+                </StackLayoutItem>
+                <StackLayoutItem VerticalAlignment="Bottom">
+                    <StackLayout Orientation="Horizontal">
+                        <StackLayoutItem HorizontalAlignment="Left">
+                            <Label>Codepage:</Label>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Center">
+                            <DropDown ID="cmbCodepages"/>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Right">
+                            <Button ID="btnClear" Click="OnBtnClearClick">Clear</Button>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+	</StackLayout>
+</Panel>

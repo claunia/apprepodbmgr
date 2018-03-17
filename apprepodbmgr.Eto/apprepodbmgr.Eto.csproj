@@ -48,6 +48,18 @@
       <DependentUpon>dlgOpticalDisc.xeto</DependentUpon>
     </Compile>
     <Compile Include="WrappersForEto.cs" />
+    <Compile Include="dlgImportMetadata.xeto.cs">
+      <DependentUpon>dlgImportMetadata.xeto</DependentUpon>
+    </Compile>
+    <Compile Include="pnlDescription.xeto.cs">
+      <DependentUpon>pnlDescription.xeto</DependentUpon>
+    </Compile>
+    <Compile Include="pnlStrings.xeto.cs">
+      <DependentUpon>pnlStrings.xeto</DependentUpon>
+    </Compile>
+    <Compile Include="pnlVersions.xeto.cs">
+      <DependentUpon>pnlVersions.xeto</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Claunia.Encoding, Version=1.6.1.0, Culture=neutral, PublicKeyToken=null">
@@ -109,6 +121,10 @@
     <EmbeddedResource Include="dlgFilesystem.xeto" />
     <EmbeddedResource Include="dlgBlockMedia.xeto" />
     <EmbeddedResource Include="dlgOpticalDisc.xeto" />
+    <EmbeddedResource Include="dlgImportMetadata.xeto" />
+    <EmbeddedResource Include="pnlDescription.xeto" />
+    <EmbeddedResource Include="pnlStrings.xeto" />
+    <EmbeddedResource Include="pnlVersions.xeto" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\apprepodbmgr.Core\apprepodbmgr.Core.csproj">

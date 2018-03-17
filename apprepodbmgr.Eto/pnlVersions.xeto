@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Panel xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<StackLayout Orientation="Horizontal" VerticalContentAlignment="Stretch">
+		<StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackLayout>
+                <StackLayoutItem HorizontalAlignment="Center">
+                    <Label>Select architectures</Label>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Center">
+                    <Label>(multiple selection)</Label>
+                </StackLayoutItem>
+                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <GridView ID="treeArchs"/>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackLayout>
+                <StackLayoutItem HorizontalAlignment="Center">
+                    <Label>Select OSes</Label>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Center">
+                    <Label>(multiple selection)</Label>
+                </StackLayoutItem>
+                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <GridView ID="treeOs"/>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackLayout>
+                <StackLayoutItem HorizontalAlignment="Center">
+                    <Label>Select version</Label>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Center">
+                    <Label>(single selection)</Label>
+                </StackLayoutItem>
+                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <GridView ID="treeVersions"/>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+	</StackLayout>
+</Panel>

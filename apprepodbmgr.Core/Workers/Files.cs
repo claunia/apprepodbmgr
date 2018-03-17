@@ -36,6 +36,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using DiscImageChef.Checksums;
 using DiscImageChef.Interop;
+using libexeinfo;
 using Newtonsoft.Json;
 using Schemas;
 using SharpCompress.Compressors;
@@ -106,9 +107,11 @@ namespace apprepodbmgr.Core
         {
             try
             {
-                Context.Hashes               = new Dictionary<string, DbAppFile>();
-                Context.FoldersDict          = new Dictionary<string, DbFolder>();
-                Context.SymlinksDict         = new Dictionary<string, string>();
+                Context.Hashes       = new Dictionary<string, DbAppFile>();
+                Context.FoldersDict  = new Dictionary<string, DbFolder>();
+                Context.SymlinksDict = new Dictionary<string, string>();
+                Context.Executables  = new List<string>();
+                Context.Readmes      = new List<string>();
                 List<string> alreadyMetadata = new List<string>();
                 bool         foundMetadata   = false;
 
@@ -183,12 +186,12 @@ namespace apprepodbmgr.Core
                                     CICMMetadataType thisMetadata = (CICMMetadataType)xs.Deserialize(xr);
                                     if(thisMetadata.Architectures != null)
                                         architectures.AddRange(thisMetadata.Architectures);
-                                    if(thisMetadata.Barcodes      != null) barcodes.AddRange(thisMetadata.Barcodes);
-                                    if(thisMetadata.BlockMedia    != null) disks.AddRange(thisMetadata.BlockMedia);
-                                    if(thisMetadata.Categories    != null) categories.AddRange(thisMetadata.Categories);
-                                    if(thisMetadata.Keywords      != null) keywords.AddRange(thisMetadata.Keywords);
-                                    if(thisMetadata.Languages     != null) languages.AddRange(thisMetadata.Languages);
-                                    if(thisMetadata.OpticalDisc   != null) discs.AddRange(thisMetadata.OpticalDisc);
+                                    if(thisMetadata.Barcodes    != null) barcodes.AddRange(thisMetadata.Barcodes);
+                                    if(thisMetadata.BlockMedia  != null) disks.AddRange(thisMetadata.BlockMedia);
+                                    if(thisMetadata.Categories  != null) categories.AddRange(thisMetadata.Categories);
+                                    if(thisMetadata.Keywords    != null) keywords.AddRange(thisMetadata.Keywords);
+                                    if(thisMetadata.Languages   != null) languages.AddRange(thisMetadata.Languages);
+                                    if(thisMetadata.OpticalDisc != null) discs.AddRange(thisMetadata.OpticalDisc);
                                     if(thisMetadata.Subcategories != null)
                                         subcategories.AddRange(thisMetadata.Subcategories);
                                     if(thisMetadata.Systems   != null) systems.AddRange(thisMetadata.Systems);
@@ -220,15 +223,14 @@ namespace apprepodbmgr.Core
                                         releaseType          = thisMetadata.ReleaseType;
                                     }
 
-                                    if(thisMetadata.Magazine != null)
-                                        magazines.AddRange(thisMetadata.Magazine);
-                                    if(thisMetadata.Book                     != null) books.AddRange(thisMetadata.Book);
+                                    if(thisMetadata.Magazine != null) magazines.AddRange(thisMetadata.Magazine);
+                                    if(thisMetadata.Book     != null) books.AddRange(thisMetadata.Book);
                                     if(thisMetadata.RequiredOperatingSystems != null)
                                         requiredOses.AddRange(thisMetadata.RequiredOperatingSystems);
                                     if(thisMetadata.UserManual != null)
                                         usermanuals.AddRange(thisMetadata.UserManual);
                                     if(thisMetadata.Advertisement != null) adverts.AddRange(thisMetadata.Advertisement);
-                                    if(thisMetadata.LinearMedia   != null)
+                                    if(thisMetadata.LinearMedia != null)
                                         linearmedias.AddRange(thisMetadata.LinearMedia);
                                     if(thisMetadata.PCICard    != null) pcis.AddRange(thisMetadata.PCICard);
                                     if(thisMetadata.AudioMedia != null) audiomedias.AddRange(thisMetadata.AudioMedia);
@@ -286,12 +288,12 @@ namespace apprepodbmgr.Core
                                     (CICMMetadataType)js.Deserialize(jr, typeof(CICMMetadataType));
                                 if(thisMetadata.Architectures != null)
                                     architectures.AddRange(thisMetadata.Architectures);
-                                if(thisMetadata.Barcodes      != null) barcodes.AddRange(thisMetadata.Barcodes);
-                                if(thisMetadata.BlockMedia    != null) disks.AddRange(thisMetadata.BlockMedia);
-                                if(thisMetadata.Categories    != null) categories.AddRange(thisMetadata.Categories);
-                                if(thisMetadata.Keywords      != null) keywords.AddRange(thisMetadata.Keywords);
-                                if(thisMetadata.Languages     != null) languages.AddRange(thisMetadata.Languages);
-                                if(thisMetadata.OpticalDisc   != null) discs.AddRange(thisMetadata.OpticalDisc);
+                                if(thisMetadata.Barcodes    != null) barcodes.AddRange(thisMetadata.Barcodes);
+                                if(thisMetadata.BlockMedia  != null) disks.AddRange(thisMetadata.BlockMedia);
+                                if(thisMetadata.Categories  != null) categories.AddRange(thisMetadata.Categories);
+                                if(thisMetadata.Keywords    != null) keywords.AddRange(thisMetadata.Keywords);
+                                if(thisMetadata.Languages   != null) languages.AddRange(thisMetadata.Languages);
+                                if(thisMetadata.OpticalDisc != null) discs.AddRange(thisMetadata.OpticalDisc);
                                 if(thisMetadata.Subcategories != null)
                                     subcategories.AddRange(thisMetadata.Subcategories);
                                 if(thisMetadata.Systems   != null) systems.AddRange(thisMetadata.Systems);
@@ -323,9 +325,8 @@ namespace apprepodbmgr.Core
                                     releaseType          = thisMetadata.ReleaseType;
                                 }
 
-                                if(thisMetadata.Magazine != null)
-                                    magazines.AddRange(thisMetadata.Magazine);
-                                if(thisMetadata.Book                     != null) books.AddRange(thisMetadata.Book);
+                                if(thisMetadata.Magazine != null) magazines.AddRange(thisMetadata.Magazine);
+                                if(thisMetadata.Book     != null) books.AddRange(thisMetadata.Book);
                                 if(thisMetadata.RequiredOperatingSystems != null)
                                     requiredOses.AddRange(thisMetadata.RequiredOperatingSystems);
                                 if(thisMetadata.UserManual    != null) usermanuals.AddRange(thisMetadata.UserManual);
@@ -375,6 +376,68 @@ namespace apprepodbmgr.Core
 
                             break;
                     }
+
+                    // TODO: Set these in settings
+                    switch(Path.GetFileNameWithoutExtension(file).ToLowerInvariant())
+                    {
+                        case "file_id":
+                        case "readme":
+                        case "read":
+                        case "léeme":
+                        case "léame":
+                        case "leeme":
+                        case "leame":
+                        case "lisezmoi":
+                        case "laesmig":
+                        case "læsmig":
+                        case "leesmij":
+                        case "loemind":
+                        case "liesmich":
+                        case "olvasdel":
+                        case "lesiðmig":
+                        case "leggimi":
+                        case "lesmeg":
+                        case "lê-me":
+                        case "le-me":
+                        case "lême":
+                        case "leme":
+                        case "citiți-mă":
+                        case "citițimă":
+                        case "cititi-ma":
+                        case "cititima":
+                        case "lasmig":
+                        case "läsmig":
+                        case "benioku":
+                        case "leggi":
+                        case "lesidmig":
+                            Context.Readmes.Add(file);
+                            break;
+                    }
+
+                    if((Path.GetExtension(file).ToLowerInvariant() == ".nfo" ||
+                        Path.GetExtension(file).ToLowerInvariant() == ".diz" ||
+                        Path.GetExtension(file).ToLowerInvariant() == ".txt") &&
+                       !Context.Readmes.Contains(file)) Context.Readmes.Add(file);
+
+                    FileStream exeStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                    // Catch all exceptions in this block to prevent a failure in libexeinfo to crash us whole 
+                    try
+                    {
+                        if(AtariST.Identify(exeStream) || COFF.Identify(exeStream) || ELF.Identify(exeStream) ||
+                           Geos.Identify(exeStream)    || LX.Identify(exeStream)   || MZ.Identify(exeStream)  ||
+                           NE.Identify(exeStream)      || PE.Identify(exeStream)) Context.Executables.Add(file);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine("Exception in libexeinfo wjem processing file {0}:", file);
+                        Console.WriteLine("Exception: {0}",                                    ex.Message);
+                        Console.WriteLine("Source: {0}",                                       ex.Source);
+                        Console.WriteLine("Stack trace: {0}",                                  ex.StackTrace);
+                        Console.WriteLine("Please report the exception and accompany the file to https://github.com/claunia/libexeinfo");
+                        Console.WriteLine("Continuing...");
+                    }
+
+                    exeStream.Close();
 
                     string   filesPath;
                     FileInfo fi = new FileInfo(file);
@@ -512,7 +575,7 @@ namespace apprepodbmgr.Core
 
                 if(foundMetadata)
                 {
-                    Context.Metadata                                           = new CICMMetadataType();
+                    Context.Metadata = new CICMMetadataType();
                     if(architectures.Count > 0) Context.Metadata.Architectures = architectures.Distinct().ToArray();
                     if(authors.Count       > 0) Context.Metadata.Author        = authors.Distinct().ToArray();
                     // TODO: Check for uniqueness
@@ -522,11 +585,11 @@ namespace apprepodbmgr.Core
                     if(developers.Count > 0) Context.Metadata.Developer  = developers.Distinct().ToArray();
                     if(keywords.Count   > 0) Context.Metadata.Keywords   = keywords.Distinct().ToArray();
                     if(languages.Count  > 0) Context.Metadata.Languages  = languages.Distinct().ToArray();
-                    Context.Metadata.Name                                = metadataName;
-                    if(discs.Count > 0) Context.Metadata.OpticalDisc     = discs.ToArray();
-                    Context.Metadata.PartNumber                          = metadataPartNo;
-                    if(performers.Count > 0) Context.Metadata.Performer  = performers.Distinct().ToArray();
-                    if(publishers.Count > 0) Context.Metadata.Publisher  = publishers.Distinct().ToArray();
+                    Context.Metadata.Name = metadataName;
+                    if(discs.Count > 0) Context.Metadata.OpticalDisc = discs.ToArray();
+                    Context.Metadata.PartNumber = metadataPartNo;
+                    if(performers.Count > 0) Context.Metadata.Performer = performers.Distinct().ToArray();
+                    if(publishers.Count > 0) Context.Metadata.Publisher = publishers.Distinct().ToArray();
                     if(releaseDateSpecified)
                     {
                         Context.Metadata.ReleaseDate          = releaseDate;
@@ -539,18 +602,18 @@ namespace apprepodbmgr.Core
                         Context.Metadata.ReleaseTypeSpecified = true;
                     }
 
-                    Context.Metadata.SerialNumber                              = metadataSerial;
+                    Context.Metadata.SerialNumber = metadataSerial;
                     if(subcategories.Count > 0) Context.Metadata.Subcategories = subcategories.Distinct().ToArray();
                     if(systems.Count       > 0) Context.Metadata.Systems       = systems.Distinct().ToArray();
-                    Context.Metadata.Version                                   = metadataVersion;
-                    Context.Metadata.Magazine                                  = magazines.ToArray();
-                    Context.Metadata.Book                                      = books.ToArray();
-                    Context.Metadata.RequiredOperatingSystems                  = requiredOses.ToArray();
-                    Context.Metadata.UserManual                                = usermanuals.ToArray();
-                    Context.Metadata.Advertisement                             = adverts.ToArray();
-                    Context.Metadata.LinearMedia                               = linearmedias.ToArray();
-                    Context.Metadata.PCICard                                   = pcis.ToArray();
-                    Context.Metadata.AudioMedia                                = audiomedias.ToArray();
+                    Context.Metadata.Version                  = metadataVersion;
+                    Context.Metadata.Magazine                 = magazines.ToArray();
+                    Context.Metadata.Book                     = books.ToArray();
+                    Context.Metadata.RequiredOperatingSystems = requiredOses.ToArray();
+                    Context.Metadata.UserManual               = usermanuals.ToArray();
+                    Context.Metadata.Advertisement            = adverts.ToArray();
+                    Context.Metadata.LinearMedia              = linearmedias.ToArray();
+                    Context.Metadata.PCICard                  = pcis.ToArray();
+                    Context.Metadata.AudioMedia               = audiomedias.ToArray();
 
                     foreach(string metadataFile in alreadyMetadata) Context.Files.Remove(metadataFile);
                 }
@@ -724,7 +787,7 @@ namespace apprepodbmgr.Core
                 {
                     UpdateProgress2?.Invoke("", folder.Path, counter, folders.Count);
 
-                    DirectoryInfo di     = Directory.CreateDirectory(Path.Combine(Context.Path, folder.Path));
+                    DirectoryInfo di = Directory.CreateDirectory(Path.Combine(Context.Path, folder.Path));
                     di.Attributes        = folder.Attributes;
                     di.CreationTimeUtc   = folder.CreationTimeUtc;
                     di.LastAccessTimeUtc = folder.LastAccessTimeUtc;
@@ -820,7 +883,7 @@ namespace apprepodbmgr.Core
                         return;
                     }
 
-                    FileStream inFs  = new FileStream(repoPath, FileMode.Open, FileAccess.Read);
+                    FileStream inFs = new FileStream(repoPath, FileMode.Open, FileAccess.Read);
                     FileStream outFs = new FileStream(Path.Combine(Context.Path, file.Path), FileMode.CreateNew,
                                                       FileAccess.Write);
 
@@ -1015,7 +1078,7 @@ namespace apprepodbmgr.Core
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to find all files", stopwatch.Elapsed.TotalSeconds);
             stopwatch.Restart();
             #endif
-            counterF                   = 0;
+            counterF = 0;
             List<string> filesToDelete = new List<string>();
             foreach(string file in repoFiles)
             {
@@ -1030,8 +1093,7 @@ namespace apprepodbmgr.Core
                 {
                     if(!dbCore.DbOps.ExistsOs(Path.GetFileNameWithoutExtension(file))) filesToDelete.Add(file);
                 }
-                else if(!dbCore.DbOps.ExistsFile(Path.GetFileNameWithoutExtension(file)))
-                    filesToDelete.Add(file);
+                else if(!dbCore.DbOps.ExistsFile(Path.GetFileNameWithoutExtension(file))) filesToDelete.Add(file);
 
                 counterF++;
             }

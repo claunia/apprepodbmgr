@@ -371,10 +371,59 @@ namespace apprepodbmgr.Eto
 
                 thdCheckFiles?.Abort();
 
-                thdHashFiles           = null;
-                lblProgress.Visible    = false;
-                prgProgress.Visible    = false;
-                btnStop.Visible        = false;
+                thdHashFiles        = null;
+                lblProgress.Visible = false;
+                prgProgress.Visible = false;
+                btnStop.Visible     = false;
+
+                if(Context.Executables?.Count > 0 || Context.Readmes?.Count > 0)
+                {
+                    dlgImportMetadata importMetadataDlg = new dlgImportMetadata();
+                    importMetadataDlg.ShowModal(this);
+
+                    if(!importMetadataDlg.canceled && (importMetadataDlg.chosenArchitectures.Count > 0           ||
+                                                       importMetadataDlg.chosenOses.Count          > 0           ||
+                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.description) ||
+                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.developer)   ||
+                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.product)     ||
+                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.publisher)   ||
+                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.version)))
+                    {
+                        if(Context.Metadata == null && (importMetadataDlg.chosenArchitectures.Count > 0         ||
+                                                        importMetadataDlg.chosenOses.Count          > 0         ||
+                                                        !string.IsNullOrWhiteSpace(importMetadataDlg.developer) ||
+                                                        !string.IsNullOrWhiteSpace(importMetadataDlg.product)   ||
+                                                        !string.IsNullOrWhiteSpace(importMetadataDlg.publisher) ||
+                                                        !string.IsNullOrWhiteSpace(importMetadataDlg.version)))
+                            Context.Metadata = new CICMMetadataType();
+
+                        if(!string.IsNullOrWhiteSpace(importMetadataDlg.description))
+                            txtDescription.Text = importMetadataDlg.description;
+                        if(!string.IsNullOrWhiteSpace(importMetadataDlg.product))
+                            Context.Metadata.Name = importMetadataDlg.product;
+                        if(!string.IsNullOrWhiteSpace(importMetadataDlg.publisher))
+                            Context.Metadata.Publisher = new[] {importMetadataDlg.publisher};
+                        if(!string.IsNullOrWhiteSpace(importMetadataDlg.developer))
+                            Context.Metadata.Developer = new[] {importMetadataDlg.developer};
+
+                        if(importMetadataDlg.chosenArchitectures.Count > 0)
+                            Context.Metadata.Architectures = importMetadataDlg.chosenArchitectures.ToArray();
+
+                        if(importMetadataDlg.chosenOses.Count > 0)
+                        {
+                            List<RequiredOperatingSystemType> reqOs = new List<RequiredOperatingSystemType>();
+                            foreach(TargetOsEntry osEntry in importMetadataDlg.chosenOses)
+                                reqOs.Add(new RequiredOperatingSystemType
+                                {
+                                    Name    = osEntry.name,
+                                    Version = new[] {osEntry.version}
+                                });
+
+                            Context.Metadata.RequiredOperatingSystems = reqOs.ToArray();
+                        }
+                    }
+                }
+
                 btnClose.Visible       = true;
                 btnExit.Enabled        = true;
                 btnPack.Visible        = true;
@@ -470,6 +519,8 @@ namespace apprepodbmgr.Eto
             Context.Path           = "";
             Context.Files          = null;
             Context.Hashes         = null;
+            Context.Executables    = null;
+            Context.Readmes        = null;
             btnStop.Visible        = false;
             btnPack.Visible        = false;
             btnClose.Visible       = false;

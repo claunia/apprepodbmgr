@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Dialog xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Height="544" Width="857" Resizable="True"  Title="Import metadata">
+	<StackLayout Orientation="Vertical">
+        <StackLayoutItem HorizontalAlignment="Center">
+		    <Label ID="lblPanelName">Panel name goes here</Label>
+        </StackLayoutItem>
+        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Panel ID="pnlPanel" />
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Stretch">
+            <ProgressBar ID="prgProgress"/>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Right">
+            <StackLayout Orientation="Horizontal">
+                <StackLayoutItem HorizontalAlignment="Right">
+                    <Button ID="btnCancel" Click="OnBtnCancelClick">Cancel</Button>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Right">
+                    <Button ID="btnPrevious" Click="OnBtnPreviousClick">Previous</Button>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Right">
+                    <Button ID="btnNext" Click="OnBtnNextClick">Next</Button>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayoutItem>
+	</StackLayout>
+</Dialog>
