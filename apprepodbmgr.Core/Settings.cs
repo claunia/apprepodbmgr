@@ -181,12 +181,12 @@ namespace apprepodbmgr.Core
                         if(!Enum.TryParse((string)key.GetValue("CompressionAlgorithm"), true,
                                           out Current.CompressionAlgorithm))
                             Current.CompressionAlgorithm = AlgoEnum.GZip;
-                        Current.UseAntivirus             = (bool)key.GetValue("UseAntivirus");
-                        Current.UseClamd                 = (bool)key.GetValue("UseClamd");
+                        Current.UseAntivirus             = bool.Parse((string)key.GetValue("UseAntivirus"));
+                        Current.UseClamd = bool.Parse((string)key.GetValue("UseClamd"));
                         Current.ClamdHost                = (string)key.GetValue("ClamdHost");
-                        Current.ClamdPort                = (ushort)key.GetValue("ClamdPort");
-                        Current.ClamdIsLocal             = (bool)key.GetValue("ClamdIsLocal");
-                        Current.UseVirusTotal            = (bool)key.GetValue("UseVirusTotal");
+                        Current.ClamdPort                = ushort.Parse((string)key.GetValue("ClamdPort"));
+                        Current.ClamdIsLocal = bool.Parse((string)key.GetValue("ClamdIsLocal"));
+                        Current.UseVirusTotal = bool.Parse((string)key.GetValue("UseVirusTotal"));
                         Current.VirusTotalKey            = (string)key.GetValue("VirusTotalKey");
                     }
                         break;
@@ -281,11 +281,11 @@ namespace apprepodbmgr.Core
                                          Current.CompressionAlgorithm);
                             key.SetValue("UseAntivirus",  Current.UseAntivirus);
                             key.SetValue("UseClamd",      Current.UseClamd);
-                            key.SetValue("ClamdHost",     Current.ClamdHost);
+                            key.SetValue("ClamdHost",     Current.ClamdHost == null ? "" : Current.ClamdHost);
                             key.SetValue("ClamdPort",     Current.ClamdPort);
                             key.SetValue("ClamdIsLocal",  Current.ClamdIsLocal);
                             key.SetValue("UseVirusTotal", Current.UseVirusTotal);
-                            key.SetValue("VirusTotalKey", Current.VirusTotalKey);
+                            key.SetValue("VirusTotalKey", Current.VirusTotalKey == null ? "" : Current.VirusTotalKey);
                         }
                     }
                         break;
