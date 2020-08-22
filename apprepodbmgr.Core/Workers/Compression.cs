@@ -69,16 +69,16 @@ namespace apprepodbmgr.Core
                 }
 
                 string destinationFolder = "";
-                destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Developer);
-                destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Product);
-                destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Version);
+                destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Developer;
+                destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Product;
+                destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Version;
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Languages))
-                    destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Languages);
+                    destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Languages;
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Architecture))
-                    destinationFolder = Path.Combine(destinationFolder, Context.DbInfo.Architecture);
-                if(Context.DbInfo.Oem) destinationFolder = Path.Combine(destinationFolder, "oem");
+                    destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Architecture;
+                if(Context.DbInfo.Oem) destinationFolder += Path.DirectorySeparatorChar + "oem";
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.TargetOs))
-                    destinationFolder = Path.Combine(destinationFolder, "for " + Context.DbInfo.TargetOs);
+                    destinationFolder += Path.DirectorySeparatorChar + "for " + Context.DbInfo.TargetOs;
 
                 string destinationFile = "";
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Format))
@@ -120,12 +120,9 @@ namespace apprepodbmgr.Core
                 }
                 else if(destinationFile == "") destinationFile = "archive";
 
-                string destination = Path.Combine(destinationFolder, destinationFile) + ".zip";
+                string destination = destinationFolder + Path.DirectorySeparatorChar + destinationFile + ".zip";
 
-                Md5Context md5 = new Md5Context();
-                md5.Init();
-                byte[] tmp;
-                string mdid = md5.Data(Encoding.UTF8.GetBytes(destination), out tmp);
+                string mdid = Md5Context.Data(Encoding.UTF8.GetBytes(destination), out _);
                 Console.WriteLine("MDID: {0}", mdid);
 
                 if(dbCore.DbOps.ExistsOs(mdid))
