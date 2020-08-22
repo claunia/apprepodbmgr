@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.Rider2017.3/system/resharper-host/local/Transient/ReSharperHost/v11/SolutionCaches/_apprepodbmgr.1640228424.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.2/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.2/resharper-host/local/Transient/Rider/v202/SolutionCaches/_apprepodbmgr.1640228424.00" t="ExcludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
+    <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p=".git/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
       <e p="DiscImageChef/CICMMetadata/dotnet/cicm.cs" t="Include" />
       <e p="DiscImageChef/DiscImageChef.Checksums" t="IncludeRecursive">
         <e p="Adler32Context.cs" t="Include" />
@@ -12,6 +20,7 @@
         <e p="CRC64Context.cs" t="Include" />
         <e p="DiscImageChef.Checksums.csproj" t="IncludeRecursive" />
         <e p="FletcherContext.cs" t="Include" />
+        <e p="IChecksum.cs" t="Include" />
         <e p="MD5Context.cs" t="Include" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
@@ -38,6 +47,16 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive" />
         <e p="packages.config" t="Include" />
+      </e>
+      <e p="DiscImageChef/DiscImageChef.Compression" t="IncludeRecursive">
+        <e p="AppleRle.cs" t="Include" />
+        <e p="DiscImageChef.Compression.csproj" t="IncludeRecursive" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="TeleDiskLzh.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef/DiscImageChef.Console" t="IncludeRecursive">
         <e p="DicConsole.cs" t="Include" />
@@ -223,6 +242,7 @@
         <e p="DIM.cs" t="Include" />
         <e p="DiscFerret.cs" t="Include" />
         <e p="DiscImageChef.DiscImages.csproj" t="IncludeRecursive" />
+        <e p="DiscImageChef.cs" t="Include" />
         <e p="DiscJuggler.cs" t="Include" />
         <e p="DiskCopy42.cs" t="Include" />
         <e p="DriDiskCopy.cs" t="Include" />
@@ -319,6 +339,7 @@
         <e p="Fossil.cs" t="Include" />
         <e p="HAMMER.cs" t="Include" />
         <e p="HPFS.cs" t="Include" />
+        <e p="HPOFS.cs" t="Include" />
         <e p="IFilesystem.cs" t="Include" />
         <e p="IReadOnlyFilesystem.cs" t="Include" />
         <e p="ISO9660" t="Include">
@@ -374,6 +395,7 @@
         <e p="ODS.cs" t="Include" />
         <e p="Opera.cs" t="Include" />
         <e p="PCEngine.cs" t="Include" />
+        <e p="PCFX.cs" t="Include" />
         <e p="PFS.cs" t="Include" />
         <e p="ProDOS.cs" t="Include" />
         <e p="Properties" t="Include">
@@ -383,6 +405,7 @@
         <e p="QNX6.cs" t="Include" />
         <e p="RBF.cs" t="Include" />
         <e p="RT11.cs" t="Include" />
+        <e p="ReFS.cs" t="Include" />
         <e p="Reiser.cs" t="Include" />
         <e p="Reiser4.cs" t="Include" />
         <e p="SFS.cs" t="Include" />
@@ -526,6 +549,72 @@
       <e p="DiscImageChef/LICENSE" t="Include" />
       <e p="DiscImageChef/LICENSE.LGPL" t="Include" />
       <e p="DiscImageChef/LICENSE.MIT" t="Include" />
+      <e p="DiscImageChef/cuetoolsnet/CUETools.Codecs" t="Include">
+        <e p="AudioBuffer.cs" t="Include" />
+        <e p="AudioDecoderClass.cs" t="Include" />
+        <e p="AudioEncoderClass.cs" t="Include" />
+        <e p="AudioEncoderSettings.cs" t="Include" />
+        <e p="AudioPCMConfig.cs" t="Include" />
+        <e p="AudioPipe.cs" t="Include" />
+        <e p="AudioSamples.cs" t="Include" />
+        <e p="BitReader.cs" t="Include" />
+        <e p="BitWriter.cs" t="Include" />
+        <e p="CRC" t="Include">
+          <e p="CRC16.cs" t="Include" />
+          <e p="CRC16CCITT.cs" t="Include" />
+          <e p="CRC32.cs" t="Include" />
+          <e p="CRC8.cs" t="Include" />
+        </e>
+        <e p="CUEToolsCodecsConfig.cs" t="Include" />
+        <e p="CUEToolsFormat.cs" t="Include" />
+        <e p="CUEToolsTagger.cs" t="Include" />
+        <e p="CUEToolsUDC.cs" t="Include" />
+        <e p="CUEToolsUDCList.cs" t="Include" />
+        <e p="CyclicBuffer.cs" t="Include" />
+        <e p="CyclicBufferInputStream.cs" t="Include" />
+        <e p="CyclicBufferOutputStream.cs" t="Include" />
+        <e p="DefaultValueForMode.cs" t="Include" />
+        <e p="DummyWriter.cs" t="Include" />
+        <e p="IAudioDest.cs" t="Include" />
+        <e p="IAudioFilter.cs" t="Include" />
+        <e p="IAudioSource.cs" t="Include" />
+        <e p="IWavePlayer.cs" t="Include" />
+        <e p="LPC.cs" t="Include" />
+        <e p="LpcContext.cs" t="Include" />
+        <e p="NullStream.cs" t="Include" />
+        <e p="PlaybackState.cs" t="Include" />
+        <e p="SRDescriptionAttribute.cs" t="Include" />
+        <e p="SilenceGenerator.cs" t="Include" />
+        <e p="UserDefinedEncoderSettings.cs" t="Include" />
+        <e p="UserDefinedReader.cs" t="Include" />
+        <e p="UserDefinedWriter.cs" t="Include" />
+        <e p="WAVReader.cs" t="Include" />
+        <e p="WAVWriter.cs" t="Include" />
+        <e p="WAVWriterSettings.cs" t="Include" />
+      </e>
+      <e p="DiscImageChef/cuetoolsnet/CUETools.Codecs.FLAKE" t="Include">
+        <e p="ChannelMode.cs" t="Include" />
+        <e p="FlacFrame.cs" t="Include" />
+        <e p="FlacSubframe.cs" t="Include" />
+        <e p="FlacSubframeInfo.cs" t="Include" />
+        <e p="Flake.cs" t="Include" />
+        <e p="FlakeReader.cs" t="Include" />
+        <e p="FlakeWriter.cs" t="Include" />
+        <e p="MetadataType.cs" t="Include" />
+        <e p="OrderMethod.cs" t="Include" />
+        <e p="PredictionType.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="Resources.Designer.cs" t="Include" />
+          <e p="Resources.resx" t="Include" />
+          <e p="Resources.ru-RU.resx" t="Include" />
+        </e>
+        <e p="RiceContext.cs" t="Include" />
+        <e p="SeekPoint.cs" t="Include" />
+        <e p="StereoMethod.cs" t="Include" />
+        <e p="SubframeType.cs" t="Include" />
+        <e p="WindowFunction.cs" t="Include" />
+        <e p="WindowMethod.cs" t="Include" />
+      </e>
       <e p="README.md" t="Include" />
       <e p="apprepodbmgr.Core" t="IncludeRecursive">
         <e p="AlgoEnum.cs" t="Include" />
@@ -607,7 +696,16 @@
           </e>
         </e>
       </e>
-      <e p="apprepodbmgr.Eto.XamMac2/apprepodbmgr.Eto.XamMac2.csproj" t="IncludeRecursive" />
+      <e p="apprepodbmgr.Eto.XamMac2" t="IncludeRecursive">
+        <e p="Info.plist" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="Resources" t="Include" />
+        <e p="apprepodbmgr.Eto.XamMac2.csproj" t="IncludeRecursive" />
+        <e p="packages.config" t="Include" />
+      </e>
       <e p="apprepodbmgr.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>

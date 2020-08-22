@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Interop", "Di
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apprepodbmgr.Eto.Desktop", "apprepodbmgr.Eto.Desktop\apprepodbmgr.Eto.Desktop.csproj", "{8DE87AED-B364-4208-B878-E3CA514F363E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Compression", "DiscImageChef\DiscImageChef.Compression\DiscImageChef.Compression.csproj", "{858398D1-7321-4763-8BAB-56BBFEC74E29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -97,6 +99,10 @@ Global
 		{8DE87AED-B364-4208-B878-E3CA514F363E}.Debug|x86.Build.0 = Debug|Any CPU
 		{8DE87AED-B364-4208-B878-E3CA514F363E}.Release|x86.ActiveCfg = Release|Any CPU
 		{8DE87AED-B364-4208-B878-E3CA514F363E}.Release|x86.Build.0 = Release|Any CPU
+		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Debug|x86.Build.0 = Debug|Any CPU
+		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Release|x86.ActiveCfg = Release|Any CPU
+		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
