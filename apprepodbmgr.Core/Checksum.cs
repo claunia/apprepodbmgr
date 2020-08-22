@@ -40,9 +40,7 @@ namespace apprepodbmgr.Core
     class Checksum
     {
         Adler32Context adler32ctx;
-
         adlerPacket adlerPkt;
-
         Thread           adlerThread;
         Crc16Context     crc16ctx;
         crc16Packet      crc16Pkt;
@@ -113,27 +111,16 @@ namespace apprepodbmgr.Core
             sha512Pkt    = new sha512Packet();
             spamsumPkt   = new spamsumPacket();
 
-            adler32ctx.Init();
             adlerPkt.context = adler32ctx;
-            crc16ctx.Init();
             crc16Pkt.context = crc16ctx;
-            crc32ctx.Init();
             crc32Pkt.context = crc32ctx;
-            crc64ctx.Init();
             crc64Pkt.context = crc64ctx;
-            md5ctx.Init();
             md5Pkt.context = md5ctx;
-            ripemd160ctx.Init();
             ripemd160Pkt.context = ripemd160ctx;
-            sha1ctx.Init();
             sha1Pkt.context = sha1ctx;
-            sha256ctx.Init();
             sha256Pkt.context = sha256ctx;
-            sha384ctx.Init();
             sha384Pkt.context = sha384ctx;
-            sha512ctx.Init();
             sha512Pkt.context = sha512ctx;
-            ssctx.Init();
             spamsumPkt.context = ssctx;
         }
 
@@ -257,27 +244,16 @@ namespace apprepodbmgr.Core
             sha512Packet    sha512PktData    = new sha512Packet();
             spamsumPacket   spamsumPktData   = new spamsumPacket();
 
-            adler32ctxData.Init();
             adlerPktData.context = adler32ctxData;
-            crc16ctxData.Init();
             crc16PktData.context = crc16ctxData;
-            crc32ctxData.Init();
             crc32PktData.context = crc32ctxData;
-            crc64ctxData.Init();
             crc64PktData.context = crc64ctxData;
-            md5ctxData.Init();
             md5PktData.context = md5ctxData;
-            ripemd160ctxData.Init();
             ripemd160PktData.context = ripemd160ctxData;
-            sha1ctxData.Init();
             sha1PktData.context = sha1ctxData;
-            sha256ctxData.Init();
             sha256PktData.context = sha256ctxData;
-            sha384ctxData.Init();
             sha384PktData.context = sha384ctxData;
-            sha512ctxData.Init();
             sha512PktData.context = sha512ctxData;
-            ssctxData.Init();
             spamsumPktData.context = ssctxData;
 
             adlerPktData.data = data;
