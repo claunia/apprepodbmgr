@@ -6,28 +6,32 @@ namespace apprepodbmgr.Core
 {
     public static class IO
     {
-        public static List<string> EnumerateFiles(string       path, string searchPattern,
-                                                  SearchOption searchOption,
-                                                  bool         followLinks = true, bool symlinks = true)
+        public static List<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption,
+                                                  bool followLinks = true, bool symlinks = true)
         {
-            if(followLinks) return new List<string>(Directory.EnumerateFiles(path, searchPattern, searchOption));
+            if(followLinks)
+                return new List<string>(Directory.EnumerateFiles(path, searchPattern, searchOption));
 
             List<string> files       = new List<string>();
             List<string> directories = new List<string>();
 
             foreach(string file in Directory.EnumerateFiles(path, searchPattern))
             {
-                FileInfo fi = new FileInfo(file);
-                if(fi.Attributes.HasFlag(FileAttributes.ReparsePoint) && symlinks) files.Add(file);
+                var fi = new FileInfo(file);
+
+                if(fi.Attributes.HasFlag(FileAttributes.ReparsePoint) && symlinks)
+                    files.Add(file);
                 else if(!fi.Attributes.HasFlag(FileAttributes.ReparsePoint))
                     files.Add(file);
             }
 
-            if(searchOption != SearchOption.AllDirectories) return files;
+            if(searchOption != SearchOption.AllDirectories)
+                return files;
 
             foreach(string directory in Directory.EnumerateDirectories(path, searchPattern))
             {
-                DirectoryInfo di = new DirectoryInfo(directory);
+                var di = new DirectoryInfo(directory);
+
                 if(!di.Attributes.HasFlag(FileAttributes.ReparsePoint))
                     files.AddRange(EnumerateFiles(directory, searchPattern, searchOption, followLinks, symlinks));
             }
@@ -35,20 +39,20 @@ namespace apprepodbmgr.Core
             return files;
         }
 
-        public static List<string> EnumerateDirectories(string       path, string searchPattern,
-                                                        SearchOption searchOption,
-                                                        bool         followLinks = true, bool symlinks = true)
+        public static List<string> EnumerateDirectories(string path, string searchPattern, SearchOption searchOption,
+                                                        bool followLinks = true, bool symlinks = true)
         {
-            if(followLinks) return new List<string>(Directory.EnumerateDirectories(path, searchPattern, searchOption));
+            if(followLinks)
+                return new List<string>(Directory.EnumerateDirectories(path, searchPattern, searchOption));
 
             List<string> directories = new List<string>();
 
-            if(searchOption != SearchOption.AllDirectories) return directories;
+            if(searchOption != SearchOption.AllDirectories)
+                return directories;
 
-            directories.AddRange(from directory in Directory.EnumerateDirectories(path, searchPattern)
-                                 let di = new DirectoryInfo(directory)
-                                 where !di.Attributes.HasFlag(FileAttributes.ReparsePoint)
-                                 select directory);
+            directories.AddRange(from directory in Directory.EnumerateDirectories(path, searchPattern) let di =
+                                     new DirectoryInfo(directory)
+                                 where !di.Attributes.HasFlag(FileAttributes.ReparsePoint) select directory);
 
             List<string> newDirectories = new List<string>();
 
@@ -65,17 +69,18 @@ namespace apprepodbmgr.Core
         {
             List<string> directories = new List<string>();
 
-            List<string> links = (from file in Directory.EnumerateFiles(path, searchPattern)
-                                  let fi = new FileInfo(file)
-                                  where fi.Attributes.HasFlag(FileAttributes.ReparsePoint)
-                                  select file).ToList();
+            List<string> links = (from file in Directory.EnumerateFiles(path, searchPattern) let fi = new FileInfo(file)
+                                  where fi.Attributes.HasFlag(FileAttributes.ReparsePoint) select file).ToList();
 
-            if(searchOption != SearchOption.AllDirectories) return links;
+            if(searchOption != SearchOption.AllDirectories)
+                return links;
 
             foreach(string directory in Directory.EnumerateDirectories(path, searchPattern))
             {
-                DirectoryInfo di = new DirectoryInfo(directory);
-                if(!di.Attributes.HasFlag(FileAttributes.ReparsePoint)) directories.Add(directory);
+                var di = new DirectoryInfo(directory);
+
+                if(!di.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                    directories.Add(directory);
                 else //if (!links.Contains(directory))
                     links.Add(directory);
             }

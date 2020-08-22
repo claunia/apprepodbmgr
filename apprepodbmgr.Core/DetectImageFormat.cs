@@ -43,7 +43,7 @@ namespace apprepodbmgr.Core
         {
             try
             {
-                PluginBase plugins = new PluginBase();
+                var plugins = new PluginBase();
 
                 IMediaImage imageFormat = null;
 
@@ -53,37 +53,45 @@ namespace apprepodbmgr.Core
                 )
                     try
                     {
-                        if(!imageplugin.Identify(imageFilter)) continue;
+                        if(!imageplugin.Identify(imageFilter))
+                            continue;
 
                         imageFormat = imageplugin;
+
                         break;
                     }
                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                    catch { }
+                    catch {}
                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
 
                 // Check only RAW plugin
-                if(imageFormat != null) return imageFormat;
+                if(imageFormat != null)
+                    return imageFormat;
 
                 foreach(IMediaImage imageplugin in
                     plugins.ImagePluginsList.Values.Where(p => p.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 )
                     try
                     {
-                        if(!imageplugin.Identify(imageFilter)) continue;
+                        if(!imageplugin.Identify(imageFilter))
+                            continue;
 
                         imageFormat = imageplugin;
+
                         break;
                     }
                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                    catch { }
+                    catch {}
                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
 
                 // Still not recognized
 
                 return imageFormat;
             }
-            catch { return null; }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

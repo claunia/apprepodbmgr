@@ -111,14 +111,14 @@ namespace apprepodbmgr.Core
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbcmd.CommandText = SQL;
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
             foreach(DataRow dRow in dataTable.Rows)
             {
-                DbEntry fEntry = new DbEntry
+                var fEntry = new DbEntry
                 {
                     Id           = long.Parse(dRow["id"].ToString()),
                     Developer    = dRow["developer"].ToString(),
@@ -138,9 +138,15 @@ namespace apprepodbmgr.Core
                     Mdid         = dRow["mdid"].ToString()
                 };
 
-                if(dRow["xml"]  != DBNull.Value) fEntry.Xml  = (byte[])dRow["xml"];
-                if(dRow["json"] != DBNull.Value) fEntry.Json = (byte[])dRow["json"];
-                if(dRow["icon"] != DBNull.Value) fEntry.Icon = (byte[])dRow["icon"];
+                if(dRow["xml"] != DBNull.Value)
+                    fEntry.Xml = (byte[])dRow["xml"];
+
+                if(dRow["json"] != DBNull.Value)
+                    fEntry.Json = (byte[])dRow["json"];
+
+                if(dRow["icon"] != DBNull.Value)
+                    fEntry.Icon = (byte[])dRow["icon"];
+
                 entries.Add(fEntry);
             }
 
@@ -363,13 +369,14 @@ namespace apprepodbmgr.Core
             param1.Value         = hash;
             dbcmd.Parameters.Add(param1);
             dbcmd.CommandText = "SELECT * FROM files WHERE sha256 = @hash";
-            DataSet        dataSet     = new DataSet();
+            var            dataSet     = new DataSet();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
-            foreach(DataRow dRow in dataTable.Rows) return true;
+            foreach(DataRow dRow in dataTable.Rows)
+                return true;
 
             return false;
         }
@@ -380,8 +387,15 @@ namespace apprepodbmgr.Core
             dbcmd.CommandText = "SELECT COUNT(*) FROM files";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
-            try { return Convert.ToUInt64(count); }
-            catch { return 0; }
+
+            try
+            {
+                return Convert.ToUInt64(count);
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         public DbFile GetFile(string hash)
@@ -391,14 +405,14 @@ namespace apprepodbmgr.Core
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbcmd.CommandText = sql;
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
             foreach(DataRow dRow in dataTable.Rows)
             {
-                DbFile fEntry = new DbFile
+                var fEntry = new DbFile
                 {
                     Id     = ulong.Parse(dRow["id"].ToString()),
                     Sha256 = dRow["sha256"].ToString(),
@@ -407,14 +421,20 @@ namespace apprepodbmgr.Core
                     Length = long.Parse(dRow["length"].ToString())
                 };
 
-                if(dRow["hasvirus"] == DBNull.Value) fEntry.HasVirus = null;
-                else fEntry.HasVirus                                 = bool.Parse(dRow["hasvirus"].ToString());
-                if(dRow["clamtime"] == DBNull.Value) fEntry.ClamTime = null;
-                else fEntry.ClamTime                                 = DateTime.Parse(dRow["clamtime"].ToString());
-                if(dRow["vtotaltime"] == DBNull.Value) fEntry.VirusTotalTime = null;
+                if(dRow["hasvirus"] == DBNull.Value)
+                    fEntry.HasVirus = null;
                 else
-                    fEntry.VirusTotalTime =
-                        DateTime.Parse(dRow["vtotaltime"].ToString());
+                    fEntry.HasVirus = bool.Parse(dRow["hasvirus"].ToString());
+
+                if(dRow["clamtime"] == DBNull.Value)
+                    fEntry.ClamTime = null;
+                else
+                    fEntry.ClamTime = DateTime.Parse(dRow["clamtime"].ToString());
+
+                if(dRow["vtotaltime"] == DBNull.Value)
+                    fEntry.VirusTotalTime = null;
+                else
+                    fEntry.VirusTotalTime = DateTime.Parse(dRow["vtotaltime"].ToString());
 
                 return fEntry;
             }
@@ -431,14 +451,14 @@ namespace apprepodbmgr.Core
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbcmd.CommandText = sql;
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
             foreach(DataRow dRow in dataTable.Rows)
             {
-                DbFile fEntry = new DbFile
+                var fEntry = new DbFile
                 {
                     Id     = ulong.Parse(dRow["id"].ToString()),
                     Sha256 = dRow["sha256"].ToString(),
@@ -447,14 +467,20 @@ namespace apprepodbmgr.Core
                     Length = long.Parse(dRow["length"].ToString())
                 };
 
-                if(dRow["hasvirus"] == DBNull.Value) fEntry.HasVirus = null;
-                else fEntry.HasVirus                                 = bool.Parse(dRow["hasvirus"].ToString());
-                if(dRow["clamtime"] == DBNull.Value) fEntry.ClamTime = null;
-                else fEntry.ClamTime                                 = DateTime.Parse(dRow["clamtime"].ToString());
-                if(dRow["vtotaltime"] == DBNull.Value) fEntry.VirusTotalTime = null;
+                if(dRow["hasvirus"] == DBNull.Value)
+                    fEntry.HasVirus = null;
                 else
-                    fEntry.VirusTotalTime =
-                        DateTime.Parse(dRow["vtotaltime"].ToString());
+                    fEntry.HasVirus = bool.Parse(dRow["hasvirus"].ToString());
+
+                if(dRow["clamtime"] == DBNull.Value)
+                    fEntry.ClamTime = null;
+                else
+                    fEntry.ClamTime = DateTime.Parse(dRow["clamtime"].ToString());
+
+                if(dRow["vtotaltime"] == DBNull.Value)
+                    fEntry.VirusTotalTime = null;
+                else
+                    fEntry.VirusTotalTime = DateTime.Parse(dRow["vtotaltime"].ToString());
 
                 entries.Add(fEntry);
             }
@@ -471,14 +497,14 @@ namespace apprepodbmgr.Core
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbcmd.CommandText = SQL;
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
             foreach(DataRow dRow in dataTable.Rows)
             {
-                DbFile fEntry = new DbFile
+                var fEntry = new DbFile
                 {
                     Id     = ulong.Parse(dRow["id"].ToString()),
                     Sha256 = dRow["sha256"].ToString(),
@@ -487,14 +513,20 @@ namespace apprepodbmgr.Core
                     Length = long.Parse(dRow["length"].ToString())
                 };
 
-                if(dRow["hasvirus"] == DBNull.Value) fEntry.HasVirus = null;
-                else fEntry.HasVirus                                 = bool.Parse(dRow["hasvirus"].ToString());
-                if(dRow["clamtime"] == DBNull.Value) fEntry.ClamTime = null;
-                else fEntry.ClamTime                                 = DateTime.Parse(dRow["clamtime"].ToString());
-                if(dRow["vtotaltime"] == DBNull.Value) fEntry.VirusTotalTime = null;
+                if(dRow["hasvirus"] == DBNull.Value)
+                    fEntry.HasVirus = null;
                 else
-                    fEntry.VirusTotalTime =
-                        DateTime.Parse(dRow["vtotaltime"].ToString());
+                    fEntry.HasVirus = bool.Parse(dRow["hasvirus"].ToString());
+
+                if(dRow["clamtime"] == DBNull.Value)
+                    fEntry.ClamTime = null;
+                else
+                    fEntry.ClamTime = DateTime.Parse(dRow["clamtime"].ToString());
+
+                if(dRow["vtotaltime"] == DBNull.Value)
+                    fEntry.VirusTotalTime = null;
+                else
+                    fEntry.VirusTotalTime = DateTime.Parse(dRow["vtotaltime"].ToString());
 
                 entries.Add(fEntry);
             }
@@ -683,16 +715,11 @@ namespace apprepodbmgr.Core
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DROP TABLE IF EXISTS `app_{id}`;\n\n"                                   +
-                         $"CREATE TABLE IF NOT EXISTS `app_{id}` (\n"                              +
-                         "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                             +
-                         "  `path` VARCHAR(8192) NOT NULL,\n"                                      +
-                         "  `sha256` VARCHAR(64) NOT NULL,\n\n"                                    +
-                         "  `length` BIGINT NOT NULL,\n"                                           +
-                         "  `creation` DATETIME NULL,\n"                                           +
-                         "  `access` DATETIME NULL,\n"                                             +
-                         "  `modification` DATETIME NULL,\n"                                       +
-                         "  `attributes` INTEGER NULL);\n\n"                                       +
+            string sql = $"DROP TABLE IF EXISTS `app_{id}`;\n\n" + $"CREATE TABLE IF NOT EXISTS `app_{id}` (\n" +
+                         "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" + "  `path` VARCHAR(8192) NOT NULL,\n" +
+                         "  `sha256` VARCHAR(64) NOT NULL,\n\n" + "  `length` BIGINT NOT NULL,\n" +
+                         "  `creation` DATETIME NULL,\n" + "  `access` DATETIME NULL,\n" +
+                         "  `modification` DATETIME NULL,\n" + "  `attributes` INTEGER NULL);\n\n" +
                          $"CREATE UNIQUE INDEX `app_{id}_id_UNIQUE` ON `app_{id}` (`id` ASC);\n\n" +
                          $"CREATE INDEX `app_{id}_path_idx` ON `app_{id}` (`path` ASC);";
 
@@ -706,14 +733,11 @@ namespace apprepodbmgr.Core
             trans             = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            sql = $"DROP TABLE IF EXISTS `app_{id}_folders`;\n\n"                                           +
-                  $"CREATE TABLE IF NOT EXISTS `app_{id}_folders` (\n"                                      +
-                  "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                                             +
-                  "  `path` VARCHAR(8192) NOT NULL,\n"                                                      +
-                  "  `creation` DATETIME NULL,\n"                                                           +
-                  "  `access` DATETIME NULL,\n"                                                             +
-                  "  `modification` DATETIME NULL,\n"                                                       +
-                  "  `attributes` INTEGER NULL);\n\n"                                                       +
+            sql = $"DROP TABLE IF EXISTS `app_{id}_folders`;\n\n" +
+                  $"CREATE TABLE IF NOT EXISTS `app_{id}_folders` (\n" + "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                  "  `path` VARCHAR(8192) NOT NULL,\n" + "  `creation` DATETIME NULL,\n" +
+                  "  `access` DATETIME NULL,\n" + "  `modification` DATETIME NULL,\n" +
+                  "  `attributes` INTEGER NULL);\n\n" +
                   $"CREATE UNIQUE INDEX `app_{id}_folders_id_UNIQUE` ON `app_{id}_folders` (`id` ASC);\n\n" +
                   $"CREATE INDEX `app_{id}_folders_path_idx` ON `app_{id}_folders` (`path` ASC);";
 
@@ -736,13 +760,14 @@ namespace apprepodbmgr.Core
             param1.Value         = hash;
             dbcmd.Parameters.Add(param1);
             dbcmd.CommandText = $"SELECT * FROM `app_{appId}` WHERE sha256 = @hash";
-            DataSet        dataSet     = new DataSet();
+            var            dataSet     = new DataSet();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
-            foreach(DataRow dRow in dataTable.Rows) return true;
+            foreach(DataRow dRow in dataTable.Rows)
+                return true;
 
             return false;
         }
@@ -757,13 +782,14 @@ namespace apprepodbmgr.Core
             param1.Value         = mdid;
             dbcmd.Parameters.Add(param1);
             dbcmd.CommandText = "SELECT * FROM `apps` WHERE mdid = @mdid";
-            DataSet        dataSet     = new DataSet();
+            var            dataSet     = new DataSet();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
-            foreach(DataRow dRow in dataTable.Rows) return true;
+            foreach(DataRow dRow in dataTable.Rows)
+                return true;
 
             return false;
         }
@@ -777,14 +803,14 @@ namespace apprepodbmgr.Core
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbcmd.CommandText = sql;
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
             foreach(DataRow dRow in dataTable.Rows)
             {
-                DbAppFile fEntry = new DbAppFile
+                var fEntry = new DbAppFile
                 {
                     Id                = ulong.Parse(dRow["id"].ToString()),
                     Path              = dRow["path"].ToString(),
@@ -811,14 +837,14 @@ namespace apprepodbmgr.Core
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbcmd.CommandText = sql;
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];
 
             foreach(DataRow dRow in dataTable.Rows)
             {
-                DbFolder fEntry = new DbFolder
+                var fEntry = new DbFolder
                 {
                     Id                = ulong.Parse(dRow["id"].ToString()),
                     Path              = dRow["path"].ToString(),
@@ -875,8 +901,10 @@ namespace apprepodbmgr.Core
         public bool HasSymlinks(long appId)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
+
             dbcmd.CommandText =
                 $"SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'app_{appId}_symlinks'";
+
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
 
@@ -889,13 +917,11 @@ namespace apprepodbmgr.Core
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            dbcmd.CommandText =
-                $"DROP TABLE IF EXISTS `app_{id}_symlinks`;\n\n"                                                +
-                $"CREATE TABLE IF NOT EXISTS `app_{id}_symlinks` (\n"                                           +
-                "  `path` VARCHAR(8192) PRIMARY KEY,\n"                                                         +
-                "  `target` VARCHAR(8192) NOT NULL);\n\n"                                                       +
-                $"CREATE UNIQUE INDEX `app_{id}_symlinks_path_UNIQUE` ON `app_{id}_symlinks` (`path` ASC);\n\n" +
-                $"CREATE INDEX `app_{id}_symlinks_target_idx` ON `app_{id}_symlinks` (`target` ASC);";
+            dbcmd.CommandText = $"DROP TABLE IF EXISTS `app_{id}_symlinks`;\n\n" +
+                                $"CREATE TABLE IF NOT EXISTS `app_{id}_symlinks` (\n" +
+                                "  `path` VARCHAR(8192) PRIMARY KEY,\n" + "  `target` VARCHAR(8192) NOT NULL);\n\n" +
+                                $"CREATE UNIQUE INDEX `app_{id}_symlinks_path_UNIQUE` ON `app_{id}_symlinks` (`path` ASC);\n\n" +
+                                $"CREATE INDEX `app_{id}_symlinks_target_idx` ON `app_{id}_symlinks` (`target` ASC);";
 
             dbcmd.ExecuteNonQuery();
             trans.Commit();
@@ -946,7 +972,7 @@ namespace apprepodbmgr.Core
             IDbCommand     dbcmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbcmd.CommandText = sql;
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbcmd;
             dataAdapter.Fill(dataSet);
             DataTable dataTable = dataSet.Tables[0];

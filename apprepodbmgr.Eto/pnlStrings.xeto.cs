@@ -12,9 +12,13 @@ namespace apprepodbmgr.Eto
 
             treeStrings.AllowMultipleSelection = false;
             treeStrings.ShowHeader             = false;
+
             treeStrings.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<string, string>(r => r)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<string, string>(r => r)
+                },
                 HeaderText = "String"
             });
         }
@@ -22,7 +26,9 @@ namespace apprepodbmgr.Eto
         void OnBtnDeveloperClick(object sender, EventArgs eventArgs)
         {
             txtDeveloper.Text = "";
-            if(!(treeStrings.SelectedItem is string str)) return;
+
+            if(!(treeStrings.SelectedItem is string str))
+                return;
 
             txtDeveloper.Text = str;
         }
@@ -30,7 +36,9 @@ namespace apprepodbmgr.Eto
         void OnBtnPublisherClick(object sender, EventArgs eventArgs)
         {
             txtPublisher.Text = "";
-            if(!(treeStrings.SelectedItem is string str)) return;
+
+            if(!(treeStrings.SelectedItem is string str))
+                return;
 
             txtPublisher.Text = str;
         }
@@ -38,7 +46,9 @@ namespace apprepodbmgr.Eto
         void OnBtnProductClick(object sender, EventArgs eventArgs)
         {
             txtProduct.Text = "";
-            if(!(treeStrings.SelectedItem is string str)) return;
+
+            if(!(treeStrings.SelectedItem is string str))
+                return;
 
             txtProduct.Text = str;
         }
@@ -46,7 +56,9 @@ namespace apprepodbmgr.Eto
         void OnBtnVersionClick(object sender, EventArgs eventArgs)
         {
             txtVersion.Text = "";
-            if(!(treeStrings.SelectedItem is string str)) return;
+
+            if(!(treeStrings.SelectedItem is string str))
+                return;
 
             txtVersion.Text = str;
         }

@@ -59,7 +59,7 @@ namespace apprepodbmgr.Core
 
         public static void LoadSettings()
         {
-            Current         = new SetSettings();
+            Current = new SetSettings();
             PlatformID ptId = DetectOS.GetRealPlatformID();
 
             FileStream   prefsFs = null;
@@ -75,6 +75,7 @@ namespace apprepodbmgr.Core
                         string preferencesPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
                                          "Preferences");
+
                         string preferencesFilePath =
                             Path.Combine(preferencesPath, "com.claunia.museum.apprepodbmgr.plist");
 
@@ -84,36 +85,36 @@ namespace apprepodbmgr.Core
                             SaveSettings();
                         }
 
-                        prefsFs                        = new FileStream(preferencesFilePath, FileMode.Open);
-                        NSDictionary parsedPreferences = (NSDictionary)BinaryPropertyListParser.Parse(prefsFs);
+                        prefsFs = new FileStream(preferencesFilePath, FileMode.Open);
+                        var parsedPreferences = (NSDictionary)BinaryPropertyListParser.Parse(prefsFs);
+
                         if(parsedPreferences != null)
                         {
                             Current.TemporaryFolder = parsedPreferences.TryGetValue("TemporaryFolder", out NSObject obj)
-                                                          ? ((NSString)obj).ToString()
-                                                          : Path.GetTempPath();
+                                                          ? ((NSString)obj).ToString() : Path.GetTempPath();
 
                             Current.DatabasePath = parsedPreferences.TryGetValue("DatabasePath", out obj)
                                                        ? ((NSString)obj).ToString()
-                                                       : Path
-                                                          .Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                                       : Path.
+                                                           Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                                                                    "apprepodbmgr.db");
 
                             Current.RepositoryPath = parsedPreferences.TryGetValue("RepositoryPath", out obj)
                                                          ? ((NSString)obj).ToString()
-                                                         : Path
-                                                            .Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                                         : Path.
+                                                             Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                                                                      "apprepo");
 
                             Current.UnArchiverPath = parsedPreferences.TryGetValue("UnArchiverPath", out obj)
-                                                         ? ((NSString)obj).ToString()
-                                                         : null;
+                                                         ? ((NSString)obj).ToString() : null;
 
                             if(parsedPreferences.TryGetValue("CompressionAlgorithm", out obj))
                             {
                                 if(!Enum.TryParse(((NSString)obj).ToString(), true, out Current.CompressionAlgorithm))
                                     Current.CompressionAlgorithm = AlgoEnum.GZip;
                             }
-                            else Current.CompressionAlgorithm = AlgoEnum.GZip;
+                            else
+                                Current.CompressionAlgorithm = AlgoEnum.GZip;
 
                             Current.UseAntivirus = parsedPreferences.TryGetValue("UseAntivirus", out obj) &&
                                                    ((NSNumber)obj).ToBool();
@@ -122,12 +123,12 @@ namespace apprepodbmgr.Core
                                                ((NSNumber)obj).ToBool();
 
                             Current.ClamdHost = parsedPreferences.TryGetValue("ClamdHost", out obj)
-                                                    ? ((NSString)obj).ToString()
-                                                    : null;
+                                                    ? ((NSString)obj).ToString() : null;
 
                             if(parsedPreferences.TryGetValue("ClamdPort", out obj))
-                                Current.ClamdPort  = (ushort)((NSNumber)obj).ToLong();
-                            else Current.ClamdPort = 3310;
+                                Current.ClamdPort = (ushort)((NSNumber)obj).ToLong();
+                            else
+                                Current.ClamdPort = 3310;
 
                             Current.ClamdIsLocal = parsedPreferences.TryGetValue("ClamdIsLocal", out obj) &&
                                                    ((NSNumber)obj).ToBool();
@@ -136,8 +137,7 @@ namespace apprepodbmgr.Core
                                                    ((NSNumber)obj).ToBool();
 
                             Current.ClamdHost = parsedPreferences.TryGetValue("VirusTotalKey", out obj)
-                                                    ? ((NSString)obj).ToString()
-                                                    : null;
+                                                    ? ((NSString)obj).ToString() : null;
 
                             prefsFs.Close();
                         }
@@ -149,6 +149,7 @@ namespace apprepodbmgr.Core
                             SaveSettings();
                         }
                     }
+
                         break;
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
@@ -156,21 +157,24 @@ namespace apprepodbmgr.Core
                     case PlatformID.WinCE:
                     case PlatformID.WindowsPhone:
                     {
-                        RegistryKey parentKey = Registry
-                                               .CurrentUser.OpenSubKey("SOFTWARE")
-                                              ?.OpenSubKey("Canary Islands Computer Museum");
+                        RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE")?.
+                                                         OpenSubKey("Canary Islands Computer Museum");
+
                         if(parentKey == null)
                         {
                             SetDefaultSettings();
                             SaveSettings();
+
                             return;
                         }
 
                         RegistryKey key = parentKey.OpenSubKey("AppRepoDBMgr");
+
                         if(key == null)
                         {
                             SetDefaultSettings();
                             SaveSettings();
+
                             return;
                         }
 
@@ -178,37 +182,42 @@ namespace apprepodbmgr.Core
                         Current.DatabasePath    = (string)key.GetValue("DatabasePath");
                         Current.RepositoryPath  = (string)key.GetValue("RepositoryPath");
                         Current.UnArchiverPath  = (string)key.GetValue("UnArchiverPath");
+
                         if(!Enum.TryParse((string)key.GetValue("CompressionAlgorithm"), true,
                                           out Current.CompressionAlgorithm))
                             Current.CompressionAlgorithm = AlgoEnum.GZip;
-                        Current.UseAntivirus             = bool.Parse((string)key.GetValue("UseAntivirus"));
-                        Current.UseClamd = bool.Parse((string)key.GetValue("UseClamd"));
-                        Current.ClamdHost                = (string)key.GetValue("ClamdHost");
-                        Current.ClamdPort                = ushort.Parse((string)key.GetValue("ClamdPort"));
-                        Current.ClamdIsLocal = bool.Parse((string)key.GetValue("ClamdIsLocal"));
+
+                        Current.UseAntivirus  = bool.Parse((string)key.GetValue("UseAntivirus"));
+                        Current.UseClamd      = bool.Parse((string)key.GetValue("UseClamd"));
+                        Current.ClamdHost     = (string)key.GetValue("ClamdHost");
+                        Current.ClamdPort     = ushort.Parse((string)key.GetValue("ClamdPort"));
+                        Current.ClamdIsLocal  = bool.Parse((string)key.GetValue("ClamdIsLocal"));
                         Current.UseVirusTotal = bool.Parse((string)key.GetValue("UseVirusTotal"));
-                        Current.VirusTotalKey            = (string)key.GetValue("VirusTotalKey");
+                        Current.VirusTotalKey = (string)key.GetValue("VirusTotalKey");
                     }
+
                         break;
                     default:
                     {
                         string configPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
-                        string settingsPath =
-                            Path.Combine(configPath, "AppRepoDBMgr.xml");
+
+                        string settingsPath = Path.Combine(configPath, "AppRepoDBMgr.xml");
 
                         if(!Directory.Exists(configPath))
                         {
                             SetDefaultSettings();
                             SaveSettings();
+
                             return;
                         }
 
-                        XmlSerializer xs = new XmlSerializer(Current.GetType());
-                        prefsSr          = new StreamReader(settingsPath);
-                        Current          = (SetSettings)xs.Deserialize(prefsSr);
+                        var xs = new XmlSerializer(Current.GetType());
+                        prefsSr = new StreamReader(settingsPath);
+                        Current = (SetSettings)xs.Deserialize(prefsSr);
                         prefsSr.Close();
                     }
+
                         break;
                 }
             }
@@ -233,32 +242,58 @@ namespace apprepodbmgr.Core
                     case PlatformID.MacOSX:
                     case PlatformID.iOS:
                     {
-                        NSDictionary root = new NSDictionary
+                        var root = new NSDictionary
                         {
-                            {"TemporaryFolder", Current.TemporaryFolder},
-                            {"DatabasePath", Current.DatabasePath},
-                            {"RepositoryPath", Current.RepositoryPath},
-                            {"UnArchiverPath", Current.UnArchiverPath},
-                            {"CompressionAlgorithm", Current.CompressionAlgorithm.ToString()},
-                            {"UseAntivirus", Current.UseAntivirus},
-                            {"UseClamd", Current.UseClamd},
-                            {"ClamdHost", Current.ClamdHost},
-                            {"ClamdPort", Current.ClamdPort},
-                            {"ClamdIsLocal", Current.ClamdIsLocal},
-                            {"UseVirusTotal", Current.UseVirusTotal},
-                            {"VirusTotalKey", Current.VirusTotalKey}
+                            {
+                                "TemporaryFolder", Current.TemporaryFolder
+                            },
+                            {
+                                "DatabasePath", Current.DatabasePath
+                            },
+                            {
+                                "RepositoryPath", Current.RepositoryPath
+                            },
+                            {
+                                "UnArchiverPath", Current.UnArchiverPath
+                            },
+                            {
+                                "CompressionAlgorithm", Current.CompressionAlgorithm.ToString()
+                            },
+                            {
+                                "UseAntivirus", Current.UseAntivirus
+                            },
+                            {
+                                "UseClamd", Current.UseClamd
+                            },
+                            {
+                                "ClamdHost", Current.ClamdHost
+                            },
+                            {
+                                "ClamdPort", Current.ClamdPort
+                            },
+                            {
+                                "ClamdIsLocal", Current.ClamdIsLocal
+                            },
+                            {
+                                "UseVirusTotal", Current.UseVirusTotal
+                            },
+                            {
+                                "VirusTotalKey", Current.VirusTotalKey
+                            }
                         };
 
                         string preferencesPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
                                          "Preferences");
+
                         string preferencesFilePath =
                             Path.Combine(preferencesPath, "com.claunia.museum.apprepodbmgr.plist");
 
-                        FileStream fs = new FileStream(preferencesFilePath, FileMode.Create);
+                        var fs = new FileStream(preferencesFilePath, FileMode.Create);
                         BinaryPropertyListWriter.Write(fs, root);
                         fs.Close();
                     }
+
                         break;
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
@@ -266,43 +301,48 @@ namespace apprepodbmgr.Core
                     case PlatformID.WinCE:
                     case PlatformID.WindowsPhone:
                     {
-                        RegistryKey parentKey = Registry
-                                               .CurrentUser.OpenSubKey("SOFTWARE", true)
-                                              ?.CreateSubKey("Canary Islands Computer Museum");
+                        RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.
+                                                         CreateSubKey("Canary Islands Computer Museum");
+
                         RegistryKey key = parentKey?.CreateSubKey("AppRepoDBMgr");
 
                         if(key != null)
                         {
-                            key.SetValue("TemporaryFolder",                                   Current.TemporaryFolder);
-                            key.SetValue("DatabasePath",                                      Current.DatabasePath);
-                            key.SetValue("RepositoryPath",                                    Current.RepositoryPath);
-                            if(Current.UnArchiverPath != null) key.SetValue("UnArchiverPath", Current.UnArchiverPath);
-                            key.SetValue("CompressionAlgorithm",
-                                         Current.CompressionAlgorithm);
-                            key.SetValue("UseAntivirus",  Current.UseAntivirus);
-                            key.SetValue("UseClamd",      Current.UseClamd);
-                            key.SetValue("ClamdHost",     Current.ClamdHost == null ? "" : Current.ClamdHost);
-                            key.SetValue("ClamdPort",     Current.ClamdPort);
-                            key.SetValue("ClamdIsLocal",  Current.ClamdIsLocal);
+                            key.SetValue("TemporaryFolder", Current.TemporaryFolder);
+                            key.SetValue("DatabasePath", Current.DatabasePath);
+                            key.SetValue("RepositoryPath", Current.RepositoryPath);
+
+                            if(Current.UnArchiverPath != null)
+                                key.SetValue("UnArchiverPath", Current.UnArchiverPath);
+
+                            key.SetValue("CompressionAlgorithm", Current.CompressionAlgorithm);
+                            key.SetValue("UseAntivirus", Current.UseAntivirus);
+                            key.SetValue("UseClamd", Current.UseClamd);
+                            key.SetValue("ClamdHost", Current.ClamdHost == null ? "" : Current.ClamdHost);
+                            key.SetValue("ClamdPort", Current.ClamdPort);
+                            key.SetValue("ClamdIsLocal", Current.ClamdIsLocal);
                             key.SetValue("UseVirusTotal", Current.UseVirusTotal);
                             key.SetValue("VirusTotalKey", Current.VirusTotalKey == null ? "" : Current.VirusTotalKey);
                         }
                     }
+
                         break;
                     default:
                     {
                         string configPath =
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config");
-                        string settingsPath =
-                            Path.Combine(configPath, "AppRepoDBMgr.xml");
 
-                        if(!Directory.Exists(configPath)) Directory.CreateDirectory(configPath);
+                        string settingsPath = Path.Combine(configPath, "AppRepoDBMgr.xml");
 
-                        FileStream    fs = new FileStream(settingsPath, FileMode.Create);
-                        XmlSerializer xs = new XmlSerializer(Current.GetType());
+                        if(!Directory.Exists(configPath))
+                            Directory.CreateDirectory(configPath);
+
+                        var fs = new FileStream(settingsPath, FileMode.Create);
+                        var xs = new XmlSerializer(Current.GetType());
                         xs.Serialize(fs, Current);
                         fs.Close();
                     }
+
                         break;
                 }
             }
@@ -310,29 +350,26 @@ namespace apprepodbmgr.Core
             catch
                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
             }
         }
 
-        static void SetDefaultSettings()
+        static void SetDefaultSettings() => Current = new SetSettings
         {
-            Current = new SetSettings
-            {
-                TemporaryFolder = Path.GetTempPath(),
-                DatabasePath    =
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "apprepodbmgr.db"),
-                RepositoryPath =
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "apprepo"),
-                UnArchiverPath       = null,
-                CompressionAlgorithm = AlgoEnum.GZip,
-                UseAntivirus         = false,
-                UseClamd             = false,
-                ClamdHost            = null,
-                ClamdPort            = 3310,
-                ClamdIsLocal         = false,
-                UseVirusTotal        = false,
-                VirusTotalKey        = null
-            };
-        }
+            TemporaryFolder = Path.GetTempPath(),
+            DatabasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                        "apprepodbmgr.db"),
+            RepositoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "apprepo"),
+            UnArchiverPath = null,
+            CompressionAlgorithm = AlgoEnum.GZip,
+            UseAntivirus = false,
+            UseClamd = false,
+            ClamdHost = null,
+            ClamdPort = 3310,
+            ClamdIsLocal = false,
+            UseVirusTotal = false,
+            VirusTotalKey = null
+        };
     }
 }

@@ -42,23 +42,30 @@ namespace apprepodbmgr.Core
             try
             {
                 string dataSrc = $"URI=file:{database}";
-                dbCon          = new SQLiteConnection(dataSrc);
+                dbCon = new SQLiteConnection(dataSrc);
                 dbCon.Open();
 
                 const string SQL = "SELECT * FROM apprepodbmgr";
 
-                SQLiteCommand dbcmd        = dbCon.CreateCommand();
-                dbcmd.CommandText          = SQL;
-                SQLiteDataAdapter dAdapter = new SQLiteDataAdapter {SelectCommand = dbcmd};
-                DataSet           dSet     = new DataSet();
+                SQLiteCommand dbcmd = dbCon.CreateCommand();
+                dbcmd.CommandText = SQL;
+
+                var dAdapter = new SQLiteDataAdapter
+                {
+                    SelectCommand = dbcmd
+                };
+
+                var dSet = new DataSet();
                 dAdapter.Fill(dSet);
                 DataTable dTable = dSet.Tables[0];
 
-                if(dTable.Rows.Count != 1) return false;
+                if(dTable.Rows.Count != 1)
+                    return false;
 
                 if((long)dTable.Rows[0]["version"] != 1)
                 {
                     dbCon = null;
+
                     return false;
                 }
 
@@ -71,6 +78,7 @@ namespace apprepodbmgr.Core
                 Console.WriteLine("Error opening DB.");
                 Console.WriteLine(ex.Message);
                 dbCon = null;
+
                 return false;
             }
         }
@@ -87,37 +95,37 @@ namespace apprepodbmgr.Core
             try
             {
                 string dataSrc = $"URI=file:{database}";
-                dbCon          = new SQLiteConnection(dataSrc);
+                dbCon = new SQLiteConnection(dataSrc);
                 dbCon.Open();
                 SQLiteCommand dbCmd = dbCon.CreateCommand();
 
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Creating apprepodbmgr table");
-                #endif
+            #endif
 
-                string sql        = "CREATE TABLE apprepodbmgr ( version INTEGER, name TEXT )";
+                string sql = "CREATE TABLE apprepodbmgr ( version INTEGER, name TEXT )";
                 dbCmd.CommandText = sql;
                 dbCmd.ExecuteNonQuery();
 
-                sql =
-                    "INSERT INTO apprepodbmgr ( version, name ) VALUES ( '1', 'Canary Islands Computer Museum' )";
+                sql = "INSERT INTO apprepodbmgr ( version, name ) VALUES ( '1', 'Canary Islands Computer Museum' )";
                 dbCmd.CommandText = sql;
                 dbCmd.ExecuteNonQuery();
 
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Creating applications table");
-                #endif
+            #endif
                 dbCmd.CommandText = Schema.AppsTableSql;
                 dbCmd.ExecuteNonQuery();
 
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Creating files table");
-                #endif
+            #endif
                 dbCmd.CommandText = Schema.FilesTableSql;
                 dbCmd.ExecuteNonQuery();
 
                 dbCmd.Dispose();
                 dbCon = null;
+
                 return true;
             }
             catch(SQLiteException ex)
@@ -125,14 +133,12 @@ namespace apprepodbmgr.Core
                 Console.WriteLine("Error opening DB.");
                 Console.WriteLine(ex.Message);
                 dbCon = null;
+
                 return false;
             }
         }
 
-        public override IDbDataAdapter GetNewDataAdapter()
-        {
-            return new SQLiteDataAdapter();
-        }
+        public override IDbDataAdapter GetNewDataAdapter() => new SQLiteDataAdapter();
 
         public override long LastInsertRowId => dbCon.LastInsertRowId;
         #endregion

@@ -53,53 +53,63 @@ namespace apprepodbmgr.Core
         {
             string filesPath;
 
-            if(!string.IsNullOrEmpty(Context.TmpFolder) && Directory.Exists(Context.TmpFolder))
-                filesPath  = Context.TmpFolder;
-            else filesPath = Context.Path;
+            if(!string.IsNullOrEmpty(Context.TmpFolder) &&
+               Directory.Exists(Context.TmpFolder))
+                filesPath = Context.TmpFolder;
+            else
+                filesPath = Context.Path;
 
-            if(string.IsNullOrEmpty(filesPath)) Failed?.Invoke("Path is null or empty");
+            if(string.IsNullOrEmpty(filesPath))
+                Failed?.Invoke("Path is null or empty");
 
-            if(!Directory.Exists(filesPath)) Failed?.Invoke("Directory not found");
+            if(!Directory.Exists(filesPath))
+                Failed?.Invoke("Directory not found");
 
             try
             {
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 Context.Files = IO.EnumerateFiles(filesPath, "*", SearchOption.AllDirectories, false, false);
                 Context.Files.Sort();
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.FindFiles(): Took {0} seconds to find all files",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
+            #endif
                 Context.Folders = IO.EnumerateDirectories(filesPath, "*", SearchOption.AllDirectories, false, false);
                 Context.Folders.Sort();
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.FindFiles(): Took {0} seconds to find all folders",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
+            #endif
                 Context.Symlinks = IO.EnumerateSymlinks(filesPath, "*", SearchOption.AllDirectories);
                 Context.Symlinks.Sort();
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.FindFiles(): Took {0} seconds to find all symbolic links",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -152,64 +162,103 @@ namespace apprepodbmgr.Core
                     DetectOS.GetRealPlatformID() == PlatformID.Win32S       ||
                     DetectOS.GetRealPlatformID() == PlatformID.Win32NT      ||
                     DetectOS.GetRealPlatformID() == PlatformID.Win32Windows ||
-                    DetectOS.GetRealPlatformID() == PlatformID.WindowsPhone) && Context.Symlinks.Count > 0)
+                    DetectOS.GetRealPlatformID() == PlatformID.WindowsPhone) &&
+                   Context.Symlinks.Count > 0)
                 {
                     Failed?.Invoke("Source contain unsupported symbolic links, not continuing.");
+
                     return;
                 }
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 long counter = 1;
+
                 foreach(string file in Context.Files)
                 {
                     // An already known metadata file, skip it
                     if(alreadyMetadata.Contains(file))
                     {
                         counter++;
+
                         continue;
                     }
 
                     switch(Path.GetExtension(file).ToLowerInvariant())
                     {
                         case ".xml":
-                            FileStream        xrs = new FileStream(file, FileMode.Open, FileAccess.Read);
-                            XmlReaderSettings xrt = new XmlReaderSettings {DtdProcessing = DtdProcessing.Ignore};
+                            var xrs = new FileStream(file, FileMode.Open, FileAccess.Read);
 
-                            XmlReader     xr = XmlReader.Create(xrs, xrt);
-                            XmlSerializer xs = new XmlSerializer(typeof(CICMMetadataType));
+                            var xrt = new XmlReaderSettings
+                            {
+                                DtdProcessing = DtdProcessing.Ignore
+                            };
+
+                            var xr = XmlReader.Create(xrs, xrt);
+                            var xs = new XmlSerializer(typeof(CICMMetadataType));
+
                             try
                             {
                                 if(xs.CanDeserialize(xr))
                                 {
-                                    CICMMetadataType thisMetadata = (CICMMetadataType)xs.Deserialize(xr);
+                                    var thisMetadata = (CICMMetadataType)xs.Deserialize(xr);
+
                                     if(thisMetadata.Architectures != null)
                                         architectures.AddRange(thisMetadata.Architectures);
-                                    if(thisMetadata.Barcodes    != null) barcodes.AddRange(thisMetadata.Barcodes);
-                                    if(thisMetadata.BlockMedia  != null) disks.AddRange(thisMetadata.BlockMedia);
-                                    if(thisMetadata.Categories  != null) categories.AddRange(thisMetadata.Categories);
-                                    if(thisMetadata.Keywords    != null) keywords.AddRange(thisMetadata.Keywords);
-                                    if(thisMetadata.Languages   != null) languages.AddRange(thisMetadata.Languages);
-                                    if(thisMetadata.OpticalDisc != null) discs.AddRange(thisMetadata.OpticalDisc);
+
+                                    if(thisMetadata.Barcodes != null)
+                                        barcodes.AddRange(thisMetadata.Barcodes);
+
+                                    if(thisMetadata.BlockMedia != null)
+                                        disks.AddRange(thisMetadata.BlockMedia);
+
+                                    if(thisMetadata.Categories != null)
+                                        categories.AddRange(thisMetadata.Categories);
+
+                                    if(thisMetadata.Keywords != null)
+                                        keywords.AddRange(thisMetadata.Keywords);
+
+                                    if(thisMetadata.Languages != null)
+                                        languages.AddRange(thisMetadata.Languages);
+
+                                    if(thisMetadata.OpticalDisc != null)
+                                        discs.AddRange(thisMetadata.OpticalDisc);
+
                                     if(thisMetadata.Subcategories != null)
                                         subcategories.AddRange(thisMetadata.Subcategories);
-                                    if(thisMetadata.Systems   != null) systems.AddRange(thisMetadata.Systems);
-                                    if(thisMetadata.Author    != null) authors.AddRange(thisMetadata.Author);
-                                    if(thisMetadata.Developer != null) developers.AddRange(thisMetadata.Developer);
-                                    if(thisMetadata.Performer != null) performers.AddRange(thisMetadata.Performer);
-                                    if(thisMetadata.Publisher != null) publishers.AddRange(thisMetadata.Publisher);
+
+                                    if(thisMetadata.Systems != null)
+                                        systems.AddRange(thisMetadata.Systems);
+
+                                    if(thisMetadata.Author != null)
+                                        authors.AddRange(thisMetadata.Author);
+
+                                    if(thisMetadata.Developer != null)
+                                        developers.AddRange(thisMetadata.Developer);
+
+                                    if(thisMetadata.Performer != null)
+                                        performers.AddRange(thisMetadata.Performer);
+
+                                    if(thisMetadata.Publisher != null)
+                                        publishers.AddRange(thisMetadata.Publisher);
+
                                     if(string.IsNullOrWhiteSpace(metadataName) &&
-                                       !string.IsNullOrWhiteSpace(thisMetadata.Name)) metadataName = thisMetadata.Name;
+                                       !string.IsNullOrWhiteSpace(thisMetadata.Name))
+                                        metadataName = thisMetadata.Name;
+
                                     if(string.IsNullOrWhiteSpace(metadataPartNo) &&
                                        !string.IsNullOrWhiteSpace(thisMetadata.PartNumber))
                                         metadataPartNo = thisMetadata.PartNumber;
+
                                     if(string.IsNullOrWhiteSpace(metadataSerial) &&
                                        !string.IsNullOrWhiteSpace(thisMetadata.SerialNumber))
                                         metadataSerial = thisMetadata.SerialNumber;
+
                                     if(string.IsNullOrWhiteSpace(metadataVersion) &&
                                        !string.IsNullOrWhiteSpace(thisMetadata.Version))
                                         metadataVersion = thisMetadata.Version;
+
                                     if(thisMetadata.ReleaseDateSpecified)
                                         if(thisMetadata.ReleaseDate > releaseDate)
                                         {
@@ -223,23 +272,36 @@ namespace apprepodbmgr.Core
                                         releaseType          = thisMetadata.ReleaseType;
                                     }
 
-                                    if(thisMetadata.Magazine != null) magazines.AddRange(thisMetadata.Magazine);
-                                    if(thisMetadata.Book     != null) books.AddRange(thisMetadata.Book);
+                                    if(thisMetadata.Magazine != null)
+                                        magazines.AddRange(thisMetadata.Magazine);
+
+                                    if(thisMetadata.Book != null)
+                                        books.AddRange(thisMetadata.Book);
+
                                     if(thisMetadata.RequiredOperatingSystems != null)
                                         requiredOses.AddRange(thisMetadata.RequiredOperatingSystems);
+
                                     if(thisMetadata.UserManual != null)
                                         usermanuals.AddRange(thisMetadata.UserManual);
-                                    if(thisMetadata.Advertisement != null) adverts.AddRange(thisMetadata.Advertisement);
+
+                                    if(thisMetadata.Advertisement != null)
+                                        adverts.AddRange(thisMetadata.Advertisement);
+
                                     if(thisMetadata.LinearMedia != null)
                                         linearmedias.AddRange(thisMetadata.LinearMedia);
-                                    if(thisMetadata.PCICard    != null) pcis.AddRange(thisMetadata.PCICard);
-                                    if(thisMetadata.AudioMedia != null) audiomedias.AddRange(thisMetadata.AudioMedia);
+
+                                    if(thisMetadata.PCICard != null)
+                                        pcis.AddRange(thisMetadata.PCICard);
+
+                                    if(thisMetadata.AudioMedia != null)
+                                        audiomedias.AddRange(thisMetadata.AudioMedia);
 
                                     foundMetadata = true;
 
                                     string metadataFileWithoutExtension =
                                         Path.Combine(Path.GetDirectoryName(file),
                                                      Path.GetFileNameWithoutExtension(file));
+
                                     alreadyMetadata.Add(metadataFileWithoutExtension + ".xml");
                                     alreadyMetadata.Add(metadataFileWithoutExtension + ".xmL");
                                     alreadyMetadata.Add(metadataFileWithoutExtension + ".xMl");
@@ -267,6 +329,7 @@ namespace apprepodbmgr.Core
 
                                     xr.Close();
                                     xrs.Close();
+
                                     continue;
                                 }
                             }
@@ -278,40 +341,69 @@ namespace apprepodbmgr.Core
 
                             break;
                         case ".json":
-                            FileStream     jrs = new FileStream(file, FileMode.Open, FileAccess.Read);
-                            TextReader     jr  = new StreamReader(jrs);
-                            JsonSerializer js  = new JsonSerializer();
+                            var        jrs = new FileStream(file, FileMode.Open, FileAccess.Read);
+                            TextReader jr  = new StreamReader(jrs);
+                            var        js  = new JsonSerializer();
 
                             try
                             {
-                                CICMMetadataType thisMetadata =
-                                    (CICMMetadataType)js.Deserialize(jr, typeof(CICMMetadataType));
+                                var thisMetadata = (CICMMetadataType)js.Deserialize(jr, typeof(CICMMetadataType));
+
                                 if(thisMetadata.Architectures != null)
                                     architectures.AddRange(thisMetadata.Architectures);
-                                if(thisMetadata.Barcodes    != null) barcodes.AddRange(thisMetadata.Barcodes);
-                                if(thisMetadata.BlockMedia  != null) disks.AddRange(thisMetadata.BlockMedia);
-                                if(thisMetadata.Categories  != null) categories.AddRange(thisMetadata.Categories);
-                                if(thisMetadata.Keywords    != null) keywords.AddRange(thisMetadata.Keywords);
-                                if(thisMetadata.Languages   != null) languages.AddRange(thisMetadata.Languages);
-                                if(thisMetadata.OpticalDisc != null) discs.AddRange(thisMetadata.OpticalDisc);
+
+                                if(thisMetadata.Barcodes != null)
+                                    barcodes.AddRange(thisMetadata.Barcodes);
+
+                                if(thisMetadata.BlockMedia != null)
+                                    disks.AddRange(thisMetadata.BlockMedia);
+
+                                if(thisMetadata.Categories != null)
+                                    categories.AddRange(thisMetadata.Categories);
+
+                                if(thisMetadata.Keywords != null)
+                                    keywords.AddRange(thisMetadata.Keywords);
+
+                                if(thisMetadata.Languages != null)
+                                    languages.AddRange(thisMetadata.Languages);
+
+                                if(thisMetadata.OpticalDisc != null)
+                                    discs.AddRange(thisMetadata.OpticalDisc);
+
                                 if(thisMetadata.Subcategories != null)
                                     subcategories.AddRange(thisMetadata.Subcategories);
-                                if(thisMetadata.Systems   != null) systems.AddRange(thisMetadata.Systems);
-                                if(thisMetadata.Author    != null) authors.AddRange(thisMetadata.Author);
-                                if(thisMetadata.Developer != null) developers.AddRange(thisMetadata.Developer);
-                                if(thisMetadata.Performer != null) performers.AddRange(thisMetadata.Performer);
-                                if(thisMetadata.Publisher != null) publishers.AddRange(thisMetadata.Publisher);
+
+                                if(thisMetadata.Systems != null)
+                                    systems.AddRange(thisMetadata.Systems);
+
+                                if(thisMetadata.Author != null)
+                                    authors.AddRange(thisMetadata.Author);
+
+                                if(thisMetadata.Developer != null)
+                                    developers.AddRange(thisMetadata.Developer);
+
+                                if(thisMetadata.Performer != null)
+                                    performers.AddRange(thisMetadata.Performer);
+
+                                if(thisMetadata.Publisher != null)
+                                    publishers.AddRange(thisMetadata.Publisher);
+
                                 if(string.IsNullOrWhiteSpace(metadataName) &&
-                                   !string.IsNullOrWhiteSpace(thisMetadata.Name)) metadataName = thisMetadata.Name;
+                                   !string.IsNullOrWhiteSpace(thisMetadata.Name))
+                                    metadataName = thisMetadata.Name;
+
                                 if(string.IsNullOrWhiteSpace(metadataPartNo) &&
                                    !string.IsNullOrWhiteSpace(thisMetadata.PartNumber))
                                     metadataPartNo = thisMetadata.PartNumber;
+
                                 if(string.IsNullOrWhiteSpace(metadataSerial) &&
                                    !string.IsNullOrWhiteSpace(thisMetadata.SerialNumber))
                                     metadataSerial = thisMetadata.SerialNumber;
+
                                 if(string.IsNullOrWhiteSpace(metadataVersion) &&
                                    !string.IsNullOrWhiteSpace(thisMetadata.Version))
                                     metadataVersion = thisMetadata.Version;
+
                                 if(thisMetadata.ReleaseDateSpecified)
                                     if(thisMetadata.ReleaseDate > releaseDate)
                                     {
@@ -325,20 +417,35 @@ namespace apprepodbmgr.Core
                                     releaseType          = thisMetadata.ReleaseType;
                                 }
 
-                                if(thisMetadata.Magazine != null) magazines.AddRange(thisMetadata.Magazine);
-                                if(thisMetadata.Book     != null) books.AddRange(thisMetadata.Book);
+                                if(thisMetadata.Magazine != null)
+                                    magazines.AddRange(thisMetadata.Magazine);
+
+                                if(thisMetadata.Book != null)
+                                    books.AddRange(thisMetadata.Book);
+
                                 if(thisMetadata.RequiredOperatingSystems != null)
                                     requiredOses.AddRange(thisMetadata.RequiredOperatingSystems);
-                                if(thisMetadata.UserManual    != null) usermanuals.AddRange(thisMetadata.UserManual);
-                                if(thisMetadata.Advertisement != null) adverts.AddRange(thisMetadata.Advertisement);
-                                if(thisMetadata.LinearMedia   != null) linearmedias.AddRange(thisMetadata.LinearMedia);
-                                if(thisMetadata.PCICard       != null) pcis.AddRange(thisMetadata.PCICard);
-                                if(thisMetadata.AudioMedia    != null) audiomedias.AddRange(thisMetadata.AudioMedia);
+
+                                if(thisMetadata.UserManual != null)
+                                    usermanuals.AddRange(thisMetadata.UserManual);
+
+                                if(thisMetadata.Advertisement != null)
+                                    adverts.AddRange(thisMetadata.Advertisement);
+
+                                if(thisMetadata.LinearMedia != null)
+                                    linearmedias.AddRange(thisMetadata.LinearMedia);
+
+                                if(thisMetadata.PCICard != null)
+                                    pcis.AddRange(thisMetadata.PCICard);
+
+                                if(thisMetadata.AudioMedia != null)
+                                    audiomedias.AddRange(thisMetadata.AudioMedia);
 
                                 foundMetadata = true;
 
                                 string metadataFileWithoutExtension =
                                     Path.Combine(Path.GetDirectoryName(file), Path.GetFileNameWithoutExtension(file));
+
                                 alreadyMetadata.Add(metadataFileWithoutExtension + ".xml");
                                 alreadyMetadata.Add(metadataFileWithoutExtension + ".xmL");
                                 alreadyMetadata.Add(metadataFileWithoutExtension + ".xMl");
@@ -366,6 +473,7 @@ namespace apprepodbmgr.Core
 
                                 jr.Close();
                                 jrs.Close();
+
                                 continue;
                             }
                             catch(JsonException)
@@ -411,58 +519,75 @@ namespace apprepodbmgr.Core
                         case "leggi":
                         case "lesidmig":
                             Context.Readmes.Add(file);
+
                             break;
                     }
 
                     if((Path.GetExtension(file).ToLowerInvariant() == ".nfo" ||
                         Path.GetExtension(file).ToLowerInvariant() == ".diz" ||
                         Path.GetExtension(file).ToLowerInvariant() == ".txt") &&
-                       !Context.Readmes.Contains(file)) Context.Readmes.Add(file);
+                       !Context.Readmes.Contains(file))
+                        Context.Readmes.Add(file);
 
-                    FileStream exeStream = new FileStream(file, FileMode.Open, FileAccess.Read);
-                    // Catch all exceptions in this block to prevent a failure in libexeinfo to crash us whole 
+                    var exeStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+
+                    // Catch all exceptions in this block to prevent a failure in libexeinfo to crash us whole
                     try
                     {
-                        if(AtariST.Identify(exeStream) || COFF.Identify(exeStream) || ELF.Identify(exeStream) ||
-                           Geos.Identify(exeStream)    || LX.Identify(exeStream)   || MZ.Identify(exeStream)  ||
-                           NE.Identify(exeStream)      || PE.Identify(exeStream)) Context.Executables.Add(file);
+                        if(AtariST.Identify(exeStream) ||
+                           COFF.Identify(exeStream)    ||
+                           ELF.Identify(exeStream)     ||
+                           Geos.Identify(exeStream)    ||
+                           LX.Identify(exeStream)      ||
+                           MZ.Identify(exeStream)      ||
+                           NE.Identify(exeStream)      ||
+                           PE.Identify(exeStream))
+                            Context.Executables.Add(file);
                     }
                     catch(Exception ex)
                     {
                         Console.WriteLine("Exception in libexeinfo wjem processing file {0}:", file);
-                        Console.WriteLine("Exception: {0}",                                    ex.Message);
-                        Console.WriteLine("Source: {0}",                                       ex.Source);
-                        Console.WriteLine("Stack trace: {0}",                                  ex.StackTrace);
-                        Console.WriteLine("Please report the exception and accompany the file to https://github.com/claunia/libexeinfo");
+                        Console.WriteLine("Exception: {0}", ex.Message);
+                        Console.WriteLine("Source: {0}", ex.Source);
+                        Console.WriteLine("Stack trace: {0}", ex.StackTrace);
+
+                        Console.
+                            WriteLine("Please report the exception and accompany the file to https://github.com/claunia/libexeinfo");
+
                         Console.WriteLine("Continuing...");
                     }
 
                     exeStream.Close();
 
-                    string   filesPath;
-                    FileInfo fi = new FileInfo(file);
+                    string filesPath;
+                    var    fi = new FileInfo(file);
 
-                    if(!string.IsNullOrEmpty(Context.TmpFolder) && Directory.Exists(Context.TmpFolder))
-                        filesPath  = Context.TmpFolder;
-                    else filesPath = Context.Path;
+                    if(!string.IsNullOrEmpty(Context.TmpFolder) &&
+                       Directory.Exists(Context.TmpFolder))
+                        filesPath = Context.TmpFolder;
+                    else
+                        filesPath = Context.Path;
 
                     string relpath = file.Substring(filesPath.Length + 1);
 
                     UpdateProgress?.Invoke($"Hashing file {counter} of {Context.Files.Count}", null, counter,
                                            Context.Files.Count);
-                    FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
 
-                    byte[]        dataBuffer;
-                    Sha256Context sha256Context = new Sha256Context();
+                    var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+
+                    byte[] dataBuffer;
+                    var    sha256Context = new Sha256Context();
 
                     if(fileStream.Length > BUFFER_SIZE)
                     {
                         long offset;
                         long remainder = fileStream.Length % BUFFER_SIZE;
+
                         for(offset = 0; offset < fileStream.Length - remainder; offset += (int)BUFFER_SIZE)
                         {
                             UpdateProgress2?.Invoke($"{offset / (double)fileStream.Length:P}", relpath, offset,
                                                     fileStream.Length);
+
                             dataBuffer = new byte[BUFFER_SIZE];
                             fileStream.Read(dataBuffer, 0, (int)BUFFER_SIZE);
                             sha256Context.Update(dataBuffer);
@@ -470,6 +595,7 @@ namespace apprepodbmgr.Core
 
                         UpdateProgress2?.Invoke($"{offset / (double)fileStream.Length:P}", relpath, offset,
                                                 fileStream.Length);
+
                         dataBuffer = new byte[remainder];
                         fileStream.Read(dataBuffer, 0, (int)remainder);
                         sha256Context.Update(dataBuffer);
@@ -485,7 +611,7 @@ namespace apprepodbmgr.Core
                     fileStream.Close();
                     string hash = Stringify(sha256Context.Final());
 
-                    DbAppFile dbFile = new DbAppFile
+                    var dbFile = new DbAppFile
                     {
                         Attributes        = fi.Attributes,
                         CreationTimeUtc   = fi.CreationTimeUtc,
@@ -504,27 +630,33 @@ namespace apprepodbmgr.Core
                     Context.Hashes.Add(relpath, dbFile);
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.HashFiles(): Took {0} seconds to hash all files",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
+            #endif
                 counter = 1;
+
                 foreach(string folder in Context.Folders)
                 {
-                    string        filesPath;
-                    DirectoryInfo di = new DirectoryInfo(folder);
+                    string filesPath;
+                    var    di = new DirectoryInfo(folder);
 
-                    if(!string.IsNullOrEmpty(Context.TmpFolder) && Directory.Exists(Context.TmpFolder))
-                        filesPath  = Context.TmpFolder;
-                    else filesPath = Context.Path;
+                    if(!string.IsNullOrEmpty(Context.TmpFolder) &&
+                       Directory.Exists(Context.TmpFolder))
+                        filesPath = Context.TmpFolder;
+                    else
+                        filesPath = Context.Path;
 
                     string relpath = folder.Substring(filesPath.Length + 1);
+
                     UpdateProgress?.Invoke($"Checking folder {counter} of {Context.Folders.Count}", null, counter,
                                            Context.Folders.Count);
 
-                    DbFolder dbFolder = new DbFolder
+                    var dbFolder = new DbFolder
                     {
                         Attributes        = di.Attributes,
                         CreationTimeUtc   = di.CreationTimeUtc,
@@ -536,20 +668,25 @@ namespace apprepodbmgr.Core
                     Context.FoldersDict.Add(relpath, dbFolder);
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.HashFiles(): Took {0} seconds to iterate all folders",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
+            #endif
                 counter = 2;
+
                 foreach(string symlink in Context.Symlinks)
                 {
                     string filesPath;
 
-                    if(!string.IsNullOrEmpty(Context.TmpFolder) && Directory.Exists(Context.TmpFolder))
-                        filesPath  = Context.TmpFolder;
-                    else filesPath = Context.Path;
+                    if(!string.IsNullOrEmpty(Context.TmpFolder) &&
+                       Directory.Exists(Context.TmpFolder))
+                        filesPath = Context.TmpFolder;
+                    else
+                        filesPath = Context.Path;
 
                     string relpath = symlink.Substring(filesPath.Length + 1);
 
@@ -557,38 +694,66 @@ namespace apprepodbmgr.Core
                                            Context.Symlinks.Count);
 
                     string target = Symlinks.ReadLink(symlink);
+
                     if(target == null)
                     {
                         Failed?.Invoke($"Could not resolve symbolic link at {relpath}, not continuing.");
+
                         return;
                     }
 
                     Context.SymlinksDict.Add(relpath, target);
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.HashFiles(): Took {0} seconds to resolve all symbolic links",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 if(foundMetadata)
                 {
                     Context.Metadata = new CICMMetadataType();
-                    if(architectures.Count > 0) Context.Metadata.Architectures = architectures.Distinct().ToArray();
-                    if(authors.Count       > 0) Context.Metadata.Author        = authors.Distinct().ToArray();
+
+                    if(architectures.Count > 0)
+                        Context.Metadata.Architectures = architectures.Distinct().ToArray();
+
+                    if(authors.Count > 0)
+                        Context.Metadata.Author = authors.Distinct().ToArray();
+
                     // TODO: Check for uniqueness
-                    if(barcodes.Count   > 0) Context.Metadata.Barcodes   = barcodes.ToArray();
-                    if(disks.Count      > 0) Context.Metadata.BlockMedia = disks.ToArray();
-                    if(categories.Count > 0) Context.Metadata.Categories = categories.Distinct().ToArray();
-                    if(developers.Count > 0) Context.Metadata.Developer  = developers.Distinct().ToArray();
-                    if(keywords.Count   > 0) Context.Metadata.Keywords   = keywords.Distinct().ToArray();
-                    if(languages.Count  > 0) Context.Metadata.Languages  = languages.Distinct().ToArray();
+                    if(barcodes.Count > 0)
+                        Context.Metadata.Barcodes = barcodes.ToArray();
+
+                    if(disks.Count > 0)
+                        Context.Metadata.BlockMedia = disks.ToArray();
+
+                    if(categories.Count > 0)
+                        Context.Metadata.Categories = categories.Distinct().ToArray();
+
+                    if(developers.Count > 0)
+                        Context.Metadata.Developer = developers.Distinct().ToArray();
+
+                    if(keywords.Count > 0)
+                        Context.Metadata.Keywords = keywords.Distinct().ToArray();
+
+                    if(languages.Count > 0)
+                        Context.Metadata.Languages = languages.Distinct().ToArray();
+
                     Context.Metadata.Name = metadataName;
-                    if(discs.Count > 0) Context.Metadata.OpticalDisc = discs.ToArray();
+
+                    if(discs.Count > 0)
+                        Context.Metadata.OpticalDisc = discs.ToArray();
+
                     Context.Metadata.PartNumber = metadataPartNo;
-                    if(performers.Count > 0) Context.Metadata.Performer = performers.Distinct().ToArray();
-                    if(publishers.Count > 0) Context.Metadata.Publisher = publishers.Distinct().ToArray();
+
+                    if(performers.Count > 0)
+                        Context.Metadata.Performer = performers.Distinct().ToArray();
+
+                    if(publishers.Count > 0)
+                        Context.Metadata.Publisher = publishers.Distinct().ToArray();
+
                     if(releaseDateSpecified)
                     {
                         Context.Metadata.ReleaseDate          = releaseDate;
@@ -602,8 +767,13 @@ namespace apprepodbmgr.Core
                     }
 
                     Context.Metadata.SerialNumber = metadataSerial;
-                    if(subcategories.Count > 0) Context.Metadata.Subcategories = subcategories.Distinct().ToArray();
-                    if(systems.Count       > 0) Context.Metadata.Systems       = systems.Distinct().ToArray();
+
+                    if(subcategories.Count > 0)
+                        Context.Metadata.Subcategories = subcategories.Distinct().ToArray();
+
+                    if(systems.Count > 0)
+                        Context.Metadata.Systems = systems.Distinct().ToArray();
+
                     Context.Metadata.Version                  = metadataVersion;
                     Context.Metadata.Magazine                 = magazines.ToArray();
                     Context.Metadata.Book                     = books.ToArray();
@@ -614,21 +784,24 @@ namespace apprepodbmgr.Core
                     Context.Metadata.PCICard                  = pcis.ToArray();
                     Context.Metadata.AudioMedia               = audiomedias.ToArray();
 
-                    foreach(string metadataFile in alreadyMetadata) Context.Files.Remove(metadataFile);
+                    foreach(string metadataFile in alreadyMetadata)
+                        Context.Files.Remove(metadataFile);
                 }
-                else Context.Metadata = null;
+                else
+                    Context.Metadata = null;
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -636,12 +809,13 @@ namespace apprepodbmgr.Core
         {
             try
             {
-                if(!Directory.Exists(Context.TmpFolder)) return;
+                if(!Directory.Exists(Context.TmpFolder))
+                    return;
 
                 Directory.Delete(Context.TmpFolder, true);
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(IOException)
             {
                 // Could not delete temporary files, do not crash.
@@ -649,12 +823,13 @@ namespace apprepodbmgr.Core
             }
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -665,27 +840,30 @@ namespace apprepodbmgr.Core
                 if(!File.Exists(Context.Path))
                 {
                     Failed?.Invoke("Specified file cannot be found");
+
                     return;
                 }
 
                 if(string.IsNullOrWhiteSpace(Context.TmpFolder))
                 {
                     Failed?.Invoke("Destination cannot be empty");
+
                     return;
                 }
 
                 if(Directory.Exists(Context.TmpFolder))
                 {
                     Failed?.Invoke("Destination cannot be a folder");
+
                     return;
                 }
 
-                FileStream inFs  = new FileStream(Context.Path,      FileMode.Open,   FileAccess.Read);
-                FileStream outFs = new FileStream(Context.TmpFolder, FileMode.Create, FileAccess.Write);
+                var inFs  = new FileStream(Context.Path, FileMode.Open, FileAccess.Read);
+                var outFs = new FileStream(Context.TmpFolder, FileMode.Create, FileAccess.Write);
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 byte[] buffer = new byte[BUFFER_SIZE];
 
                 while(inFs.Position + BUFFER_SIZE <= inFs.Length)
@@ -698,6 +876,7 @@ namespace apprepodbmgr.Core
                 }
 
                 buffer = new byte[inFs.Length - inFs.Position];
+
                 UpdateProgress?.Invoke("Copying file...", $"{inFs.Position} / {inFs.Length} bytes", inFs.Position,
                                        inFs.Length);
 
@@ -706,22 +885,23 @@ namespace apprepodbmgr.Core
 
                 inFs.Close();
                 outFs.Close();
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
                 Console.WriteLine("Core.CopyFile(): Took {0} seconds to copy file", stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -732,18 +912,21 @@ namespace apprepodbmgr.Core
                 if(string.IsNullOrWhiteSpace(Context.Path))
                 {
                     Failed?.Invoke("Destination cannot be empty");
+
                     return;
                 }
 
                 if(File.Exists(Context.Path))
                 {
                     Failed?.Invoke("Destination cannot be a file");
+
                     return;
                 }
 
                 if(Context.DbInfo.Id == 0)
                 {
                     Failed?.Invoke("Operating system must be set");
+
                     return;
                 }
 
@@ -770,6 +953,7 @@ namespace apprepodbmgr.Core
                     if(!symlinksSupported)
                     {
                         Failed?.Invoke("Symbolic links cannot be created on this platform.");
+
                         return;
                     }
 
@@ -778,10 +962,11 @@ namespace apprepodbmgr.Core
 
                 UpdateProgress?.Invoke("", "Creating folders...", 4, 100);
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 long counter = 0;
+
                 foreach(DbFolder folder in folders)
                 {
                     UpdateProgress2?.Invoke("", folder.Path, counter, folders.Count);
@@ -794,18 +979,20 @@ namespace apprepodbmgr.Core
 
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.SaveAs(): Took {0} seconds to create all folders",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 UpdateProgress?.Invoke("", "Creating symbolic links...", 4, 100);
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 counter = 0;
+
                 foreach(KeyValuePair<string, string> kvp in symlinks)
                 {
                     UpdateProgress2?.Invoke("", kvp.Key, counter, folders.Count);
@@ -813,17 +1000,19 @@ namespace apprepodbmgr.Core
                     Symlinks.Symlink(kvp.Value, kvp.Key);
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.SaveAs(): Took {0} seconds to create all symbolic links",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
 
                 counter = 4;
+
                 foreach(DbAppFile file in files)
                 {
                     UpdateProgress?.Invoke("", $"Creating {file.Path}...", counter, 4 + files.Count);
@@ -841,6 +1030,7 @@ namespace apprepodbmgr.Core
                                                 file.Sha256[1].ToString(), file.Sha256[2].ToString(),
                                                 file.Sha256[3].ToString(), file.Sha256[4].ToString(),
                                                 file.Sha256 + ".gz");
+
                         algorithm = AlgoEnum.GZip;
                     }
                     else if(File.Exists(Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
@@ -852,6 +1042,7 @@ namespace apprepodbmgr.Core
                                                 file.Sha256[1].ToString(), file.Sha256[2].ToString(),
                                                 file.Sha256[3].ToString(), file.Sha256[4].ToString(),
                                                 file.Sha256 + ".bz2");
+
                         algorithm = AlgoEnum.BZip2;
                     }
                     else if(File.Exists(Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
@@ -863,6 +1054,7 @@ namespace apprepodbmgr.Core
                                                 file.Sha256[1].ToString(), file.Sha256[2].ToString(),
                                                 file.Sha256[3].ToString(), file.Sha256[4].ToString(),
                                                 file.Sha256 + ".lzma");
+
                         algorithm = AlgoEnum.LZMA;
                     }
                     else if(File.Exists(Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
@@ -874,36 +1066,43 @@ namespace apprepodbmgr.Core
                                                 file.Sha256[1].ToString(), file.Sha256[2].ToString(),
                                                 file.Sha256[3].ToString(), file.Sha256[4].ToString(),
                                                 file.Sha256 + ".lz");
+
                         algorithm = AlgoEnum.LZip;
                     }
                     else
                     {
                         Failed?.Invoke($"Cannot find file with hash {file.Sha256} in the repository");
+
                         return;
                     }
 
-                    FileStream inFs = new FileStream(repoPath, FileMode.Open, FileAccess.Read);
-                    FileStream outFs = new FileStream(Path.Combine(Context.Path, file.Path), FileMode.CreateNew,
-                                                      FileAccess.Write);
+                    var inFs = new FileStream(repoPath, FileMode.Open, FileAccess.Read);
+
+                    var outFs = new FileStream(Path.Combine(Context.Path, file.Path), FileMode.CreateNew,
+                                               FileAccess.Write);
 
                     long inLength = inFs.Length;
-                    
+
                     switch(algorithm)
                     {
                         case AlgoEnum.GZip:
                             zStream = new GZipStream(inFs, CompressionMode.Decompress);
+
                             break;
                         case AlgoEnum.BZip2:
                             zStream = new BZip2Stream(inFs, CompressionMode.Decompress);
+
                             break;
                         case AlgoEnum.LZMA:
                             byte[] properties = new byte[5];
                             inFs.Read(properties, 0, 5);
                             inFs.Seek(8, SeekOrigin.Current);
                             zStream = new LzmaStream(properties, inFs);
+
                             break;
                         case AlgoEnum.LZip:
                             zStream = new LZipStream(inFs, CompressionMode.Decompress);
+
                             break;
                     }
 
@@ -919,6 +1118,7 @@ namespace apprepodbmgr.Core
                     }
 
                     buffer = new byte[file.Length - outFs.Position];
+
                     UpdateProgress2?.Invoke($"{outFs.Position / (double)file.Length:P}",
                                             $"{outFs.Position} / {file.Length} bytes", outFs.Position, file.Length);
 
@@ -931,7 +1131,7 @@ namespace apprepodbmgr.Core
                     zStream.Close();
                     outFs.Close();
 
-                    FileInfo fi = new FileInfo(Path.Combine(Context.Path, file.Path))
+                    var fi = new FileInfo(Path.Combine(Context.Path, file.Path))
                     {
                         Attributes        = file.Attributes,
                         CreationTimeUtc   = file.CreationTimeUtc,
@@ -941,23 +1141,25 @@ namespace apprepodbmgr.Core
 
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.SaveAs(): Took {0} seconds to create all files",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -970,12 +1172,13 @@ namespace apprepodbmgr.Core
             List<DbFile> filesPage;
             List<DbFile> allFiles = new List<DbFile>();
 
-            #if DEBUG
+        #if DEBUG
             stopwatch.Restart();
-            #endif
+        #endif
             while(dbCore.DbOps.GetFiles(out filesPage, offset, page))
             {
-                if(filesPage.Count == 0) break;
+                if(filesPage.Count == 0)
+                    break;
 
                 UpdateProgress?.Invoke(null, $"Loaded file {offset} of {count}", (long)offset, (long)count);
 
@@ -983,41 +1186,44 @@ namespace apprepodbmgr.Core
 
                 offset += page;
             }
-            #if DEBUG
+        #if DEBUG
             stopwatch.Stop();
+
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to get all files from the database",
                               stopwatch.Elapsed.TotalSeconds);
-            #endif
+        #endif
 
             filesPage = null;
 
             UpdateProgress?.Invoke(null, "Getting OSes from the database", 0, 0);
-            #if DEBUG
+        #if DEBUG
             stopwatch.Restart();
-            #endif
+        #endif
             dbCore.DbOps.GetAllApps(out List<DbEntry> apps);
-            #if DEBUG
+        #if DEBUG
             stopwatch.Stop();
+
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to get OSes from database",
                               stopwatch.Elapsed.TotalSeconds);
-            #endif
+        #endif
 
             List<string> orphanFiles = new List<string>();
 
-            #if DEBUG
+        #if DEBUG
             stopwatch.Restart();
-            Stopwatch stopwatch2 = new Stopwatch();
-            #endif
+            var stopwatch2 = new Stopwatch();
+        #endif
             int counterF = 0;
+
             foreach(DbFile file in allFiles)
             {
                 UpdateProgress?.Invoke(null, $"Checking file {counterF} of {allFiles.Count}", counterF, allFiles.Count);
 
                 bool fileExists = false;
                 int  counterO   = 0;
-                #if DEBUG
+            #if DEBUG
                 stopwatch2.Restart();
-                #endif
+            #endif
                 foreach(DbEntry app in apps)
                 {
                     UpdateProgress2?.Invoke(null, $"Checking OS {counterO} of {apps.Count}", counterO, apps.Count);
@@ -1025,32 +1231,36 @@ namespace apprepodbmgr.Core
                     if(dbCore.DbOps.ExistsFileInApp(file.Sha256, app.Id))
                     {
                         fileExists = true;
+
                         break;
                     }
 
                     counterO++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch2.Stop();
+
                 Console.WriteLine("Core.CleanFiles(): Took {0} seconds to check file in all applications",
                                   stopwatch2.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
-                if(!fileExists) orphanFiles.Add(file.Sha256);
+                if(!fileExists)
+                    orphanFiles.Add(file.Sha256);
 
                 counterF++;
             }
-            #if DEBUG
+        #if DEBUG
             stopwatch.Stop();
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to check all files", stopwatch.Elapsed.TotalSeconds);
-            #endif
+        #endif
 
             UpdateProgress2?.Invoke(null, null, 0, 0);
 
-            #if DEBUG
+        #if DEBUG
             stopwatch.Restart();
-            #endif
+        #endif
             counterF = 0;
+
             foreach(string hash in orphanFiles)
             {
                 UpdateProgress?.Invoke(null, $"Deleting file {counterF} of {orphanFiles.Count} from database", counterF,
@@ -1059,58 +1269,70 @@ namespace apprepodbmgr.Core
                 dbCore.DbOps.DeleteFile(hash);
                 counterF++;
             }
-            #if DEBUG
+        #if DEBUG
             stopwatch.Stop();
+
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to remove all orphan files from database",
                               stopwatch.Elapsed.TotalSeconds);
-            #endif
+        #endif
 
             UpdateProgress?.Invoke(null, "Listing files in repository", 0, 0);
 
-            #if DEBUG
+        #if DEBUG
             stopwatch.Restart();
-            #endif
+        #endif
             List<string> repoFiles =
                 new List<string>(Directory.EnumerateFiles(Settings.Current.RepositoryPath, "*",
                                                           SearchOption.AllDirectories));
+
             repoFiles.Sort();
-            #if DEBUG
+        #if DEBUG
             stopwatch.Stop();
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to find all files", stopwatch.Elapsed.TotalSeconds);
             stopwatch.Restart();
-            #endif
+        #endif
             counterF = 0;
             List<string> filesToDelete = new List<string>();
+
             foreach(string file in repoFiles)
             {
                 UpdateProgress?.Invoke(null, $"Checking file {counterF} of {repoFiles.Count} from repository", counterF,
                                        repoFiles.Count);
 
                 // Allow database to be inside repo
-                if(file == Settings.Current.DatabasePath) continue;
+                if(file == Settings.Current.DatabasePath)
+                    continue;
 
                 if(Path.GetExtension(file)?.ToLowerInvariant() == ".xml" ||
                    Path.GetExtension(file)?.ToLowerInvariant() == ".json")
                 {
-                    if(!dbCore.DbOps.ExistsOs(Path.GetFileNameWithoutExtension(file))) filesToDelete.Add(file);
+                    if(!dbCore.DbOps.ExistsOs(Path.GetFileNameWithoutExtension(file)))
+                        filesToDelete.Add(file);
                 }
-                else if(!dbCore.DbOps.ExistsFile(Path.GetFileNameWithoutExtension(file))) filesToDelete.Add(file);
+                else if(!dbCore.DbOps.ExistsFile(Path.GetFileNameWithoutExtension(file)))
+                    filesToDelete.Add(file);
 
                 counterF++;
             }
-            #if DEBUG
+        #if DEBUG
             stopwatch.Stop();
+
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to check all repository files",
                               stopwatch.Elapsed.TotalSeconds);
+
             stopwatch.Restart();
-            #endif
+        #endif
             counterF = 0;
+
             foreach(string file in filesToDelete)
             {
                 UpdateProgress?.Invoke(null, $"Deleting file {counterF} of {filesToDelete.Count} from repository",
                                        counterF, filesToDelete.Count);
 
-                try { File.Delete(file); }
+                try
+                {
+                    File.Delete(file);
+                }
                 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
                     #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -1120,11 +1342,12 @@ namespace apprepodbmgr.Core
 
                 counterF++;
             }
-            #if DEBUG
+        #if DEBUG
             stopwatch.Stop();
+
             Console.WriteLine("Core.CleanFiles(): Took {0} seconds to delete all orphan files",
                               stopwatch.Elapsed.TotalSeconds);
-            #endif
+        #endif
 
             Finished?.Invoke();
         }

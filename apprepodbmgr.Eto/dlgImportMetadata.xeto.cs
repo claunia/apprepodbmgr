@@ -22,9 +22,9 @@ namespace apprepodbmgr.Eto
         Panels                                       maximumPanel;
         Panels                                       minimumPanel;
         List<TargetOsEntry>                          operatingSystems;
-        pnlDescription                               panelDescription;
-        pnlStrings                                   panelStrings;
-        pnlVersions                                  panelVersions;
+        readonly pnlDescription                      panelDescription;
+        readonly pnlStrings                          panelStrings;
+        readonly pnlVersions                         panelVersions;
         internal string                              product;
         internal string                              publisher;
         List<string>                                 strings;
@@ -75,37 +75,49 @@ namespace apprepodbmgr.Eto
 
                 foreach(string file in Context.Executables)
                 {
-                    FileStream  exeStream = new FileStream(file, FileMode.Open, FileAccess.Read);
-                    MZ          mzExe     = new MZ(exeStream);
-                    NE          neExe     = new NE(exeStream);
-                    AtariST     stExe     = new AtariST(exeStream);
-                    LX          lxExe     = new LX(exeStream);
-                    COFF        coffExe   = new COFF(exeStream);
-                    PE          peExe     = new PE(exeStream);
-                    Geos        geosExe   = new Geos(exeStream);
-                    ELF         elfExe    = new ELF(exeStream);
+                    var         exeStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                    var         mzExe     = new MZ(exeStream);
+                    var         neExe     = new NE(exeStream);
+                    var         stExe     = new AtariST(exeStream);
+                    var         lxExe     = new LX(exeStream);
+                    var         coffExe   = new COFF(exeStream);
+                    var         peExe     = new PE(exeStream);
+                    var         geosExe   = new Geos(exeStream);
+                    var         elfExe    = new ELF(exeStream);
                     IExecutable recognizedExe;
 
-                    if(neExe.Recognized) recognizedExe        = neExe;
-                    else if(lxExe.Recognized) recognizedExe   = lxExe;
-                    else if(peExe.Recognized) recognizedExe   = peExe;
-                    else if(mzExe.Recognized) recognizedExe   = mzExe;
-                    else if(coffExe.Recognized) recognizedExe = coffExe;
-                    else if(stExe.Recognized) recognizedExe   = stExe;
-                    else if(elfExe.Recognized) recognizedExe  = elfExe;
-                    else if(geosExe.Recognized) recognizedExe = geosExe;
+                    if(neExe.Recognized)
+                        recognizedExe = neExe;
+                    else if(lxExe.Recognized)
+                        recognizedExe = lxExe;
+                    else if(peExe.Recognized)
+                        recognizedExe = peExe;
+                    else if(mzExe.Recognized)
+                        recognizedExe = mzExe;
+                    else if(coffExe.Recognized)
+                        recognizedExe = coffExe;
+                    else if(stExe.Recognized)
+                        recognizedExe = stExe;
+                    else if(elfExe.Recognized)
+                        recognizedExe = elfExe;
+                    else if(geosExe.Recognized)
+                        recognizedExe = geosExe;
                     else
                     {
                         exeStream.Close();
+
                         continue;
                     }
 
-                    if(recognizedExe.Strings != null) strings.AddRange(recognizedExe.Strings);
+                    if(recognizedExe.Strings != null)
+                        strings.AddRange(recognizedExe.Strings);
 
                     foreach(Architecture exeArch in recognizedExe.Architectures)
                     {
                         ArchitecturesTypeArchitecture? arch = ExeArchToSchemaArch(exeArch);
-                        if(arch.HasValue && !architectures.Contains($"{arch.Value}"))
+
+                        if(arch.HasValue &&
+                           !architectures.Contains($"{arch.Value}"))
                             architectures.Add($"{arch.Value}");
                     }
 
@@ -125,11 +137,13 @@ namespace apprepodbmgr.Eto
                                     versions.Add(exeVersion.FileVersion);
                                     versions.Add(exeVersion.ProductVersion);
                                     version = exeVersion.ProductVersion;
-                                    foreach(KeyValuePair<string, Dictionary<string, string>> kvp in exeVersion
-                                       .StringsByLanguage)
+
+                                    foreach(KeyValuePair<string, Dictionary<string, string>> kvp in exeVersion.
+                                        StringsByLanguage)
                                     {
                                         if(kvp.Value.TryGetValue("CompanyName", out string tmpValue))
                                             developer = tmpValue;
+
                                         if(kvp.Value.TryGetValue("ProductName", out string tmpValue2))
                                             product = tmpValue2;
                                     }
@@ -143,11 +157,13 @@ namespace apprepodbmgr.Eto
                                     versions.Add(exeVersion.FileVersion);
                                     versions.Add(exeVersion.ProductVersion);
                                     version = exeVersion.ProductVersion;
-                                    foreach(KeyValuePair<string, Dictionary<string, string>> kvp in exeVersion
-                                       .StringsByLanguage)
+
+                                    foreach(KeyValuePair<string, Dictionary<string, string>> kvp in exeVersion.
+                                        StringsByLanguage)
                                     {
                                         if(kvp.Value.TryGetValue("CompanyName", out string tmpValue))
                                             developer = tmpValue;
+
                                         if(kvp.Value.TryGetValue("ProductName", out string tmpValue2))
                                             product = tmpValue2;
                                     }
@@ -160,12 +176,15 @@ namespace apprepodbmgr.Eto
                                 versions.Add(lxExe.WinVersion.FileVersion);
                                 versions.Add(lxExe.WinVersion.ProductVersion);
                                 version = lxExe.WinVersion.ProductVersion;
-                                foreach(KeyValuePair<string, Dictionary<string, string>> kvp in lxExe
-                                                                                               .WinVersion
-                                                                                               .StringsByLanguage)
+
+                                foreach(KeyValuePair<string, Dictionary<string, string>> kvp in lxExe.WinVersion.
+                                    StringsByLanguage)
                                 {
-                                    if(kvp.Value.TryGetValue("CompanyName", out string tmpValue)) developer = tmpValue;
-                                    if(kvp.Value.TryGetValue("ProductName", out string tmpValue2)) product  = tmpValue2;
+                                    if(kvp.Value.TryGetValue("CompanyName", out string tmpValue))
+                                        developer = tmpValue;
+
+                                    if(kvp.Value.TryGetValue("ProductName", out string tmpValue2))
+                                        product = tmpValue2;
                                 }
                             }
 
@@ -179,8 +198,11 @@ namespace apprepodbmgr.Eto
                 strings = strings.Distinct().ToList();
                 strings.Sort();
 
-                if(strings.Count == 0 && minimumPanel == Panels.Strings) minimumPanel = Panels.Versions;
-                else maximumPanel                                                     = Panels.Strings;
+                if(strings.Count == 0 &&
+                   minimumPanel  == Panels.Strings)
+                    minimumPanel = Panels.Versions;
+                else
+                    maximumPanel = Panels.Strings;
 
                 panelStrings.treeStrings.DataStore = strings;
                 versions                           = versions.Distinct().ToList();
@@ -194,11 +216,13 @@ namespace apprepodbmgr.Eto
 
                 foreach(TargetOsEntry osEntry in operatingSystems)
                 {
-                    if(string.IsNullOrEmpty(osEntry.name)) continue;
+                    if(string.IsNullOrEmpty(osEntry.name))
+                        continue;
 
                     osEntriesDictionary.TryGetValue(osEntry.name, out List<string> osvers);
 
-                    if(osvers == null) osvers = new List<string>();
+                    if(osvers == null)
+                        osvers = new List<string>();
 
                     osvers.Add(osEntry.version);
                     osEntriesDictionary.Remove(osEntry.name);
@@ -206,38 +230,52 @@ namespace apprepodbmgr.Eto
                 }
 
                 operatingSystems = new List<TargetOsEntry>();
+
                 foreach(KeyValuePair<string, List<string>> kvp in osEntriesDictionary.OrderBy(t => t.Key))
                 {
                     kvp.Value.Sort();
+
                     foreach(string s in kvp.Value.Distinct())
-                        operatingSystems.Add(new TargetOsEntry {name = kvp.Key, version = s});
+                        operatingSystems.Add(new TargetOsEntry
+                        {
+                            name    = kvp.Key,
+                            version = s
+                        });
                 }
 
                 panelVersions.treeOs.DataStore = operatingSystems;
 
-                if(versions.Count > 0 || architectures.Count > 0 || operatingSystems.Count > 0)
+                if(versions.Count         > 0 ||
+                   architectures.Count    > 0 ||
+                   operatingSystems.Count > 0)
                     maximumPanel = Panels.Versions;
             }
 
             prgProgress.Visible = false;
             btnPrevious.Enabled = false;
+
             switch(minimumPanel)
             {
                 case Panels.Description:
                     pnlPanel.Content = panelDescription;
                     currentPanel     = Panels.Description;
+
                     break;
                 case Panels.Strings:
                     pnlPanel.Content = panelStrings;
                     currentPanel     = Panels.Strings;
+
                     break;
                 case Panels.Versions:
                     pnlPanel.Content = panelVersions;
                     currentPanel     = Panels.Versions;
+
                     break;
             }
 
-            if(currentPanel == maximumPanel) btnNext.Text = "Finish";
+            if(currentPanel == maximumPanel)
+                btnNext.Text = "Finish";
+
             lblPanelName.Visible = false;
         }
 
@@ -297,6 +335,7 @@ namespace apprepodbmgr.Eto
         {
             canceled = true;
             Close();
+
             //            throw new NotImplementedException();
         }
 
@@ -308,7 +347,8 @@ namespace apprepodbmgr.Eto
                     // Ok...
                     break;
                 case Panels.Strings:
-                    if(minimumPanel == Panels.Strings) return;
+                    if(minimumPanel == Panels.Strings)
+                        return;
 
                     pnlPanel.Content = panelDescription;
                     currentPanel     = Panels.Description;
@@ -317,7 +357,8 @@ namespace apprepodbmgr.Eto
 
                     break;
                 case Panels.Versions:
-                    if(minimumPanel == Panels.Versions) return;
+                    if(minimumPanel == Panels.Versions)
+                        return;
 
                     pnlPanel.Content = panelStrings;
                     currentPanel     = Panels.Strings;
@@ -327,7 +368,8 @@ namespace apprepodbmgr.Eto
                     break;
             }
 
-            if(currentPanel != maximumPanel) btnNext.Text = "Next";
+            if(currentPanel != maximumPanel)
+                btnNext.Text = "Next";
         }
 
         void OnBtnNextClick(object sender, EventArgs eventArgs)
@@ -337,7 +379,8 @@ namespace apprepodbmgr.Eto
                 switch(currentPanel)
                 {
                     case Panels.Description:
-                        if(maximumPanel == Panels.Description) return;
+                        if(maximumPanel == Panels.Description)
+                            return;
 
                         pnlPanel.Content = panelStrings;
                         currentPanel     = Panels.Strings;
@@ -346,7 +389,8 @@ namespace apprepodbmgr.Eto
 
                         break;
                     case Panels.Strings:
-                        if(maximumPanel == Panels.Strings) return;
+                        if(maximumPanel == Panels.Strings)
+                            return;
 
                         pnlPanel.Content = panelVersions;
                         currentPanel     = Panels.Versions;
@@ -355,7 +399,8 @@ namespace apprepodbmgr.Eto
 
                         break;
                     case Panels.Versions:
-                        if(minimumPanel == Panels.Versions) return;
+                        if(minimumPanel == Panels.Versions)
+                            return;
 
                         pnlPanel.Content = panelStrings;
                         currentPanel     = Panels.Strings;
@@ -365,23 +410,35 @@ namespace apprepodbmgr.Eto
                         break;
                 }
 
-                if(currentPanel == maximumPanel) btnNext.Text = "Finish";
+                if(currentPanel == maximumPanel)
+                    btnNext.Text = "Finish";
+
                 return;
             }
 
-            if(Context.Readmes?.Count > 0 && !string.IsNullOrWhiteSpace(panelDescription.description))
+            if(Context.Readmes?.Count > 0 &&
+               !string.IsNullOrWhiteSpace(panelDescription.description))
                 description = panelDescription.description;
 
-            if(!(Context.Executables?.Count > 0)) return;
+            if(!(Context.Executables?.Count > 0))
+                return;
 
-            if(!string.IsNullOrWhiteSpace(panelStrings.txtDeveloper.Text)) developer = panelStrings.txtDeveloper.Text;
-            if(!string.IsNullOrWhiteSpace(panelStrings.txtPublisher.Text)) publisher = panelStrings.txtPublisher.Text;
-            if(!string.IsNullOrWhiteSpace(panelStrings.txtProduct.Text)) product     = panelStrings.txtProduct.Text;
-            if(!string.IsNullOrWhiteSpace(panelStrings.txtVersion.Text)) version     = panelStrings.txtVersion.Text;
+            if(!string.IsNullOrWhiteSpace(panelStrings.txtDeveloper.Text))
+                developer = panelStrings.txtDeveloper.Text;
+
+            if(!string.IsNullOrWhiteSpace(panelStrings.txtPublisher.Text))
+                publisher = panelStrings.txtPublisher.Text;
+
+            if(!string.IsNullOrWhiteSpace(panelStrings.txtProduct.Text))
+                product = panelStrings.txtProduct.Text;
+
+            if(!string.IsNullOrWhiteSpace(panelStrings.txtVersion.Text))
+                version = panelStrings.txtVersion.Text;
 
             foreach(object archsSelectedItem in panelVersions.treeArchs.SelectedItems)
             {
-                if(!(archsSelectedItem is string arch)) continue;
+                if(!(archsSelectedItem is string arch))
+                    continue;
 
                 if(Enum.TryParse(arch, true, out ArchitecturesTypeArchitecture realArch))
                     chosenArchitectures.Add(realArch);
@@ -389,12 +446,14 @@ namespace apprepodbmgr.Eto
 
             foreach(object osesSelectedItem in panelVersions.treeOs.SelectedItems)
             {
-                if(!(osesSelectedItem is TargetOsEntry os)) continue;
+                if(!(osesSelectedItem is TargetOsEntry os))
+                    continue;
 
                 chosenOses.Add(os);
             }
 
-            if(panelVersions.treeVersions.SelectedItem is string chosenVersion) version = chosenVersion;
+            if(panelVersions.treeVersions.SelectedItem is string chosenVersion)
+                version = chosenVersion;
 
             canceled = false;
             Close();
@@ -402,9 +461,7 @@ namespace apprepodbmgr.Eto
 
         enum Panels
         {
-            Description,
-            Strings,
-            Versions
+            Description, Strings, Versions
         }
 
         #region XAML UI elements

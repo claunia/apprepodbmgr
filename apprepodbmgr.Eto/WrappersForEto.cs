@@ -31,139 +31,153 @@ using Schemas;
 
 namespace apprepodbmgr.Eto
 {
-    class DBEntryForEto
+    internal class DBEntryForEto
     {
-        DbEntry _item;
+        readonly DbEntry _item;
 
-        public DBEntryForEto(DbEntry item)
-        {
-            _item = item;
-        }
+        public DBEntryForEto(DbEntry item) => _item = item;
 
         public long id
         {
-            get { return _item.Id; }
-            set { }
+            get => _item.Id;
+            set {}
         }
+
         public string developer
         {
-            get { return _item.Developer; }
-            set { }
+            get => _item.Developer;
+            set {}
         }
+
         public string product
         {
-            get { return _item.Product; }
-            set { }
+            get => _item.Product;
+            set {}
         }
+
         public string version
         {
-            get { return _item.Version; }
-            set { }
+            get => _item.Version;
+            set {}
         }
+
         public string languages
         {
-            get { return _item.Languages; }
-            set { }
+            get => _item.Languages;
+            set {}
         }
+
         public string architecture
         {
-            get { return _item.Architecture; }
-            set { }
+            get => _item.Architecture;
+            set {}
         }
+
         public string targetos
         {
-            get { return _item.TargetOs; }
-            set { }
+            get => _item.TargetOs;
+            set {}
         }
+
         public string format
         {
-            get { return _item.Format; }
-            set { }
+            get => _item.Format;
+            set {}
         }
+
         public string description
         {
-            get { return _item.Description; }
-            set { }
+            get => _item.Description;
+            set {}
         }
+
         public bool oem
         {
-            get { return _item.Oem; }
-            set { }
+            get => _item.Oem;
+            set {}
         }
+
         public bool upgrade
         {
-            get { return _item.Upgrade; }
-            set { }
+            get => _item.Upgrade;
+            set {}
         }
+
         public bool update
         {
-            get { return _item.Update; }
-            set { }
+            get => _item.Update;
+            set {}
         }
+
         public bool source
         {
-            get { return _item.Source; }
-            set { }
+            get => _item.Source;
+            set {}
         }
+
         public bool files
         {
-            get { return _item.Files; }
-            set { }
+            get => _item.Files;
+            set {}
         }
+
         public bool Installer
         {
-            get { return _item.Installer; }
-            set { }
+            get => _item.Installer;
+            set {}
         }
+
         public byte[] xml
         {
-            get { return _item.Xml; }
-            set { }
+            get => _item.Xml;
+            set {}
         }
+
         public byte[] json
         {
-            get { return _item.Json; }
-            set { }
+            get => _item.Json;
+            set {}
         }
+
         public string mdid
         {
-            get { return _item.Mdid; }
-            set { }
+            get => _item.Mdid;
+            set {}
         }
 
         public DbEntry original
         {
-            get { return _item; }
-            set { }
+            get => _item;
+            set {}
         }
     }
 
-    class StringEntry
+    internal class StringEntry
     {
         public string str { get; set; }
     }
 
-    class BarcodeEntry
+    internal class BarcodeEntry
     {
         public string          code { get; set; }
         public BarcodeTypeType type { get; set; }
     }
 
-    class DiscEntry
+    internal class DiscEntry
     {
         public string          path { get; set; }
         public OpticalDiscType disc { get; set; }
     }
 
-    class DiskEntry
+    internal class DiskEntry
     {
         public string         path { get; set; }
         public BlockMediaType disk { get; set; }
     }
 
-    class TargetOsEntry
+    internal class TargetOsEntry
     {
-        public string name { get; set; }
+        public string name    { get; set; }
         public string version { get; set; }
     }
 }

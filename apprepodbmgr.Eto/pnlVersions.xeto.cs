@@ -19,22 +19,37 @@ namespace apprepodbmgr.Eto
 
             treeArchs.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<string, string>(r => r)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<string, string>(r => r)
+                },
                 HeaderText = "Arch"
             });
+
             treeOs.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<TargetOsEntry, string>(r => r.name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<TargetOsEntry, string>(r => r.name)
+                },
                 HeaderText = "Name"
             });
+
             treeOs.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<TargetOsEntry, string>(r => r.version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<TargetOsEntry, string>(r => r.version)
+                },
                 HeaderText = "Version"
             });
+
             treeVersions.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<string, string>(r => r)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<string, string>(r => r)
+                },
                 HeaderText = "Version"
             });
         }

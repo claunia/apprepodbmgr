@@ -46,9 +46,12 @@ namespace apprepodbmgr.Eto
 
         public void FillFields()
         {
-            if(Metadata == null) return;
+            if(Metadata == null)
+                return;
 
-            if(Metadata.Type != null) txtType.Text = Metadata.Type;
+            if(Metadata.Type != null)
+                txtType.Text = Metadata.Type;
+
             if(Metadata.CreationDateSpecified)
             {
                 chkCreationDate.Checked = true;
@@ -70,14 +73,25 @@ namespace apprepodbmgr.Eto
                 cldBackupDate.Value   = Metadata.BackupDate;
             }
 
-            spClusterSize.Value                                     = Metadata.ClusterSize;
-            txtClusters.Text                                        = Metadata.Clusters.ToString();
-            if(Metadata.FilesSpecified) txtFiles.Text               = Metadata.Files.ToString();
-            chkBootable.Checked                                     = Metadata.Bootable;
-            if(Metadata.VolumeSerial != null) txtSerial.Text        = Metadata.VolumeSerial;
-            if(Metadata.VolumeName   != null) txtLabel.Text         = Metadata.VolumeName;
-            if(Metadata.FreeClustersSpecified) txtFreeClusters.Text = Metadata.FreeClusters.ToString();
-            chkDirty.Checked                                        = Metadata.Dirty;
+            spClusterSize.Value = Metadata.ClusterSize;
+            txtClusters.Text    = Metadata.Clusters.ToString();
+
+            if(Metadata.FilesSpecified)
+                txtFiles.Text = Metadata.Files.ToString();
+
+            chkBootable.Checked = Metadata.Bootable;
+
+            if(Metadata.VolumeSerial != null)
+                txtSerial.Text = Metadata.VolumeSerial;
+
+            if(Metadata.VolumeName != null)
+                txtLabel.Text = Metadata.VolumeName;
+
+            if(Metadata.FreeClustersSpecified)
+                txtFreeClusters.Text = Metadata.FreeClusters.ToString();
+
+            chkDirty.Checked = Metadata.Dirty;
+
             if(Metadata.ExpirationDateSpecified)
             {
                 chkExpirationDate.Checked = true;
@@ -92,37 +106,36 @@ namespace apprepodbmgr.Eto
                 cldEffectiveDate.Value   = Metadata.EffectiveDate;
             }
 
-            if(Metadata.SystemIdentifier       != null) txtSysId.Text  = Metadata.SystemIdentifier;
-            if(Metadata.VolumeSetIdentifier    != null) txtVolId.Text  = Metadata.VolumeSetIdentifier;
-            if(Metadata.PublisherIdentifier    != null) txtPubId.Text  = Metadata.PublisherIdentifier;
-            if(Metadata.DataPreparerIdentifier != null) txtDataId.Text = Metadata.DataPreparerIdentifier;
-            if(Metadata.ApplicationIdentifier  != null) txtAppId.Text  = Metadata.ApplicationIdentifier;
+            if(Metadata.SystemIdentifier != null)
+                txtSysId.Text = Metadata.SystemIdentifier;
+
+            if(Metadata.VolumeSetIdentifier != null)
+                txtVolId.Text = Metadata.VolumeSetIdentifier;
+
+            if(Metadata.PublisherIdentifier != null)
+                txtPubId.Text = Metadata.PublisherIdentifier;
+
+            if(Metadata.DataPreparerIdentifier != null)
+                txtDataId.Text = Metadata.DataPreparerIdentifier;
+
+            if(Metadata.ApplicationIdentifier != null)
+                txtAppId.Text = Metadata.ApplicationIdentifier;
         }
 
-        protected void OnChkCreationDateToggled(object sender, EventArgs e)
-        {
+        protected void OnChkCreationDateToggled(object sender, EventArgs e) =>
             cldCreationDate.Enabled = chkCreationDate.Checked.Value;
-        }
 
-        protected void OnChkModificationDateToggled(object sender, EventArgs e)
-        {
+        protected void OnChkModificationDateToggled(object sender, EventArgs e) =>
             cldModificationDate.Enabled = chkModificationDate.Checked.Value;
-        }
 
-        protected void OnChkEffectiveDateToggled(object sender, EventArgs e)
-        {
+        protected void OnChkEffectiveDateToggled(object sender, EventArgs e) =>
             cldEffectiveDate.Enabled = chkEffectiveDate.Checked.Value;
-        }
 
-        protected void OnChkExpirationDateToggled(object sender, EventArgs e)
-        {
+        protected void OnChkExpirationDateToggled(object sender, EventArgs e) =>
             cldExpirationDate.Enabled = chkExpirationDate.Checked.Value;
-        }
 
-        protected void OnChkBackupDateToggled(object sender, EventArgs e)
-        {
+        protected void OnChkBackupDateToggled(object sender, EventArgs e) =>
             cldBackupDate.Enabled = chkBackupDate.Checked.Value;
-        }
 
         protected void OnBtnCancelClicked(object sender, EventArgs e)
         {
@@ -135,26 +148,36 @@ namespace apprepodbmgr.Eto
             if(string.IsNullOrWhiteSpace(txtType.Text))
                 MessageBox.Show("Filesystem type cannot be empty", MessageBoxType.Error);
 
-            if(spClusterSize.Value < 1) MessageBox.Show("Clusters must be bigger than 0 bytes", MessageBoxType.Error);
+            if(spClusterSize.Value < 1)
+                MessageBox.Show("Clusters must be bigger than 0 bytes", MessageBoxType.Error);
 
             if(!long.TryParse(txtClusters.Text, out long temp))
                 MessageBox.Show("Clusters must be a number", MessageBoxType.Error);
 
-            if(temp < 1) MessageBox.Show("Filesystem must have more than 0 clusters", MessageBoxType.Error);
+            if(temp < 1)
+                MessageBox.Show("Filesystem must have more than 0 clusters", MessageBoxType.Error);
 
-            if(!string.IsNullOrWhiteSpace(txtFiles.Text) && !long.TryParse(txtFiles.Text, out temp))
+            if(!string.IsNullOrWhiteSpace(txtFiles.Text) &&
+               !long.TryParse(txtFiles.Text, out temp))
                 MessageBox.Show("Files must be a number, or empty for unknown", MessageBoxType.Error);
 
-            if(!string.IsNullOrWhiteSpace(txtFiles.Text) && temp < 0)
+            if(!string.IsNullOrWhiteSpace(txtFiles.Text) &&
+               temp < 0)
                 MessageBox.Show("Files must be positive", MessageBoxType.Error);
 
-            if(!string.IsNullOrWhiteSpace(txtFreeClusters.Text) && !long.TryParse(txtFreeClusters.Text, out temp))
+            if(!string.IsNullOrWhiteSpace(txtFreeClusters.Text) &&
+               !long.TryParse(txtFreeClusters.Text, out temp))
                 MessageBox.Show("Free clusters must be a number or empty for unknown", MessageBoxType.Error);
 
-            if(!string.IsNullOrWhiteSpace(txtFreeClusters.Text) && temp < 0)
+            if(!string.IsNullOrWhiteSpace(txtFreeClusters.Text) &&
+               temp < 0)
                 MessageBox.Show("Free clusters must be positive", MessageBoxType.Error);
 
-            Metadata = new FileSystemType {Type = txtType.Text};
+            Metadata = new FileSystemType
+            {
+                Type = txtType.Text
+            };
+
             if(chkCreationDate.Checked.Value)
             {
                 Metadata.CreationDateSpecified = true;
@@ -175,15 +198,21 @@ namespace apprepodbmgr.Eto
 
             Metadata.ClusterSize = (int)spClusterSize.Value;
             Metadata.Clusters    = long.Parse(txtClusters.Text);
+
             if(!string.IsNullOrWhiteSpace(txtFiles.Text))
             {
                 Metadata.FilesSpecified = true;
                 Metadata.Files          = long.Parse(txtFiles.Text);
             }
 
-            Metadata.Bootable                                                    = chkBootable.Checked.Value;
-            if(!string.IsNullOrWhiteSpace(txtSerial.Text)) Metadata.VolumeSerial = txtSerial.Text;
-            if(!string.IsNullOrWhiteSpace(txtLabel.Text)) Metadata.VolumeName    = txtLabel.Text;
+            Metadata.Bootable = chkBootable.Checked.Value;
+
+            if(!string.IsNullOrWhiteSpace(txtSerial.Text))
+                Metadata.VolumeSerial = txtSerial.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtLabel.Text))
+                Metadata.VolumeName = txtLabel.Text;
+
             if(!string.IsNullOrWhiteSpace(txtFreeClusters.Text))
             {
                 Metadata.FreeClustersSpecified = true;
@@ -191,6 +220,7 @@ namespace apprepodbmgr.Eto
             }
 
             Metadata.Dirty = chkDirty.Checked.Value;
+
             if(chkExpirationDate.Checked.Value)
             {
                 Metadata.ExpirationDateSpecified = true;
@@ -203,11 +233,20 @@ namespace apprepodbmgr.Eto
                 Metadata.EffectiveDate          = cldEffectiveDate.Value.Value;
             }
 
-            if(!string.IsNullOrWhiteSpace(txtSysId.Text)) Metadata.SystemIdentifier        = txtSysId.Text;
-            if(!string.IsNullOrWhiteSpace(txtVolId.Text)) Metadata.VolumeSetIdentifier     = txtVolId.Text;
-            if(!string.IsNullOrWhiteSpace(txtPubId.Text)) Metadata.PublisherIdentifier     = txtPubId.Text;
-            if(!string.IsNullOrWhiteSpace(txtDataId.Text)) Metadata.DataPreparerIdentifier = txtDataId.Text;
-            if(!string.IsNullOrWhiteSpace(txtAppId.Text)) Metadata.ApplicationIdentifier   = txtAppId.Text;
+            if(!string.IsNullOrWhiteSpace(txtSysId.Text))
+                Metadata.SystemIdentifier = txtSysId.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtVolId.Text))
+                Metadata.VolumeSetIdentifier = txtVolId.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtPubId.Text))
+                Metadata.PublisherIdentifier = txtPubId.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtDataId.Text))
+                Metadata.DataPreparerIdentifier = txtDataId.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtAppId.Text))
+                Metadata.ApplicationIdentifier = txtAppId.Text;
 
             Modified = true;
             Close();

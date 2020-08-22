@@ -40,9 +40,12 @@ namespace apprepodbmgr.Eto.Desktop
         {
             Settings.LoadSettings();
             Context.CheckUnar();
+
             if(Settings.Current.UseAntivirus)
             {
-                if(Settings.Current.UseClamd) Workers.InitClamd();
+                if(Settings.Current.UseClamd)
+                    Workers.InitClamd();
+
                 if(Settings.Current.UseVirusTotal)
                     Context.VirusTotalEnabled = Workers.InitVirusTotal(Settings.Current.VirusTotalKey);
             }

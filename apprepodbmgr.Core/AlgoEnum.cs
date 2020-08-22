@@ -30,9 +30,7 @@ namespace apprepodbmgr.Core
 {
     public enum AlgoEnum
     {
-        GZip,
-        BZip2,
-        LZMA,
+        GZip, BZip2, LZMA,
         LZip
     }
 }

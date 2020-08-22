@@ -44,29 +44,29 @@ namespace apprepodbmgr.Eto
         DumpHardwareType dumpHwIter;
         bool             editingDumpHw;
 
-        bool                              editingPartition;
-        FileSystemType                    filesystemIter;
-        ObservableCollection<StringEntry> lstAdditionalInformation;
+        bool                                       editingPartition;
+        FileSystemType                             filesystemIter;
+        readonly ObservableCollection<StringEntry> lstAdditionalInformation;
 
-        ObservableCollection<DumpType>         lstAta;
-        ObservableCollection<DumpType>         lstCID;
-        ObservableCollection<DumpType>         lstCSD;
-        ObservableCollection<DumpHardwareType> lstDumpHw;
-        ObservableCollection<DumpType>         lstECSD;
-        ObservableCollection<EVPDType>         lstEVPDs;
-        ObservableCollection<DumpType>         lstInquiry;
-        ObservableCollection<DumpType>         lstLogSense;
-        ObservableCollection<DumpType>         lstMAM;
-        ObservableCollection<DumpType>         lstModeSense;
-        ObservableCollection<DumpType>         lstModeSense10;
-        ObservableCollection<PartitionType>    lstPartitions;
-        ObservableCollection<DumpType>         lstPCIConfiguration;
-        ObservableCollection<LinearMediaType>  lstPCIOptionROM;
-        ObservableCollection<DumpType>         lstPCMCIACIS;
-        ObservableCollection<BlockTrackType>   lstTracks;
-        ObservableCollection<DumpType>         lstUSBDescriptors;
-        public BlockMediaType                  Metadata;
-        public bool                            Modified;
+        readonly ObservableCollection<DumpType>        lstAta;
+        readonly ObservableCollection<DumpType>        lstCID;
+        readonly ObservableCollection<DumpType>        lstCSD;
+        ObservableCollection<DumpHardwareType>         lstDumpHw;
+        readonly ObservableCollection<DumpType>        lstECSD;
+        ObservableCollection<EVPDType>                 lstEVPDs;
+        readonly ObservableCollection<DumpType>        lstInquiry;
+        readonly ObservableCollection<DumpType>        lstLogSense;
+        readonly ObservableCollection<DumpType>        lstMAM;
+        readonly ObservableCollection<DumpType>        lstModeSense;
+        readonly ObservableCollection<DumpType>        lstModeSense10;
+        ObservableCollection<PartitionType>            lstPartitions;
+        readonly ObservableCollection<DumpType>        lstPCIConfiguration;
+        readonly ObservableCollection<LinearMediaType> lstPCIOptionROM;
+        readonly ObservableCollection<DumpType>        lstPCMCIACIS;
+        ObservableCollection<BlockTrackType>           lstTracks;
+        readonly ObservableCollection<DumpType>        lstUSBDescriptors;
+        public   BlockMediaType                        Metadata;
+        public   bool                                  Modified;
 
         PartitionType       partitionIter;
         ScansType           scans;
@@ -90,6 +90,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Sequence"
             });
+
             treePartitions.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -98,6 +99,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Start"
             });
+
             treePartitions.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -106,19 +108,31 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "End"
             });
+
             treePartitions.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PartitionType, string>(r => r.Type)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PartitionType, string>(r => r.Type)
+                },
                 HeaderText = "Type"
             });
+
             treePartitions.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PartitionType, string>(r => r.Name)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PartitionType, string>(r => r.Name)
+                },
                 HeaderText = "Name"
             });
+
             treePartitions.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<PartitionType, string>(r => r.Description)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<PartitionType, string>(r => r.Description)
+                },
                 HeaderText = "Description"
             });
 
@@ -130,12 +144,19 @@ namespace apprepodbmgr.Eto
             #region Set filesystems table
             treeFilesystems.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<FileSystemType, string>(r => r.Type)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<FileSystemType, string>(r => r.Type)
+                },
                 HeaderText = "Type"
             });
+
             treeFilesystems.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<FileSystemType, string>(r => r.VolumeName)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<FileSystemType, string>(r => r.VolumeName)
+                },
                 HeaderText = "Name"
             });
 
@@ -147,30 +168,49 @@ namespace apprepodbmgr.Eto
 
             treeDumpHardware.Columns.Add(new GridColumn
             {
-                DataCell                     =
-                    new TextBoxCell {Binding = Binding.Property<DumpHardwareType, string>(r => r.Manufacturer)},
-                HeaderText                   = "Manufacturer"
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpHardwareType, string>(r => r.Manufacturer)
+                },
+                HeaderText = "Manufacturer"
             });
+
             treeDumpHardware.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpHardwareType, string>(r => r.Model)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpHardwareType, string>(r => r.Model)
+                },
                 HeaderText = "Model"
             });
+
             treeDumpHardware.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpHardwareType, string>(r => r.Revision)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpHardwareType, string>(r => r.Revision)
+                },
                 HeaderText = "Revision"
             });
+
             treeDumpHardware.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpHardwareType, string>(r => r.Firmware)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpHardwareType, string>(r => r.Firmware)
+                },
                 HeaderText = "Firmware"
             });
+
             treeDumpHardware.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpHardwareType, string>(r => r.Serial)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpHardwareType, string>(r => r.Serial)
+                },
                 HeaderText = "Serial"
             });
+
             treeDumpHardware.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -179,6 +219,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Software"
             });
+
             treeDumpHardware.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -187,12 +228,13 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Version"
             });
+
             treeDumpHardware.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<DumpHardwareType, SoftwareType>(r => r.Software)
-                                     .Convert(v => v?.OperatingSystem)
+                    Binding = Binding.Property<DumpHardwareType, SoftwareType>(r => r.Software).
+                                      Convert(v => v?.OperatingSystem)
                 },
                 HeaderText = "Operating system"
             });
@@ -209,6 +251,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Start"
             });
+
             treeExtents.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -221,11 +264,16 @@ namespace apprepodbmgr.Eto
 
             #region Set ATA IDENTIFY table
             lstAta = new ObservableCollection<DumpType>();
+
             treeATA.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeATA.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -234,16 +282,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeATA.DataStore = lstAta;
             #endregion Set ATA IDENTIFY table
 
             #region Set PCI configuration table
             lstPCIConfiguration = new ObservableCollection<DumpType>();
+
             treeConfiguration.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeConfiguration.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -252,16 +306,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeConfiguration.DataStore = lstPCIConfiguration;
             #endregion Set PCI configuration table
 
             #region Set PCMCIA CIS table
             lstPCMCIACIS = new ObservableCollection<DumpType>();
+
             treeCIS.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeCIS.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -270,16 +330,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeCIS.DataStore = lstPCMCIACIS;
             #endregion Set PCI option ROM table
 
             #region Set CID table
             lstCID = new ObservableCollection<DumpType>();
+
             treeCID.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeCID.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -288,16 +354,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeCID.DataStore = lstCID;
             #endregion Set CID table
 
             #region Set CSD table
             lstCSD = new ObservableCollection<DumpType>();
+
             treeCSD.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeCSD.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -306,16 +378,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeCSD.DataStore = lstCSD;
             #endregion Set CSD table
 
             #region Set Extended CSD table
             lstECSD = new ObservableCollection<DumpType>();
+
             treeECSD.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeECSD.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -324,16 +402,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeECSD.DataStore = lstECSD;
             #endregion Set Extended CSD table
 
             #region Set SCSI INQUIRY table
             lstInquiry = new ObservableCollection<DumpType>();
+
             treeInquiry.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeInquiry.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -342,16 +426,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeInquiry.DataStore = lstInquiry;
             #endregion Set SCSI INQUIRY table
 
             #region Set SCSI MODE SENSE table
             lstModeSense = new ObservableCollection<DumpType>();
+
             treeModeSense.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeModeSense.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -360,16 +450,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeModeSense.DataStore = lstModeSense;
             #endregion Set SCSI MODE SENSE table
 
             #region Set SCSI MODE SENSE (10) table
             lstModeSense10 = new ObservableCollection<DumpType>();
+
             treeModeSense10.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeModeSense10.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -378,16 +474,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeModeSense10.DataStore = lstModeSense10;
             #endregion Set SCSI MODE SENSE (10) table
 
             #region Set SCSI LOG SENSE table
             lstLogSense = new ObservableCollection<DumpType>();
+
             treeLogSense.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeLogSense.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -396,6 +498,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeLogSense.DataStore = lstLogSense;
             #endregion Set SCSI MODE SENSE (10) table
 
@@ -410,11 +513,16 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Page"
             });
+
             treeEVPDs.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<EVPDType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<EVPDType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeEVPDs.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -431,11 +539,16 @@ namespace apprepodbmgr.Eto
 
             #region Set USB descriptors table
             lstUSBDescriptors = new ObservableCollection<DumpType>();
+
             treeDescriptors.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeDescriptors.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -444,16 +557,22 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeDescriptors.DataStore = lstUSBDescriptors;
             #endregion Set USB descriptors table
 
             #region Set MAM table
             lstMAM = new ObservableCollection<DumpType>();
+
             treeMAM.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DumpType, string>(r => r.Image)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DumpType, string>(r => r.Image)
+                },
                 HeaderText = "File"
             });
+
             treeMAM.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -462,6 +581,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeMAM.DataStore = lstMAM;
             #endregion Set MAM table
 
@@ -470,9 +590,13 @@ namespace apprepodbmgr.Eto
 
             treeOptionROM.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<LinearMediaType, string>(r => r.Image.Value)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<LinearMediaType, string>(r => r.Image.Value)
+                },
                 HeaderText = "File"
             });
+
             treeOptionROM.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -481,6 +605,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Offset"
             });
+
             treeOptionROM.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -500,9 +625,13 @@ namespace apprepodbmgr.Eto
 
             treeTracks.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<BlockTrackType, string>(r => r.Image.Value)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<BlockTrackType, string>(r => r.Image.Value)
+                },
                 HeaderText = "File"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -511,6 +640,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Offset"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -519,11 +649,16 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Size"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<BlockTrackType, string>(r => r.Image.format)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<BlockTrackType, string>(r => r.Image.format)
+                },
                 HeaderText = "Image format"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -532,6 +667,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Head"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -540,6 +676,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Cylinder"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -548,6 +685,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Start"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -556,6 +694,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "End"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -564,6 +703,7 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Sectors"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
@@ -572,9 +712,13 @@ namespace apprepodbmgr.Eto
                 },
                 HeaderText = "Bytes per sector"
             });
+
             treeTracks.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<BlockTrackType, string>(r => r.Format)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<BlockTrackType, string>(r => r.Format)
+                },
                 HeaderText = "Track format"
             });
 
@@ -584,11 +728,16 @@ namespace apprepodbmgr.Eto
             #endregion Set tracks table
 
             lstAdditionalInformation = new ObservableCollection<StringEntry>();
+
             treeAdditionalInformation.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<StringEntry, string>(r => r.str)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<StringEntry, string>(r => r.str)
+                },
                 HeaderText = "Information"
             });
+
             treeAdditionalInformation.DataStore              = lstAdditionalInformation;
             treeAdditionalInformation.AllowMultipleSelection = false;
 
@@ -627,45 +776,65 @@ namespace apprepodbmgr.Eto
 
         public void FillFields()
         {
-            if(Metadata == null) return;
+            if(Metadata == null)
+                return;
 
-            txtImage.Text                                     = Metadata.Image.Value;
-            txtFormat.Text                                    = Metadata.Image.format;
-            if(Metadata.Image.offsetSpecified) txtOffset.Text = Metadata.Image.offset.ToString();
-            txtSize.Text                                      = Metadata.Size.ToString();
-            checksums                                         = Metadata.Checksums;
-            contentChks                                       = Metadata.ContentChecksums;
+            txtImage.Text  = Metadata.Image.Value;
+            txtFormat.Text = Metadata.Image.format;
+
+            if(Metadata.Image.offsetSpecified)
+                txtOffset.Text = Metadata.Image.offset.ToString();
+
+            txtSize.Text = Metadata.Size.ToString();
+            checksums    = Metadata.Checksums;
+            contentChks  = Metadata.ContentChecksums;
+
             if(Metadata.Sequence != null)
             {
-                lblMediaTitle.Visible                              = true;
-                txtMediaTitle.Visible                              = true;
-                lblSequence.Visible                                = true;
-                spSequence.Visible                                 = true;
-                lblTotalMedia.Visible                              = true;
-                spTotalMedia.Visible                               = true;
-                lblSide.Visible                                    = true;
-                spSide.Visible                                     = true;
-                lblLayer.Visible                                   = true;
-                spLayer.Visible                                    = true;
-                chkSequence.Checked                                = true;
-                txtMediaTitle.Text                                 = Metadata.Sequence.MediaTitle;
-                spSequence.Value                                   = Metadata.Sequence.MediaSequence;
-                spTotalMedia.Value                                 = Metadata.Sequence.TotalMedia;
-                if(Metadata.Sequence.SideSpecified) spSide.Value   = Metadata.Sequence.Side;
-                if(Metadata.Sequence.LayerSpecified) spLayer.Value = Metadata.Sequence.Layer;
+                lblMediaTitle.Visible = true;
+                txtMediaTitle.Visible = true;
+                lblSequence.Visible   = true;
+                spSequence.Visible    = true;
+                lblTotalMedia.Visible = true;
+                spTotalMedia.Visible  = true;
+                lblSide.Visible       = true;
+                spSide.Visible        = true;
+                lblLayer.Visible      = true;
+                spLayer.Visible       = true;
+                chkSequence.Checked   = true;
+                txtMediaTitle.Text    = Metadata.Sequence.MediaTitle;
+                spSequence.Value      = Metadata.Sequence.MediaSequence;
+                spTotalMedia.Value    = Metadata.Sequence.TotalMedia;
+
+                if(Metadata.Sequence.SideSpecified)
+                    spSide.Value = Metadata.Sequence.Side;
+
+                if(Metadata.Sequence.LayerSpecified)
+                    spLayer.Value = Metadata.Sequence.Layer;
             }
 
-            if(Metadata.Manufacturer != null) txtManufacturer.Text = Metadata.Manufacturer;
-            if(Metadata.Model        != null) txtModel.Text        = Metadata.Model;
-            if(Metadata.Serial       != null) txtSerial.Text       = Metadata.Serial;
-            if(Metadata.Firmware     != null) txtFirmware.Text     = Metadata.Firmware;
-            if(Metadata.Interface    != null) txtInterface.Text    = Metadata.Interface;
-            spPhysicalBlockSize.Value                              = Metadata.PhysicalBlockSize;
-            spLogicalBlockSize.Value                               = Metadata.LogicalBlockSize;
-            txtBlocks.Text                                         = Metadata.LogicalBlocks.ToString();
-            variableBlockSize                                      = Metadata.VariableBlockSize;
-            tapeInformation                                        = Metadata.TapeInformation;
-            scans                                                  = Metadata.Scans;
+            if(Metadata.Manufacturer != null)
+                txtManufacturer.Text = Metadata.Manufacturer;
+
+            if(Metadata.Model != null)
+                txtModel.Text = Metadata.Model;
+
+            if(Metadata.Serial != null)
+                txtSerial.Text = Metadata.Serial;
+
+            if(Metadata.Firmware != null)
+                txtFirmware.Text = Metadata.Firmware;
+
+            if(Metadata.Interface != null)
+                txtInterface.Text = Metadata.Interface;
+
+            spPhysicalBlockSize.Value = Metadata.PhysicalBlockSize;
+            spLogicalBlockSize.Value  = Metadata.LogicalBlockSize;
+            txtBlocks.Text            = Metadata.LogicalBlocks.ToString();
+            variableBlockSize         = Metadata.VariableBlockSize;
+            tapeInformation           = Metadata.TapeInformation;
+            scans                     = Metadata.Scans;
+
             if(Metadata.ATA?.Identify != null)
             {
                 chkATA.Checked  = true;
@@ -682,6 +851,7 @@ namespace apprepodbmgr.Eto
                 txtPCIProduct.Visible = true;
                 txtPCIVendor.Text     = $"0x{Metadata.PCI.VendorID:X4}";
                 txtPCIProduct.Text    = $"0x{Metadata.PCI.DeviceID:X4}";
+
                 if(Metadata.PCI.Configuration != null)
                 {
                     frmPCIConfiguration.Visible = true;
@@ -716,23 +886,31 @@ namespace apprepodbmgr.Eto
                     lstPCMCIACIS.Add(Metadata.PCMCIA.CIS);
                 }
 
-                if(Metadata.PCMCIA.Compliance != null) txtCompliance.Text = Metadata.PCMCIA.Compliance;
+                if(Metadata.PCMCIA.Compliance != null)
+                    txtCompliance.Text = Metadata.PCMCIA.Compliance;
+
                 if(Metadata.PCMCIA.ManufacturerCodeSpecified)
-                    txtMfgCode.Text =
-                        $"0x{Metadata.PCMCIA.ManufacturerCode:X4}";
+                    txtMfgCode.Text = $"0x{Metadata.PCMCIA.ManufacturerCode:X4}";
+
                 if(Metadata.PCMCIA.CardCodeSpecified)
                     txtCardCode.Text = $"0x{Metadata.PCMCIA.CardCode:X4}";
+
                 if(Metadata.PCMCIA.Manufacturer != null)
                     txtPCMCIAManufacturer.Text = Metadata.PCMCIA.Manufacturer;
+
                 if(Metadata.PCMCIA.ProductName != null)
                     txtPCMCIAProductName.Text = Metadata.PCMCIA.ProductName;
+
                 if(Metadata.PCMCIA.AdditionalInformation != null)
                 {
                     lblAdditionalInformation.Visible  = true;
                     treeAdditionalInformation.Visible = true;
 
                     foreach(string addinfo in Metadata.PCMCIA.AdditionalInformation)
-                        lstAdditionalInformation.Add(new StringEntry {str = addinfo});
+                        lstAdditionalInformation.Add(new StringEntry
+                        {
+                            str = addinfo
+                        });
                 }
             }
 
@@ -801,6 +979,7 @@ namespace apprepodbmgr.Eto
                 txtUSBProduct.Visible = true;
                 txtUSBVendor.Text     = $"0x{Metadata.USB.VendorID:X4}";
                 txtUSBProduct.Text    = $"0x{Metadata.USB.ProductID:X4}";
+
                 if(Metadata.USB.Descriptors != null)
                 {
                     frmDescriptors.Visible = true;
@@ -815,9 +994,15 @@ namespace apprepodbmgr.Eto
                 lstMAM.Add(Metadata.MAM);
             }
 
-            if(Metadata.HeadsSpecified) spHeads.Value             = Metadata.Heads;
-            if(Metadata.CylindersSpecified) spCylinders.Value     = Metadata.Cylinders;
-            if(Metadata.SectorsPerTrackSpecified) spSectors.Value = Metadata.SectorsPerTrack;
+            if(Metadata.HeadsSpecified)
+                spHeads.Value = Metadata.Heads;
+
+            if(Metadata.CylindersSpecified)
+                spCylinders.Value = Metadata.Cylinders;
+
+            if(Metadata.SectorsPerTrackSpecified)
+                spSectors.Value = Metadata.SectorsPerTrack;
+
             if(Metadata.Track != null)
             {
                 chkTracks.Checked    = true;
@@ -826,10 +1011,13 @@ namespace apprepodbmgr.Eto
                 treeTracks.DataStore = lstTracks; // TODO: Really needed?
             }
 
-            if(Metadata.CopyProtection != null) txtCopyProtection.Text = Metadata.CopyProtection;
-            if(Metadata.Dimensions     != null)
+            if(Metadata.CopyProtection != null)
+                txtCopyProtection.Text = Metadata.CopyProtection;
+
+            if(Metadata.Dimensions != null)
             {
                 chkDimensions.Checked = true;
+
                 if(Metadata.Dimensions.DiameterSpecified)
                 {
                     chkRound.Checked    = true;
@@ -869,8 +1057,11 @@ namespace apprepodbmgr.Eto
                 treeDumpHardware.DataStore = lstDumpHw; // TODO: Really needed?
             }
 
-            if(Metadata.DiskType    != null) txtMediaType.Text    = Metadata.DiskType;
-            if(Metadata.DiskSubType != null) txtMediaSubtype.Text = Metadata.DiskSubType;
+            if(Metadata.DiskType != null)
+                txtMediaType.Text = Metadata.DiskType;
+
+            if(Metadata.DiskSubType != null)
+                txtMediaSubtype.Text = Metadata.DiskSubType;
         }
 
         protected void OnChkSequenceToggled(object sender, EventArgs e)
@@ -891,7 +1082,9 @@ namespace apprepodbmgr.Eto
         {
             chkRound.Visible     = chkDimensions.Checked.Value;
             stkThickness.Visible = chkDimensions.Checked.Value;
-            if(chkDimensions.Checked.Value) OnChkRoundToggled(sender, e);
+
+            if(chkDimensions.Checked.Value)
+                OnChkRoundToggled(sender, e);
             else
             {
                 stkDiameter.Visible = false;
@@ -939,12 +1132,14 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnRemovePartitionClicked(object sender, EventArgs e)
         {
-            if(treePartitions.SelectedItem != null) lstPartitions.Remove((PartitionType)treePartitions.SelectedItem);
+            if(treePartitions.SelectedItem != null)
+                lstPartitions.Remove((PartitionType)treePartitions.SelectedItem);
         }
 
         protected void OnBtnEditPartitionClicked(object sender, EventArgs e)
         {
-            if(treePartitions.SelectedItem == null) return;
+            if(treePartitions.SelectedItem == null)
+                return;
 
             partitionIter = (PartitionType)treePartitions.SelectedItem;
 
@@ -973,22 +1168,26 @@ namespace apprepodbmgr.Eto
             if(!int.TryParse(txtPartitionStart.Text, out int temp))
             {
                 MessageBox.Show("Partition start must be a number", MessageBoxType.Error);
+
                 return;
             }
 
             if(!int.TryParse(txtPartitionEnd.Text, out int temp2))
             {
                 MessageBox.Show("Partition end must be a number", MessageBoxType.Error);
+
                 return;
             }
 
             if(temp2 <= temp)
             {
                 MessageBox.Show("Partition must end after start, and be bigger than 1 sector", MessageBoxType.Error);
+
                 return;
             }
 
-            if(editingPartition) lstPartitions.Remove(partitionIter);
+            if(editingPartition)
+                lstPartitions.Remove(partitionIter);
 
             partitionIter = new PartitionType
             {
@@ -999,6 +1198,7 @@ namespace apprepodbmgr.Eto
                 Name        = txtPartitionName.Text,
                 Description = txtPartitionDescription.Text
             };
+
             if(((ObservableCollection<FileSystemType>)treeFilesystems.DataStore).Count > 0)
                 partitionIter.FileSystems = ((ObservableCollection<FileSystemType>)treeFilesystems.DataStore).ToArray();
 
@@ -1037,21 +1237,27 @@ namespace apprepodbmgr.Eto
         protected void OnBtnRemoveFilesystemClicked(object sender, EventArgs e)
         {
             if(treeFilesystems.SelectedItem != null)
-                ((ObservableCollection<FileSystemType>)treeFilesystems.DataStore).Remove((FileSystemType)treeFilesystems
-                                                                                            .SelectedItem);
+                ((ObservableCollection<FileSystemType>)treeFilesystems.DataStore).
+                    Remove((FileSystemType)treeFilesystems.SelectedItem);
         }
 
         protected void OnBtnEditFilesystemClicked(object sender, EventArgs e)
         {
-            if(treeFilesystems.SelectedItem == null) return;
+            if(treeFilesystems.SelectedItem == null)
+                return;
 
             filesystemIter = (FileSystemType)treeFilesystems.SelectedItem;
 
-            dlgFilesystem _dlgFilesystem = new dlgFilesystem {Metadata = filesystemIter};
+            var _dlgFilesystem = new dlgFilesystem
+            {
+                Metadata = filesystemIter
+            };
+
             _dlgFilesystem.FillFields();
             _dlgFilesystem.ShowModal(this);
 
-            if(!_dlgFilesystem.Modified) return;
+            if(!_dlgFilesystem.Modified)
+                return;
 
             ((ObservableCollection<FileSystemType>)treeFilesystems.DataStore).Remove(filesystemIter);
             ((ObservableCollection<FileSystemType>)treeFilesystems.DataStore).Add(_dlgFilesystem.Metadata);
@@ -1059,7 +1265,7 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnAddFilesystemClicked(object sender, EventArgs e)
         {
-            dlgFilesystem _dlgFilesystem = new dlgFilesystem();
+            var _dlgFilesystem = new dlgFilesystem();
             _dlgFilesystem.ShowModal(this);
 
             if(_dlgFilesystem.Modified)
@@ -1090,12 +1296,14 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnRemoveHardwareClicked(object sender, EventArgs e)
         {
-            if(treeDumpHardware.SelectedItem != null) lstDumpHw.Remove((DumpHardwareType)treeDumpHardware.SelectedItem);
+            if(treeDumpHardware.SelectedItem != null)
+                lstDumpHw.Remove((DumpHardwareType)treeDumpHardware.SelectedItem);
         }
 
         protected void OnBtnEditHardwareClicked(object sender, EventArgs e)
         {
-            if(treeDumpHardware.SelectedItem == null) return;
+            if(treeDumpHardware.SelectedItem == null)
+                return;
 
             dumpHwIter = (DumpHardwareType)treeDumpHardware.SelectedItem;
 
@@ -1104,6 +1312,7 @@ namespace apprepodbmgr.Eto
             txtHWRevision.Text     = dumpHwIter.Revision;
             txtHWFirmware.Text     = dumpHwIter.Firmware;
             txtHWSerial.Text       = dumpHwIter.Serial;
+
             if(dumpHwIter.Software != null)
             {
                 txtDumpName.Text    = dumpHwIter.Software.Name;
@@ -1125,7 +1334,8 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnApplyHardwareClicked(object sender, EventArgs e)
         {
-            if(editingDumpHw) lstDumpHw.Remove(dumpHwIter);
+            if(editingDumpHw)
+                lstDumpHw.Remove(dumpHwIter);
 
             dumpHwIter = new DumpHardwareType
             {
@@ -1135,7 +1345,9 @@ namespace apprepodbmgr.Eto
                 Firmware     = txtHWFirmware.Text,
                 Serial       = txtHWSerial.Text
             };
-            if(!string.IsNullOrWhiteSpace(txtDumpName.Text) || !string.IsNullOrWhiteSpace(txtDumpVersion.Text) ||
+
+            if(!string.IsNullOrWhiteSpace(txtDumpName.Text)    ||
+               !string.IsNullOrWhiteSpace(txtDumpVersion.Text) ||
                !string.IsNullOrWhiteSpace(txtDumpOS.Text))
                 dumpHwIter.Software = new SoftwareType
                 {
@@ -1143,6 +1355,7 @@ namespace apprepodbmgr.Eto
                     Version         = txtDumpVersion.Text,
                     OperatingSystem = txtDumpOS.Text
                 };
+
             if(((ObservableCollection<ExtentType>)treeExtents.DataStore).Count > 0)
                 dumpHwIter.Extents = ((ObservableCollection<ExtentType>)treeExtents.DataStore).ToArray();
 
@@ -1184,19 +1397,14 @@ namespace apprepodbmgr.Eto
                 ((ObservableCollection<ExtentType>)treeExtents.DataStore).Remove((ExtentType)treeExtents.SelectedItem);
         }
 
-        protected void OnBtnAddExtentClicked(object sender, EventArgs e)
-        {
+        protected void OnBtnAddExtentClicked(object sender, EventArgs e) =>
             ((ObservableCollection<ExtentType>)treeExtents.DataStore).Add(new ExtentType
             {
                 Start = (ulong)spExtentStart.Value,
                 End   = (ulong)spExtentEnd.Value
             });
-        }
 
-        protected void OnBtnCancelClicked(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnCancelClicked(object sender, EventArgs e) => Close();
 
         protected void OnBtnSaveClicked(object sender, EventArgs e)
         {
@@ -1204,6 +1412,7 @@ namespace apprepodbmgr.Eto
             if(string.IsNullOrEmpty(txtFormat.Text))
             {
                 MessageBox.Show("Image format cannot be null", MessageBoxType.Error);
+
                 return;
             }
 
@@ -1212,49 +1421,58 @@ namespace apprepodbmgr.Eto
                 if(spSequence.Value < 1)
                 {
                     MessageBox.Show("Media sequence must be bigger than 0", MessageBoxType.Error);
+
                     return;
                 }
 
                 if(spTotalMedia.Value < 1)
                 {
                     MessageBox.Show("Total medias must be bigger than 0", MessageBoxType.Error);
+
                     return;
                 }
 
                 if(spSequence.Value > spTotalMedia.Value)
                 {
                     MessageBox.Show("Media sequence cannot be bigger than total medias", MessageBoxType.Error);
+
                     return;
                 }
             }
 
-            if(string.IsNullOrEmpty(txtBlocks.Text) || !long.TryParse(txtBlocks.Text, out long ltmp))
+            if(string.IsNullOrEmpty(txtBlocks.Text) ||
+               !long.TryParse(txtBlocks.Text, out long ltmp))
             {
                 MessageBox.Show("Blocks must be a number", MessageBoxType.Error);
+
                 return;
             }
 
             if(ltmp < 1)
             {
                 MessageBox.Show("Blocks must be bigger than 0", MessageBoxType.Error);
+
                 return;
             }
 
             if(spPhysicalBlockSize.Value < 1)
             {
                 MessageBox.Show("Physical Block Size must be bigger than 0", MessageBoxType.Error);
+
                 return;
             }
 
             if(spLogicalBlockSize.Value < 1)
             {
                 MessageBox.Show("Logical Block Size must be bigger than 0", MessageBoxType.Error);
+
                 return;
             }
 
             if(spPhysicalBlockSize.Value < spLogicalBlockSize.Value)
             {
                 MessageBox.Show("Physical Block Size must be bigger than Logical Block Size", MessageBoxType.Error);
+
                 return;
             }
 
@@ -1265,6 +1483,7 @@ namespace apprepodbmgr.Eto
                     if(spDiameter.Value <= 0)
                     {
                         MessageBox.Show("Diameter must be bigger than 0", MessageBoxType.Error);
+
                         return;
                     }
                 }
@@ -1273,12 +1492,14 @@ namespace apprepodbmgr.Eto
                     if(spHeight.Value <= 0)
                     {
                         MessageBox.Show("Height must be bigger than 0", MessageBoxType.Error);
+
                         return;
                     }
 
                     if(spWidth.Value <= 0)
                     {
                         MessageBox.Show("Width must be bigger than 0", MessageBoxType.Error);
+
                         return;
                     }
                 }
@@ -1286,6 +1507,7 @@ namespace apprepodbmgr.Eto
                 if(spThickness.Value <= 0)
                 {
                     MessageBox.Show("Thickness must be bigger than 0", MessageBoxType.Error);
+
                     return;
                 }
             }
@@ -1295,50 +1517,60 @@ namespace apprepodbmgr.Eto
                 if(string.IsNullOrWhiteSpace(txtPCIVendor.Text))
                 {
                     MessageBox.Show("PCI Vendor ID must be set", MessageBoxType.Error);
+
                     return;
                 }
 
                 if(string.IsNullOrWhiteSpace(txtPCIProduct.Text))
                 {
                     MessageBox.Show("PCI Product ID must be set", MessageBoxType.Error);
+
                     return;
                 }
 
                 try
                 {
-                    if(Convert.ToInt32(txtPCIVendor.Text, 16) < 0 || Convert.ToInt32(txtPCIVendor.Text, 16) > 0xFFFF)
+                    if(Convert.ToInt32(txtPCIVendor.Text, 16) < 0 ||
+                       Convert.ToInt32(txtPCIVendor.Text, 16) > 0xFFFF)
                     {
                         MessageBox.Show("PCI Vendor ID must be between 0x0000 and 0xFFFF", MessageBoxType.Error);
+
                         return;
                     }
                 }
                 catch(FormatException)
                 {
                     MessageBox.Show("PCI Vendor ID must be a number in hexadecimal format", MessageBoxType.Error);
+
                     return;
                 }
                 catch(OverflowException)
                 {
                     MessageBox.Show("PCI Vendor ID must not be negative", MessageBoxType.Error);
+
                     return;
                 }
 
                 try
                 {
-                    if(Convert.ToInt32(txtPCIProduct.Text, 16) < 0 || Convert.ToInt32(txtPCIProduct.Text, 16) > 0xFFFF)
+                    if(Convert.ToInt32(txtPCIProduct.Text, 16) < 0 ||
+                       Convert.ToInt32(txtPCIProduct.Text, 16) > 0xFFFF)
                     {
                         MessageBox.Show("PCI Product ID must be between 0x0000 and 0xFFFF", MessageBoxType.Error);
+
                         return;
                     }
                 }
                 catch(FormatException)
                 {
                     MessageBox.Show("PCI Product ID must be a number in hexadecimal format", MessageBoxType.Error);
+
                     return;
                 }
                 catch(OverflowException)
                 {
                     MessageBox.Show("PCI Product ID must not be negative", MessageBoxType.Error);
+
                     return;
                 }
             }
@@ -1348,21 +1580,25 @@ namespace apprepodbmgr.Eto
                 if(string.IsNullOrWhiteSpace(txtPCMCIAManufacturer.Text))
                 {
                     MessageBox.Show("PCMCIA Manufacturer Code must be set", MessageBoxType.Error);
+
                     return;
                 }
 
                 if(string.IsNullOrWhiteSpace(txtCardCode.Text))
                 {
                     MessageBox.Show("PCMCIA Card Code must be set", MessageBoxType.Error);
+
                     return;
                 }
 
                 try
                 {
-                    if(Convert.ToInt32(txtMfgCode.Text, 16) < 0 || Convert.ToInt32(txtMfgCode.Text, 16) > 0xFFFF)
+                    if(Convert.ToInt32(txtMfgCode.Text, 16) < 0 ||
+                       Convert.ToInt32(txtMfgCode.Text, 16) > 0xFFFF)
                     {
                         MessageBox.Show("PCMCIA Manufacturer Code must be between 0x0000 and 0xFFFF",
                                         MessageBoxType.Error);
+
                         return;
                     }
                 }
@@ -1370,30 +1606,36 @@ namespace apprepodbmgr.Eto
                 {
                     MessageBox.Show("PCMCIA Manufacturer Code must be a number in hexadecimal format",
                                     MessageBoxType.Error);
+
                     return;
                 }
                 catch(OverflowException)
                 {
                     MessageBox.Show("PCMCIA Manufacturer Code must not be negative", MessageBoxType.Error);
+
                     return;
                 }
 
                 try
                 {
-                    if(Convert.ToInt32(txtCardCode.Text, 16) < 0 || Convert.ToInt32(txtCardCode.Text, 16) > 0xFFFF)
+                    if(Convert.ToInt32(txtCardCode.Text, 16) < 0 ||
+                       Convert.ToInt32(txtCardCode.Text, 16) > 0xFFFF)
                     {
                         MessageBox.Show("PCMCIA Card Code must be between 0x0000 and 0xFFFF", MessageBoxType.Error);
+
                         return;
                     }
                 }
                 catch(FormatException)
                 {
                     MessageBox.Show("PCMCIA Card Code must be a number in hexadecimal format", MessageBoxType.Error);
+
                     return;
                 }
                 catch(OverflowException)
                 {
                     MessageBox.Show("PCMCIA Card Code must not be negative", MessageBoxType.Error);
+
                     return;
                 }
             }
@@ -1403,50 +1645,60 @@ namespace apprepodbmgr.Eto
                 if(string.IsNullOrWhiteSpace(txtUSBVendor.Text))
                 {
                     MessageBox.Show("USB Vendor ID must be set", MessageBoxType.Error);
+
                     return;
                 }
 
                 if(string.IsNullOrWhiteSpace(txtUSBProduct.Text))
                 {
                     MessageBox.Show("USB Product ID must be set", MessageBoxType.Error);
+
                     return;
                 }
 
                 try
                 {
-                    if(Convert.ToInt32(txtUSBVendor.Text, 16) < 0 || Convert.ToInt32(txtUSBVendor.Text, 16) > 0xFFFF)
+                    if(Convert.ToInt32(txtUSBVendor.Text, 16) < 0 ||
+                       Convert.ToInt32(txtUSBVendor.Text, 16) > 0xFFFF)
                     {
                         MessageBox.Show("USB Vendor ID must be between 0x0000 and 0xFFFF", MessageBoxType.Error);
+
                         return;
                     }
                 }
                 catch(FormatException)
                 {
                     MessageBox.Show("USB Vendor ID must be a number in hexadecimal format", MessageBoxType.Error);
+
                     return;
                 }
                 catch(OverflowException)
                 {
                     MessageBox.Show("USB Vendor ID must not be negative", MessageBoxType.Error);
+
                     return;
                 }
 
                 try
                 {
-                    if(Convert.ToInt32(txtUSBProduct.Text, 16) < 0 || Convert.ToInt32(txtUSBProduct.Text, 16) > 0xFFFF)
+                    if(Convert.ToInt32(txtUSBProduct.Text, 16) < 0 ||
+                       Convert.ToInt32(txtUSBProduct.Text, 16) > 0xFFFF)
                     {
                         MessageBox.Show("USB Product ID must be between 0x0000 and 0xFFFF", MessageBoxType.Error);
+
                         return;
                     }
                 }
                 catch(FormatException)
                 {
                     MessageBox.Show("USB Product ID must be a number in hexadecimal format", MessageBoxType.Error);
+
                     return;
                 }
                 catch(OverflowException)
                 {
                     MessageBox.Show("USB Product ID must not be negative", MessageBoxType.Error);
+
                     return;
                 }
             }
@@ -1455,13 +1707,22 @@ namespace apprepodbmgr.Eto
                 if(lstDumpHw.Count < 1)
                 {
                     MessageBox.Show("If dump hardware is known at least an entry must be created");
+
                     return;
                 }
             #endregion Sanity checks
 
-            Metadata = new BlockMediaType {Image = new ImageType {Value = txtImage.Text, format = txtFormat.Text}};
+            Metadata = new BlockMediaType
+            {
+                Image = new ImageType
+                {
+                    Value  = txtImage.Text,
+                    format = txtFormat.Text
+                }
+            };
 
-            if(!string.IsNullOrWhiteSpace(txtOffset.Text) && long.TryParse(txtOffset.Text, out ltmp))
+            if(!string.IsNullOrWhiteSpace(txtOffset.Text) &&
+               long.TryParse(txtOffset.Text, out ltmp))
             {
                 Metadata.Image.offsetSpecified = true;
                 Metadata.Image.offset          = long.Parse(txtOffset.Text);
@@ -1479,6 +1740,7 @@ namespace apprepodbmgr.Eto
                     MediaSequence = (int)spSequence.Value,
                     TotalMedia    = (int)spTotalMedia.Value
                 };
+
                 if(spSide.Value > 0)
                 {
                     Metadata.Sequence.SideSpecified = true;
@@ -1492,11 +1754,20 @@ namespace apprepodbmgr.Eto
                 }
             }
 
-            if(!string.IsNullOrWhiteSpace(txtManufacturer.Text)) Metadata.Manufacturer = txtManufacturer.Text;
-            if(!string.IsNullOrWhiteSpace(txtModel.Text)) Metadata.Model               = txtModel.Text;
-            if(!string.IsNullOrWhiteSpace(txtSerial.Text)) Metadata.Serial             = txtSerial.Text;
-            if(!string.IsNullOrWhiteSpace(txtFirmware.Text)) Metadata.Firmware         = txtFirmware.Text;
-            if(!string.IsNullOrWhiteSpace(txtInterface.Text)) Metadata.Interface       = txtInterface.Text;
+            if(!string.IsNullOrWhiteSpace(txtManufacturer.Text))
+                Metadata.Manufacturer = txtManufacturer.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtModel.Text))
+                Metadata.Model = txtModel.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtSerial.Text))
+                Metadata.Serial = txtSerial.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtFirmware.Text))
+                Metadata.Firmware = txtFirmware.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtInterface.Text))
+                Metadata.Interface = txtInterface.Text;
 
             Metadata.PhysicalBlockSize = (int)spPhysicalBlockSize.Value;
             Metadata.LogicalBlockSize  = (int)spLogicalBlockSize.Value;
@@ -1505,32 +1776,44 @@ namespace apprepodbmgr.Eto
             Metadata.TapeInformation   = tapeInformation;
             Metadata.Scans             = scans;
 
-            if(chkATA.Checked.Value && lstAta.Count == 1) Metadata.ATA = new ATAType {Identify = lstAta[0]};
+            if(chkATA.Checked.Value &&
+               lstAta.Count == 1)
+                Metadata.ATA = new ATAType
+                {
+                    Identify = lstAta[0]
+                };
 
             if(chkPCI.Checked.Value)
             {
                 Metadata.PCI = new PCIType
                 {
-                    VendorID = Convert.ToUInt16(txtPCIVendor.Text,  16),
+                    VendorID = Convert.ToUInt16(txtPCIVendor.Text, 16),
                     DeviceID = Convert.ToUInt16(txtPCIProduct.Text, 16)
                 };
 
-                if(lstPCIConfiguration.Count == 1) Metadata.PCI.Configuration = lstPCIConfiguration[0];
+                if(lstPCIConfiguration.Count == 1)
+                    Metadata.PCI.Configuration = lstPCIConfiguration[0];
 
-                if(lstPCIOptionROM.Count == 1) Metadata.PCI.ExpansionROM = lstPCIOptionROM[0];
+                if(lstPCIOptionROM.Count == 1)
+                    Metadata.PCI.ExpansionROM = lstPCIOptionROM[0];
             }
 
             if(chkPCMCIA.Checked.Value)
             {
                 Metadata.PCMCIA = new PCMCIAType();
 
-                if(lstPCMCIACIS.Count == 1) Metadata.PCMCIA.CIS = lstPCMCIACIS[0];
+                if(lstPCMCIACIS.Count == 1)
+                    Metadata.PCMCIA.CIS = lstPCMCIACIS[0];
 
-                if(!string.IsNullOrWhiteSpace(txtCompliance.Text)) Metadata.PCMCIA.Compliance = txtCompliance.Text;
+                if(!string.IsNullOrWhiteSpace(txtCompliance.Text))
+                    Metadata.PCMCIA.Compliance = txtCompliance.Text;
+
                 if(!string.IsNullOrWhiteSpace(txtPCMCIAManufacturer.Text))
                     Metadata.PCMCIA.Manufacturer = txtPCMCIAManufacturer.Text;
+
                 if(!string.IsNullOrWhiteSpace(txtPCMCIAProductName.Text))
                     Metadata.PCMCIA.ProductName = txtPCMCIAProductName.Text;
+
                 if(!string.IsNullOrWhiteSpace(txtMfgCode.Text))
                 {
                     Metadata.PCMCIA.ManufacturerCodeSpecified = true;
@@ -1546,7 +1829,10 @@ namespace apprepodbmgr.Eto
                 if(lstAdditionalInformation.Count > 0)
                 {
                     List<string> addinfos = new List<string>();
-                    foreach(StringEntry entry in lstAdditionalInformation) addinfos.Add(entry.str);
+
+                    foreach(StringEntry entry in lstAdditionalInformation)
+                        addinfos.Add(entry.str);
+
                     Metadata.PCMCIA.AdditionalInformation = addinfos.ToArray();
                 }
             }
@@ -1555,36 +1841,55 @@ namespace apprepodbmgr.Eto
             {
                 Metadata.SecureDigital = new SecureDigitalType();
 
-                if(lstCID.Count  == 1) Metadata.SecureDigital.CID          = lstCID[0];
-                if(lstCSD.Count  == 1) Metadata.SecureDigital.CSD          = lstCSD[0];
-                if(lstECSD.Count == 1) Metadata.MultiMediaCard.ExtendedCSD = lstECSD[0];
+                if(lstCID.Count == 1)
+                    Metadata.SecureDigital.CID = lstCID[0];
+
+                if(lstCSD.Count == 1)
+                    Metadata.SecureDigital.CSD = lstCSD[0];
+
+                if(lstECSD.Count == 1)
+                    Metadata.MultiMediaCard.ExtendedCSD = lstECSD[0];
             }
 
             if(chkSCSI.Checked.Value)
             {
                 Metadata.SCSI = new SCSIType();
 
-                if(lstInquiry.Count     == 1) Metadata.SCSI.Inquiry     = lstInquiry[0];
-                if(lstModeSense.Count   == 1) Metadata.SCSI.ModeSense   = lstModeSense[0];
-                if(lstModeSense10.Count == 1) Metadata.SCSI.ModeSense10 = lstModeSense10[0];
-                if(lstLogSense.Count    == 1) Metadata.SCSI.LogSense    = lstLogSense[0];
-                if(lstEVPDs.Count       > 0) Metadata.SCSI.EVPD         = lstEVPDs.ToArray();
+                if(lstInquiry.Count == 1)
+                    Metadata.SCSI.Inquiry = lstInquiry[0];
+
+                if(lstModeSense.Count == 1)
+                    Metadata.SCSI.ModeSense = lstModeSense[0];
+
+                if(lstModeSense10.Count == 1)
+                    Metadata.SCSI.ModeSense10 = lstModeSense10[0];
+
+                if(lstLogSense.Count == 1)
+                    Metadata.SCSI.LogSense = lstLogSense[0];
+
+                if(lstEVPDs.Count > 0)
+                    Metadata.SCSI.EVPD = lstEVPDs.ToArray();
             }
 
             if(chkUSB.Checked.Value)
             {
                 Metadata.USB = new USBType
                 {
-                    VendorID  = Convert.ToUInt16(txtUSBVendor.Text,  16),
+                    VendorID  = Convert.ToUInt16(txtUSBVendor.Text, 16),
                     ProductID = Convert.ToUInt16(txtUSBProduct.Text, 16)
                 };
 
-                if(lstUSBDescriptors.Count == 1) Metadata.USB.Descriptors = lstUSBDescriptors[0];
+                if(lstUSBDescriptors.Count == 1)
+                    Metadata.USB.Descriptors = lstUSBDescriptors[0];
             }
 
-            if(chkMAM.Checked.Value && lstMAM.Count == 1) Metadata.MAM = lstMAM[0];
+            if(chkMAM.Checked.Value &&
+               lstMAM.Count == 1)
+                Metadata.MAM = lstMAM[0];
 
-            if(spHeads.Value > 0 && spCylinders.Value > 0 && spSectors.Value > 0)
+            if(spHeads.Value     > 0 &&
+               spCylinders.Value > 0 &&
+               spSectors.Value   > 0)
             {
                 Metadata.HeadsSpecified           = true;
                 Metadata.CylindersSpecified       = true;
@@ -1594,13 +1899,16 @@ namespace apprepodbmgr.Eto
                 Metadata.SectorsPerTrack          = (long)spSectors.Value;
             }
 
-            if(lstTracks.Count > 0) Metadata.Track = lstTracks.ToArray();
+            if(lstTracks.Count > 0)
+                Metadata.Track = lstTracks.ToArray();
 
-            if(!string.IsNullOrWhiteSpace(txtCopyProtection.Text)) Metadata.CopyProtection = txtCopyProtection.Text;
+            if(!string.IsNullOrWhiteSpace(txtCopyProtection.Text))
+                Metadata.CopyProtection = txtCopyProtection.Text;
 
             if(chkDimensions.Checked.Value)
             {
                 Metadata.Dimensions = new DimensionsType();
+
                 if(chkRound.Checked.Value)
                 {
                     Metadata.Dimensions.DiameterSpecified = true;
@@ -1617,12 +1925,18 @@ namespace apprepodbmgr.Eto
                 Metadata.Dimensions.Thickness = spThickness.Value;
             }
 
-            if(lstPartitions.Count > 0) Metadata.FileSystemInformation = lstPartitions.ToArray();
+            if(lstPartitions.Count > 0)
+                Metadata.FileSystemInformation = lstPartitions.ToArray();
 
-            if(chkDumpHardware.Checked.Value && lstDumpHw.Count > 0) Metadata.DumpHardwareArray = lstDumpHw.ToArray();
+            if(chkDumpHardware.Checked.Value &&
+               lstDumpHw.Count > 0)
+                Metadata.DumpHardwareArray = lstDumpHw.ToArray();
 
-            if(!string.IsNullOrWhiteSpace(txtMediaType.Text)) Metadata.DiskType       = txtMediaType.Text;
-            if(!string.IsNullOrWhiteSpace(txtMediaSubtype.Text)) Metadata.DiskSubType = txtMediaSubtype.Text;
+            if(!string.IsNullOrWhiteSpace(txtMediaType.Text))
+                Metadata.DiskType = txtMediaType.Text;
+
+            if(!string.IsNullOrWhiteSpace(txtMediaSubtype.Text))
+                Metadata.DiskSubType = txtMediaSubtype.Text;
 
             Modified = true;
             Close();

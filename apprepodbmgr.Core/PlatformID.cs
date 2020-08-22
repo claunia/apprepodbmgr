@@ -40,150 +40,77 @@ namespace DiscImageChef.Interop
 {
     public enum PlatformID
     {
-        /// <summary>
-        ///     Win32s
-        /// </summary>
+        /// <summary>Win32s</summary>
         Win32S = 0,
-        /// <summary>
-        ///     Win32 (Windows 9x)
-        /// </summary>
+        /// <summary>Win32 (Windows 9x)</summary>
         Win32Windows = 1,
-        /// <summary>
-        ///     Windows NT
-        /// </summary>
+        /// <summary>Windows NT</summary>
         Win32NT = 2,
-        /// <summary>
-        ///     Windows Mobile
-        /// </summary>
+        /// <summary>Windows Mobile</summary>
         WinCE = 3,
-        /// <summary>
-        ///     UNIX (do not use, too generic)
-        /// </summary>
+        /// <summary>UNIX (do not use, too generic)</summary>
         Unix = 4,
-        /// <summary>
-        ///     Xbox 360
-        /// </summary>
+        /// <summary>Xbox 360</summary>
         Xbox = 5,
-        /// <summary>
-        ///     OS X
-        /// </summary>
+        /// <summary>OS X</summary>
         MacOSX = 6,
-        /// <summary>
-        ///     iOS is not OS X
-        /// </summary>
+        /// <summary>iOS is not OS X</summary>
         iOS = 7,
-        /// <summary>
-        ///     Linux
-        /// </summary>
+        /// <summary>Linux</summary>
         Linux = 8,
-        /// <summary>
-        ///     Sun Solaris
-        /// </summary>
+        /// <summary>Sun Solaris</summary>
         Solaris = 9,
-        /// <summary>
-        ///     NetBSD
-        /// </summary>
+        /// <summary>NetBSD</summary>
         NetBSD = 10,
-        /// <summary>
-        ///     OpenBSD
-        /// </summary>
+        /// <summary>OpenBSD</summary>
         OpenBSD = 11,
-        /// <summary>
-        ///     FreeBSD
-        /// </summary>
+        /// <summary>FreeBSD</summary>
         FreeBSD = 12,
-        /// <summary>
-        ///     DragonFly BSD
-        /// </summary>
+        /// <summary>DragonFly BSD</summary>
         DragonFly = 13,
-        /// <summary>
-        ///     Nintendo Wii
-        /// </summary>
+        /// <summary>Nintendo Wii</summary>
         Wii = 14,
-        /// <summary>
-        ///     Nintendo Wii U
-        /// </summary>
+        /// <summary>Nintendo Wii U</summary>
         WiiU = 15,
-        /// <summary>
-        ///     Sony PlayStation 3
-        /// </summary>
+        /// <summary>Sony PlayStation 3</summary>
         PlayStation3 = 16,
-        /// <summary>
-        ///     Sony Playstation 4
-        /// </summary>
+        /// <summary>Sony Playstation 4</summary>
         PlayStation4 = 17,
-        /// <summary>
-        ///     Google Android
-        /// </summary>
+        /// <summary>Google Android</summary>
         Android = 18,
-        /// <summary>
-        ///     Samsung Tizen
-        /// </summary>
+        /// <summary>Samsung Tizen</summary>
         Tizen = 19,
-        /// <summary>
-        ///     Windows Phone
-        /// </summary>
+        /// <summary>Windows Phone</summary>
         WindowsPhone = 20,
-        /// <summary>
-        ///     GNU/Hurd
-        /// </summary>
+        /// <summary>GNU/Hurd</summary>
         Hurd = 21,
-        /// <summary>
-        ///     Haiku
-        /// </summary>
+        /// <summary>Haiku</summary>
         Haiku = 22,
-        /// <summary>
-        ///     HP-UX
-        /// </summary>
+        /// <summary>HP-UX</summary>
         HPUX = 23,
-        /// <summary>
-        ///     AIX
-        /// </summary>
+        /// <summary>AIX</summary>
         AIX = 24,
-        /// <summary>
-        ///     OS/400
-        /// </summary>
+        /// <summary>OS/400</summary>
         OS400 = 25,
-        /// <summary>
-        ///     IRIX
-        /// </summary>
+        /// <summary>IRIX</summary>
         IRIX = 26,
-        /// <summary>
-        ///     Minix
-        /// </summary>
+        /// <summary>Minix</summary>
         Minix = 27,
-        /// <summary>
-        ///     NonStop
-        /// </summary>
+        /// <summary>NonStop</summary>
         NonStop = 28,
-        /// <summary>
-        ///     QNX
-        /// </summary>
+        /// <summary>QNX</summary>
         QNX = 29,
-        /// <summary>
-        ///     SINIX
-        /// </summary>
+        /// <summary>SINIX</summary>
         SINIX = 30,
-        /// <summary>
-        ///     Tru64 UNIX
-        /// </summary>
+        /// <summary>Tru64 UNIX</summary>
         Tru64 = 31,
-        /// <summary>
-        ///     Ultrix
-        /// </summary>
+        /// <summary>Ultrix</summary>
         Ultrix = 32,
-        /// <summary>
-        ///     SCO OpenServer / SCO UNIX
-        /// </summary>
+        /// <summary>SCO OpenServer / SCO UNIX</summary>
         OpenServer = 33,
-        /// <summary>
-        ///     SCO UnixWare
-        /// </summary>
+        /// <summary>SCO UnixWare</summary>
         UnixWare = 34,
-        /// <summary>
-        ///     IBM z/OS
-        /// </summary>
-        zOS     = 35,
-        Unknown = -1
+        /// <summary>IBM z/OS</summary>
+        zOS = 35, Unknown = -1
     }
 }

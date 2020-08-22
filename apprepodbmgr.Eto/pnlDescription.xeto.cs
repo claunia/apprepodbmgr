@@ -11,9 +11,9 @@ namespace apprepodbmgr.Eto
 {
     public class pnlDescription : Panel
     {
-        ObservableCollection<ListItem> cmbCodepagesItems;
-        Encoding                       currentEncoding;
-        public string                  description;
+        readonly ObservableCollection<ListItem> cmbCodepagesItems;
+        Encoding                                currentEncoding;
+        public string                           description;
 
         public pnlDescription()
         {
@@ -21,31 +21,52 @@ namespace apprepodbmgr.Eto
 
             treeFiles.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<string, string>(r => r)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<string, string>(r => r)
+                },
                 HeaderText = "File"
             });
 
             treeFiles.AllowMultipleSelection =  false;
             treeFiles.SelectionChanged       += TreeFilesOnSelectionChanged;
             cmbCodepagesItems                =  new ObservableCollection<ListItem>();
+
             foreach(EncodingInfo enc in Claunia.Encoding.Encoding.GetEncodings())
-                cmbCodepagesItems.Add(new ListItem {Key = enc.Name, Text = enc.DisplayName});
+                cmbCodepagesItems.Add(new ListItem
+                {
+                    Key  = enc.Name,
+                    Text = enc.DisplayName
+                });
+
             foreach(System.Text.EncodingInfo enc in Encoding.GetEncodings())
-                cmbCodepagesItems.Add(new ListItem {Key = enc.Name, Text = enc.GetEncoding().EncodingName});
+                cmbCodepagesItems.Add(new ListItem
+                {
+                    Key  = enc.Name,
+                    Text = enc.GetEncoding().EncodingName
+                });
+
             cmbCodepages.DataStore = cmbCodepagesItems.OrderBy(t => t.Text);
+
             try
             {
                 currentEncoding          = Claunia.Encoding.Encoding.GetEncoding("ibm437");
                 cmbCodepages.SelectedKey = currentEncoding.BodyName;
             }
-            catch { currentEncoding = Encoding.ASCII; }
+            catch
+            {
+                currentEncoding = Encoding.ASCII;
+            }
 
             cmbCodepages.SelectedIndexChanged += CmbCodepagesOnSelectedIndexChanged;
         }
 
         void CmbCodepagesOnSelectedIndexChanged(object sender, EventArgs eventArgs)
         {
-            try { currentEncoding = Claunia.Encoding.Encoding.GetEncoding(cmbCodepages.SelectedKey); }
+            try
+            {
+                currentEncoding = Claunia.Encoding.Encoding.GetEncoding(cmbCodepages.SelectedKey);
+            }
             catch
             {
                 currentEncoding          = Encoding.ASCII;
@@ -59,9 +80,11 @@ namespace apprepodbmgr.Eto
         {
             txtDescription.Text = "";
             description         = null;
-            if(!(treeFiles.SelectedItem is string file)) return;
 
-            StreamReader sr = new StreamReader(file, currentEncoding);
+            if(!(treeFiles.SelectedItem is string file))
+                return;
+
+            var sr = new StreamReader(file, currentEncoding);
             description         = sr.ReadToEnd();
             txtDescription.Text = description;
             sr.Close();

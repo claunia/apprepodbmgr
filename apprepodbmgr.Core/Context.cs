@@ -68,7 +68,7 @@ namespace apprepodbmgr.Core
             Workers.FinishedWithText += CheckUnarFinished;
             Workers.Failed           += CheckUnarFailed;
 
-            Thread thdCheckUnar = new Thread(Workers.CheckUnar);
+            var thdCheckUnar = new Thread(Workers.CheckUnar);
             thdCheckUnar.Start();
         }
 

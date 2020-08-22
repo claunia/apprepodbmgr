@@ -40,15 +40,16 @@ namespace apprepodbmgr.Core
         static int    zipCounter;
         static string zipCurrentEntryName;
 
-        #if DEBUG
-        static Stopwatch stopwatch = new Stopwatch();
-        #endif
+    #if DEBUG
+        static readonly Stopwatch stopwatch = new Stopwatch();
+    #endif
 
         static string Stringify(byte[] hash)
         {
-            StringBuilder hashOutput = new StringBuilder();
+            var hashOutput = new StringBuilder();
 
-            foreach(byte h in hash) hashOutput.Append(h.ToString("x2"));
+            foreach(byte h in hash)
+                hashOutput.Append(h.ToString("x2"));
 
             return hashOutput.ToString();
         }
@@ -58,6 +59,7 @@ namespace apprepodbmgr.Core
             if(string.IsNullOrWhiteSpace(Settings.Current.UnArchiverPath))
             {
                 Failed?.Invoke("unar path is not set.");
+
                 return;
             }
 
@@ -71,12 +73,14 @@ namespace apprepodbmgr.Core
             if(!File.Exists(unarPath))
             {
                 Failed?.Invoke($"Cannot find unar executable at {unarPath}.");
+
                 return;
             }
 
             if(!File.Exists(lsarPath))
             {
                 Failed?.Invoke("Cannot find unar executable.");
+
                 return;
             }
 
@@ -84,7 +88,7 @@ namespace apprepodbmgr.Core
 
             try
             {
-                Process unarProcess = new Process
+                var unarProcess = new Process
                 {
                     StartInfo =
                     {
@@ -94,6 +98,7 @@ namespace apprepodbmgr.Core
                         UseShellExecute        = false
                     }
                 };
+
                 unarProcess.Start();
                 unarProcess.WaitForExit();
                 unarOut = unarProcess.StandardOutput.ReadToEnd();
@@ -101,12 +106,13 @@ namespace apprepodbmgr.Core
             catch
             {
                 Failed?.Invoke("Cannot run unar.");
+
                 return;
             }
 
             try
             {
-                Process lsarProcess = new Process
+                var lsarProcess = new Process
                 {
                     StartInfo =
                     {
@@ -116,6 +122,7 @@ namespace apprepodbmgr.Core
                         UseShellExecute        = false
                     }
                 };
+
                 lsarProcess.Start();
                 lsarProcess.WaitForExit();
                 lsarOut = lsarProcess.StandardOutput.ReadToEnd();
@@ -123,22 +130,25 @@ namespace apprepodbmgr.Core
             catch
             {
                 Failed?.Invoke("Cannot run lsar.");
+
                 return;
             }
 
             if(!unarOut.StartsWith("unar ", StringComparison.CurrentCulture))
             {
                 Failed?.Invoke("Not the correct unar executable");
+
                 return;
             }
 
             if(!lsarOut.StartsWith("lsar ", StringComparison.CurrentCulture))
             {
                 Failed?.Invoke("Not the correct unar executable");
+
                 return;
             }
 
-            Process versionProcess = new Process
+            var versionProcess = new Process
             {
                 StartInfo =
                 {
@@ -149,6 +159,7 @@ namespace apprepodbmgr.Core
                     Arguments              = "-v"
                 }
             };
+
             versionProcess.Start();
             versionProcess.WaitForExit();
 

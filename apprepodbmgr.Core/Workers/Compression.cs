@@ -53,18 +53,21 @@ namespace apprepodbmgr.Core
                 if(string.IsNullOrWhiteSpace(Context.DbInfo.Developer))
                 {
                     Failed?.Invoke("Developer cannot be empty");
+
                     return;
                 }
 
                 if(string.IsNullOrWhiteSpace(Context.DbInfo.Product))
                 {
                     Failed?.Invoke("Product cannot be empty");
+
                     return;
                 }
 
                 if(string.IsNullOrWhiteSpace(Context.DbInfo.Version))
                 {
                     Failed?.Invoke("Version cannot be empty");
+
                     return;
                 }
 
@@ -72,53 +75,73 @@ namespace apprepodbmgr.Core
                 destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Developer;
                 destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Product;
                 destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Version;
+
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Languages))
                     destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Languages;
+
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Architecture))
                     destinationFolder += Path.DirectorySeparatorChar + Context.DbInfo.Architecture;
-                if(Context.DbInfo.Oem) destinationFolder += Path.DirectorySeparatorChar + "oem";
+
+                if(Context.DbInfo.Oem)
+                    destinationFolder += Path.DirectorySeparatorChar + "oem";
+
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.TargetOs))
                     destinationFolder += Path.DirectorySeparatorChar + "for " + Context.DbInfo.TargetOs;
 
                 string destinationFile = "";
+
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Format))
                     destinationFile += "[" + Context.DbInfo.Format + "]";
+
                 if(Context.DbInfo.Files)
                 {
-                    if(destinationFile != "") destinationFile += "_";
+                    if(destinationFile != "")
+                        destinationFile += "_";
+
                     destinationFile += "files";
                 }
 
                 if(Context.DbInfo.Installer)
                 {
-                    if(destinationFile != "") destinationFile += "_";
+                    if(destinationFile != "")
+                        destinationFile += "_";
+
                     destinationFile += "installer";
                 }
 
                 if(Context.DbInfo.Source)
                 {
-                    if(destinationFile != "") destinationFile += "_";
+                    if(destinationFile != "")
+                        destinationFile += "_";
+
                     destinationFile += "source";
                 }
 
                 if(Context.DbInfo.Update)
                 {
-                    if(destinationFile != "") destinationFile += "_";
+                    if(destinationFile != "")
+                        destinationFile += "_";
+
                     destinationFile += "update";
                 }
 
                 if(Context.DbInfo.Upgrade)
                 {
-                    if(destinationFile != "") destinationFile += "_";
+                    if(destinationFile != "")
+                        destinationFile += "_";
+
                     destinationFile += "upgrade";
                 }
 
                 if(!string.IsNullOrWhiteSpace(Context.DbInfo.Description))
                 {
-                    if(destinationFile != "") destinationFile += "_";
+                    if(destinationFile != "")
+                        destinationFile += "_";
+
                     destinationFile += Context.DbInfo.Description;
                 }
-                else if(destinationFile == "") destinationFile = "archive";
+                else if(destinationFile == "")
+                    destinationFile = "archive";
 
                 string destination = destinationFolder + Path.DirectorySeparatorChar + destinationFile + ".zip";
 
@@ -130,16 +153,19 @@ namespace apprepodbmgr.Core
                     if(File.Exists(destination))
                     {
                         Failed?.Invoke("Application already exists.");
+
                         return;
                     }
 
                     Failed?.Invoke("Application already exists in the database but not in the repository, check for inconsistencies.");
+
                     return;
                 }
 
                 if(File.Exists(destination))
                 {
                     Failed?.Invoke("Application already exists in the repository but not in the database, check for inconsistencies.");
+
                     return;
                 }
 
@@ -147,9 +173,11 @@ namespace apprepodbmgr.Core
 
                 string filesPath;
 
-                if(!string.IsNullOrEmpty(Context.TmpFolder) && Directory.Exists(Context.TmpFolder))
-                    filesPath  = Context.TmpFolder;
-                else filesPath = Context.Path;
+                if(!string.IsNullOrEmpty(Context.TmpFolder) &&
+                   Directory.Exists(Context.TmpFolder))
+                    filesPath = Context.TmpFolder;
+                else
+                    filesPath = Context.Path;
 
                 string extension = null;
 
@@ -157,24 +185,30 @@ namespace apprepodbmgr.Core
                 {
                     case AlgoEnum.GZip:
                         extension = ".gz";
+
                         break;
                     case AlgoEnum.BZip2:
                         extension = ".bz2";
+
                         break;
                     case AlgoEnum.LZMA:
                         extension = ".lzma";
+
                         break;
                     case AlgoEnum.LZip:
                         extension = ".lz";
+
                         break;
                 }
 
-                long totalSize                                                            = 0, currentSize = 0;
-                foreach(KeyValuePair<string, DbAppFile> file in Context.Hashes) totalSize += file.Value.Length;
+                long totalSize = 0, currentSize = 0;
 
-                #if DEBUG
+                foreach(KeyValuePair<string, DbAppFile> file in Context.Hashes)
+                    totalSize += file.Value.Length;
+
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 foreach(KeyValuePair<string, DbAppFile> file in Context.Hashes)
                 {
                     UpdateProgress?.Invoke("Compressing...", file.Value.Path, currentSize, totalSize);
@@ -182,34 +216,42 @@ namespace apprepodbmgr.Core
                     destinationFolder = Path.Combine(Settings.Current.RepositoryPath, file.Value.Sha256[0].ToString(),
                                                      file.Value.Sha256[1].ToString(), file.Value.Sha256[2].ToString(),
                                                      file.Value.Sha256[3].ToString(), file.Value.Sha256[4].ToString());
+
                     Directory.CreateDirectory(destinationFolder);
 
                     destinationFile = Path.Combine(destinationFolder, file.Value.Sha256 + extension);
 
                     if(!File.Exists(destinationFile))
                     {
-                        FileStream inFs = new FileStream(Path.Combine(filesPath, file.Value.Path), FileMode.Open,
-                                                         FileAccess.Read);
-                        FileStream outFs   = new FileStream(destinationFile, FileMode.CreateNew, FileAccess.Write);
-                        Stream     zStream = null;
+                        var inFs = new FileStream(Path.Combine(filesPath, file.Value.Path), FileMode.Open,
+                                                  FileAccess.Read);
+
+                        var    outFs   = new FileStream(destinationFile, FileMode.CreateNew, FileAccess.Write);
+                        Stream zStream = null;
 
                         switch(Settings.Current.CompressionAlgorithm)
                         {
                             case AlgoEnum.GZip:
                                 zStream = new GZipStream(outFs, CompressionMode.Compress,
                                                          CompressionLevel.BestCompression);
+
                                 break;
                             case AlgoEnum.BZip2:
                                 zStream = new BZip2Stream(outFs, CompressionMode.Compress);
+
                                 break;
                             case AlgoEnum.LZMA:
                                 zStream = new LzmaStream(new LzmaEncoderProperties(), false, outFs);
+
                                 outFs.Write(((LzmaStream)zStream).Properties, 0,
                                             ((LzmaStream)zStream).Properties.Length);
+
                                 outFs.Write(BitConverter.GetBytes(inFs.Length), 0, 8);
+
                                 break;
                             case AlgoEnum.LZip:
                                 zStream = new LZipStream(outFs, CompressionMode.Compress);
+
                                 break;
                         }
 
@@ -220,6 +262,7 @@ namespace apprepodbmgr.Core
                             UpdateProgress2?.Invoke($"{inFs.Position / (double)inFs.Length:P}",
                                                     $"{inFs.Position} / {inFs.Length} bytes", inFs.Position,
                                                     inFs.Length);
+
                             UpdateProgress?.Invoke("Compressing...", file.Value.Path, currentSize, totalSize);
 
                             inFs.Read(buffer, 0, buffer.Length);
@@ -228,8 +271,10 @@ namespace apprepodbmgr.Core
                         }
 
                         buffer = new byte[inFs.Length - inFs.Position];
+
                         UpdateProgress2?.Invoke($"{inFs.Position / (double)inFs.Length:P}",
                                                 $"{inFs.Position} / {inFs.Length} bytes", inFs.Position, inFs.Length);
+
                         UpdateProgress?.Invoke("Compressing...", file.Value.Path, currentSize, totalSize);
 
                         inFs.Read(buffer, 0, buffer.Length);
@@ -243,28 +288,31 @@ namespace apprepodbmgr.Core
                         zStream.Close();
                         outFs.Dispose();
                     }
-                    else currentSize += file.Value.Length;
+                    else
+                        currentSize += file.Value.Length;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.CompressFiles(): Took {0} seconds to compress files",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 if(Context.Metadata != null)
                 {
-                    MemoryStream  xms = new MemoryStream();
-                    XmlSerializer xs  = new XmlSerializer(typeof(CICMMetadataType));
+                    var xms = new MemoryStream();
+                    var xs  = new XmlSerializer(typeof(CICMMetadataType));
                     xs.Serialize(xms, Context.Metadata);
                     xms.Position = 0;
 
-                    JsonSerializer js = new JsonSerializer
+                    var js = new JsonSerializer
                     {
                         Formatting        = Formatting.Indented,
                         NullValueHandling = NullValueHandling.Ignore
                     };
-                    MemoryStream jms = new MemoryStream();
-                    StreamWriter sw  = new StreamWriter(jms, Encoding.UTF8, 1048576, true);
+
+                    var jms = new MemoryStream();
+                    var sw  = new StreamWriter(jms, Encoding.UTF8, 1048576, true);
                     js.Serialize(sw, Context.Metadata, typeof(CICMMetadataType));
                     sw.Close();
                     jms.Position = 0;
@@ -272,14 +320,18 @@ namespace apprepodbmgr.Core
                     destinationFolder = Path.Combine(Settings.Current.RepositoryPath, "metadata", mdid[0].ToString(),
                                                      mdid[1].ToString(), mdid[2].ToString(), mdid[3].ToString(),
                                                      mdid[4].ToString());
+
                     Directory.CreateDirectory(destinationFolder);
 
-                    FileStream xfs = new FileStream(Path.Combine(destinationFolder, mdid + ".xml"), FileMode.CreateNew,
-                                                    FileAccess.Write);
+                    var xfs = new FileStream(Path.Combine(destinationFolder, mdid + ".xml"), FileMode.CreateNew,
+                                             FileAccess.Write);
+
                     xms.CopyTo(xfs);
                     xfs.Close();
-                    FileStream jfs = new FileStream(Path.Combine(destinationFolder, mdid + ".json"), FileMode.CreateNew,
-                                                    FileAccess.Write);
+
+                    var jfs = new FileStream(Path.Combine(destinationFolder, mdid + ".json"), FileMode.CreateNew,
+                                             FileAccess.Write);
+
                     jms.CopyTo(jfs);
                     jfs.Close();
 
@@ -289,15 +341,16 @@ namespace apprepodbmgr.Core
 
                 FinishedWithText?.Invoke($"Correctly added application with MDID {mdid}");
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -306,12 +359,14 @@ namespace apprepodbmgr.Core
             if(!Context.UnarUsable)
             {
                 Failed?.Invoke("The UnArchiver is not correctly installed");
+
                 return;
             }
 
             if(!File.Exists(Context.Path))
             {
                 Failed?.Invoke("Specified file cannot be found");
+
                 return;
             }
 
@@ -323,10 +378,10 @@ namespace apprepodbmgr.Core
                 string lsarfilename = unarfilename?.Replace("unar", "lsar");
                 string lsarPath     = Path.Combine(unarFolder, lsarfilename + extension);
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
-                Process lsarProcess = new Process
+            #endif
+                var lsarProcess = new Process
                 {
                     StartInfo =
                     {
@@ -337,37 +392,46 @@ namespace apprepodbmgr.Core
                         Arguments              = $"-j \"\"\"{Context.Path}\"\"\""
                     }
                 };
+
                 lsarProcess.Start();
                 string lsarOutput = lsarProcess.StandardOutput.ReadToEnd();
                 lsarProcess.WaitForExit();
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.OpenArchive(): Took {0} seconds to list archive contents",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
-                long           counter  = 0;
-                string         format   = null;
-                JsonTextReader jsReader = new JsonTextReader(new StringReader(lsarOutput));
+            #endif
+                long   counter  = 0;
+                string format   = null;
+                var    jsReader = new JsonTextReader(new StringReader(lsarOutput));
+
                 while(jsReader.Read())
                     switch(jsReader.TokenType)
                     {
                         case JsonToken.PropertyName
                             when jsReader.Value != null && jsReader.Value.ToString() == "XADFileName":
                             counter++;
+
                             break;
                         case JsonToken.PropertyName
                             when jsReader.Value != null && jsReader.Value.ToString() == "lsarFormatName":
                             jsReader.Read();
-                            if(jsReader.TokenType == JsonToken.String && jsReader.Value != null)
+
+                            if(jsReader.TokenType == JsonToken.String &&
+                               jsReader.Value     != null)
                                 format = jsReader.Value.ToString();
+
                             break;
                     }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.OpenArchive(): Took {0} seconds to process archive contents",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 Context.UnzipWithUnAr    = false;
                 Context.ArchiveFormat    = format;
@@ -376,12 +440,14 @@ namespace apprepodbmgr.Core
                 if(string.IsNullOrEmpty(format))
                 {
                     Failed?.Invoke("File not recognized as an archive");
+
                     return;
                 }
 
                 if(counter == 0)
                 {
                     Failed?.Invoke("Archive contains no files");
+
                     return;
                 }
 
@@ -391,37 +457,46 @@ namespace apprepodbmgr.Core
 
                     if(Context.UsableDotNetZip)
                     {
-                        #if DEBUG
+                    #if DEBUG
                         stopwatch.Restart();
-                        #endif
-                        ZipFile zf = ZipFile.Read(Context.Path, new ReadOptions {Encoding = Encoding.UTF8});
+                    #endif
+                        var zf = ZipFile.Read(Context.Path, new ReadOptions
+                        {
+                            Encoding = Encoding.UTF8
+                        });
+
                         foreach(ZipEntry ze in zf)
                         {
                             // ZIP created with Mac OS X, need to be extracted with The UnArchiver to get correct ResourceFork structure
-                            if(!ze.FileName.StartsWith("__MACOSX", StringComparison.CurrentCulture)) continue;
+                            if(!ze.FileName.StartsWith("__MACOSX", StringComparison.CurrentCulture))
+                                continue;
 
                             Context.UnzipWithUnAr = true;
+
                             break;
                         }
-                        #if DEBUG
+                    #if DEBUG
                         stopwatch.Stop();
-                        Console.WriteLine("Core.OpenArchive(): Took {0} seconds to navigate in search of Mac OS X metadata",
-                                          stopwatch.Elapsed.TotalSeconds);
-                        #endif
+
+                        Console.
+                            WriteLine("Core.OpenArchive(): Took {0} seconds to navigate in search of Mac OS X metadata",
+                                      stopwatch.Elapsed.TotalSeconds);
+                    #endif
                     }
                 }
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -430,17 +505,18 @@ namespace apprepodbmgr.Core
             if(!File.Exists(Context.Path))
             {
                 Failed?.Invoke("Specified file cannot be found");
+
                 return;
             }
 
             if(!Directory.Exists(Settings.Current.TemporaryFolder))
             {
                 Failed?.Invoke("Temporary folder cannot be found");
+
                 return;
             }
 
-            string tmpFolder = Context.UserExtracting
-                                   ? Context.TmpFolder
+            string tmpFolder = Context.UserExtracting ? Context.TmpFolder
                                    : Path.Combine(Settings.Current.TemporaryFolder, Path.GetRandomFileName());
 
             try
@@ -449,10 +525,11 @@ namespace apprepodbmgr.Core
 
                 Context.TmpFolder = tmpFolder;
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke("Cannot create temporary folder");
             }
@@ -460,105 +537,125 @@ namespace apprepodbmgr.Core
             try
             {
                 // If it's a ZIP file not created by Mac OS X, use DotNetZip to uncompress (unar freaks out or corrupts certain ZIP features)
-                if(Context.ArchiveFormat == "Zip" && !Context.UnzipWithUnAr && Context.UsableDotNetZip)
+                if(Context.ArchiveFormat == "Zip" &&
+                   !Context.UnzipWithUnAr         &&
+                   Context.UsableDotNetZip)
                     try
                     {
-                        #if DEBUG
+                    #if DEBUG
                         stopwatch.Restart();
-                        #endif
-                        ZipFile zf = ZipFile.Read(Context.Path, new ReadOptions {Encoding = Encoding.UTF8});
+                    #endif
+                        var zf = ZipFile.Read(Context.Path, new ReadOptions
+                        {
+                            Encoding = Encoding.UTF8
+                        });
+
                         zf.ExtractExistingFile =  ExtractExistingFileAction.OverwriteSilently;
                         zf.ExtractProgress     += Zf_ExtractProgress;
                         zipCounter             =  0;
                         zipCurrentEntryName    =  "";
                         zf.ExtractAll(tmpFolder);
                     }
-                    catch(ThreadAbortException) { }
+                    catch(ThreadAbortException) {}
                     catch(Exception ex)
                     {
-                        if(Debugger.IsAttached) throw;
+                        if(Debugger.IsAttached)
+                            throw;
 
                         Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                        #if DEBUG
+                    #if DEBUG
                         Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                        #endif
+                    #endif
                     }
                 else
                 {
                     if(!Context.UnarUsable)
                     {
                         Failed?.Invoke("The UnArchiver is not correctly installed");
+
                         return;
                     }
 
-                    #if DEBUG
+                #if DEBUG
                     stopwatch.Restart();
-                    #endif
+                #endif
                     Context.UnarProcess = new Process
                     {
                         StartInfo =
                         {
-                            FileName               = Settings.Current.UnArchiverPath,
-                            CreateNoWindow         = true,
+                            FileName = Settings.Current.UnArchiverPath,
+                            CreateNoWindow = true,
                             RedirectStandardOutput = true,
-                            UseShellExecute        = false,
-                            Arguments =
-                                $"-o \"\"\"{tmpFolder}\"\"\" -r -D -k hidden \"\"\"{Context.Path}\"\"\""
+                            UseShellExecute = false,
+                            Arguments = $"-o \"\"\"{tmpFolder}\"\"\" -r -D -k hidden \"\"\"{Context.Path}\"\"\""
                         }
                     };
+
                     long counter = 0;
+
                     Context.UnarProcess.OutputDataReceived += (sender, e) =>
                     {
                         counter++;
                         UpdateProgress2?.Invoke("", e.Data, counter, Context.NoFilesInArchive);
                     };
+
                     Context.UnarProcess.Start();
                     Context.UnarProcess.BeginOutputReadLine();
                     Context.UnarProcess.WaitForExit();
                     Context.UnarProcess.Close();
                     Context.UnarProcess = null;
-                    #if DEBUG
+                #if DEBUG
                     stopwatch.Stop();
+
                     Console.WriteLine("Core.ExtractArchive(): Took {0} seconds to extract archive contents using UnAr",
                                       stopwatch.Elapsed.TotalSeconds);
-                    #endif
+                #endif
 
                     Finished?.Invoke();
                 }
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
         static void Zf_ExtractProgress(object sender, ExtractProgressEventArgs e)
         {
-            if(e.CurrentEntry != null && e.CurrentEntry.FileName != zipCurrentEntryName)
+            if(e.CurrentEntry          != null &&
+               e.CurrentEntry.FileName != zipCurrentEntryName)
             {
                 zipCurrentEntryName = e.CurrentEntry.FileName;
                 zipCounter++;
             }
 
-            if(UpdateProgress != null && e.CurrentEntry != null && e.EntriesTotal > 0)
+            if(UpdateProgress != null &&
+               e.CurrentEntry != null &&
+               e.EntriesTotal > 0)
                 UpdateProgress("Extracting...", e.CurrentEntry.FileName, zipCounter, e.EntriesTotal);
-            if(UpdateProgress2 != null && e.TotalBytesToTransfer > 0)
+
+            if(UpdateProgress2        != null &&
+               e.TotalBytesToTransfer > 0)
                 UpdateProgress2($"{e.BytesTransferred / (double)e.TotalBytesToTransfer:P}",
                                 $"{e.BytesTransferred} / {e.TotalBytesToTransfer}", e.BytesTransferred,
                                 e.TotalBytesToTransfer);
 
-            if(e.EventType != ZipProgressEventType.Extracting_AfterExtractAll || Finished == null) return;
-            #if DEBUG
+            if(e.EventType != ZipProgressEventType.Extracting_AfterExtractAll ||
+               Finished    == null)
+                return;
+        #if DEBUG
             stopwatch.Stop();
+
             Console.WriteLine("Core.Zf_ExtractProgress(): Took {0} seconds to extract archive contents using DotNetZip",
                               stopwatch.Elapsed.TotalSeconds);
-            #endif
+        #endif
             Finished();
         }
 
@@ -569,34 +666,39 @@ namespace apprepodbmgr.Core
                 if(string.IsNullOrWhiteSpace(Context.Path))
                 {
                     Failed?.Invoke("Destination cannot be empty");
+
                     return;
                 }
 
                 if(Directory.Exists(Context.Path))
                 {
                     Failed?.Invoke("Destination cannot be a folder");
+
                     return;
                 }
 
                 if(Context.DbInfo.Id == 0)
                 {
                     Failed?.Invoke("Operating system must be set");
+
                     return;
                 }
 
                 if(dbCore.DbOps.HasSymlinks(Context.DbInfo.Id))
                 {
                     Failed?.Invoke("Cannot create symbolic links on ZIP files");
+
                     return;
                 }
 
                 if(!Context.UsableDotNetZip)
                 {
                     Failed?.Invoke("Cannot create ZIP files");
+
                     return;
                 }
 
-                ZipFile zf = new ZipFile(Context.Path, Encoding.UTF8)
+                var zf = new ZipFile(Context.Path, Encoding.UTF8)
                 {
                     CompressionLevel                   = Ionic.Zlib.CompressionLevel.BestCompression,
                     CompressionMethod                  = CompressionMethod.Deflate,
@@ -605,6 +707,7 @@ namespace apprepodbmgr.Core
                     UseZip64WhenSaving                 = Zip64Option.AsNecessary,
                     SortEntriesBeforeSaving            = true
                 };
+
                 zf.SaveProgress += Zf_SaveProgress;
 
                 UpdateProgress?.Invoke("", "Asking DB for files...", 1, 100);
@@ -617,10 +720,11 @@ namespace apprepodbmgr.Core
 
                 UpdateProgress?.Invoke("", "Creating folders...", 3, 100);
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 long counter = 0;
+
                 foreach(DbFolder folder in folders)
                 {
                     UpdateProgress2?.Invoke("", folder.Path, counter, folders.Count);
@@ -634,17 +738,18 @@ namespace apprepodbmgr.Core
 
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.CompressTo(): Took {0} seconds to add folders to ZIP",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 counter        = 3;
                 Context.Hashes = new Dictionary<string, DbAppFile>();
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 foreach(DbAppFile file in files)
                 {
                     UpdateProgress?.Invoke("", $"Adding {file.Path}...", counter, 3 + files.Count);
@@ -660,37 +765,42 @@ namespace apprepodbmgr.Core
 
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.CompressTo(): Took {0} seconds to add files to ZIP",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
+            #endif
                 zipCounter          = 0;
                 zipCurrentEntryName = "";
                 zf.Save();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
         static Stream Zf_HandleOpen(string entryName)
         {
             DbAppFile file;
+
             if(!Context.Hashes.TryGetValue(entryName, out file))
                 if(!Context.Hashes.TryGetValue(entryName.Replace('/', '\\'), out file))
                     throw new ArgumentException("Cannot find requested zip entry in hashes dictionary");
 
             // Special case for empty file, as it seems to crash when SharpCompress tries to unLZMA it.
-            if(file.Length == 0) return new MemoryStream();
+            if(file.Length == 0)
+                return new MemoryStream();
 
             Stream   zStream = null;
             string   repoPath;
@@ -703,6 +813,7 @@ namespace apprepodbmgr.Core
                 repoPath = Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
                                         file.Sha256[1].ToString(), file.Sha256[2].ToString(), file.Sha256[3].ToString(),
                                         file.Sha256[4].ToString(), file.Sha256 + ".gz");
+
                 algorithm = AlgoEnum.GZip;
             }
             else if(File.Exists(Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
@@ -713,6 +824,7 @@ namespace apprepodbmgr.Core
                 repoPath = Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
                                         file.Sha256[1].ToString(), file.Sha256[2].ToString(), file.Sha256[3].ToString(),
                                         file.Sha256[4].ToString(), file.Sha256 + ".bz2");
+
                 algorithm = AlgoEnum.BZip2;
             }
             else if(File.Exists(Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
@@ -723,6 +835,7 @@ namespace apprepodbmgr.Core
                 repoPath = Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
                                         file.Sha256[1].ToString(), file.Sha256[2].ToString(), file.Sha256[3].ToString(),
                                         file.Sha256[4].ToString(), file.Sha256 + ".lzma");
+
                 algorithm = AlgoEnum.LZMA;
             }
             else if(File.Exists(Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
@@ -733,50 +846,58 @@ namespace apprepodbmgr.Core
                 repoPath = Path.Combine(Settings.Current.RepositoryPath, file.Sha256[0].ToString(),
                                         file.Sha256[1].ToString(), file.Sha256[2].ToString(), file.Sha256[3].ToString(),
                                         file.Sha256[4].ToString(), file.Sha256 + ".lz");
+
                 algorithm = AlgoEnum.LZip;
             }
-            else throw new ArgumentException($"Cannot find file with hash {file.Sha256} in the repository");
+            else
+                throw new ArgumentException($"Cannot find file with hash {file.Sha256} in the repository");
 
-            FileStream inFs = new FileStream(repoPath, FileMode.Open, FileAccess.Read);
+            var inFs = new FileStream(repoPath, FileMode.Open, FileAccess.Read);
 
             switch(algorithm)
             {
                 case AlgoEnum.GZip:
                     zStream = new GZipStream(inFs, CompressionMode.Decompress);
+
                     break;
                 case AlgoEnum.BZip2:
                     zStream = new BZip2Stream(inFs, CompressionMode.Decompress);
+
                     break;
                 case AlgoEnum.LZMA:
                     byte[] properties = new byte[5];
                     inFs.Read(properties, 0, 5);
                     inFs.Seek(8, SeekOrigin.Current);
                     zStream = new LzmaStream(properties, inFs, inFs.Length - 13, file.Length);
+
                     break;
                 case AlgoEnum.LZip:
                     zStream = new LZipStream(inFs, CompressionMode.Decompress);
+
                     break;
             }
 
             return zStream;
         }
 
-        static void Zf_HandleClose(string entryName, Stream stream)
-        {
-            stream.Close();
-        }
+        static void Zf_HandleClose(string entryName, Stream stream) => stream.Close();
 
         static void Zf_SaveProgress(object sender, SaveProgressEventArgs e)
         {
-            if(e.CurrentEntry != null && e.CurrentEntry.FileName != zipCurrentEntryName)
+            if(e.CurrentEntry          != null &&
+               e.CurrentEntry.FileName != zipCurrentEntryName)
             {
                 zipCurrentEntryName = e.CurrentEntry.FileName;
                 zipCounter++;
             }
 
-            if(UpdateProgress != null && e.CurrentEntry != null && e.EntriesTotal > 0)
+            if(UpdateProgress != null &&
+               e.CurrentEntry != null &&
+               e.EntriesTotal > 0)
                 UpdateProgress("Compressing...", e.CurrentEntry.FileName, zipCounter, e.EntriesTotal);
-            if(UpdateProgress2 != null && e.TotalBytesToTransfer > 0)
+
+            if(UpdateProgress2        != null &&
+               e.TotalBytesToTransfer > 0)
                 UpdateProgress2($"{e.BytesTransferred / (double)e.TotalBytesToTransfer:P}",
                                 $"{e.BytesTransferred} / {e.TotalBytesToTransfer}", e.BytesTransferred,
                                 e.TotalBytesToTransfer);
@@ -785,14 +906,17 @@ namespace apprepodbmgr.Core
             {
                 case ZipProgressEventType.Error_Saving:
                     Failed?.Invoke("An error occurred creating ZIP file.");
+
                     break;
                 case ZipProgressEventType.Saving_Completed when Finished != null:
-                    #if DEBUG
+                #if DEBUG
                     stopwatch.Stop();
+
                     Console.WriteLine("Core.Zf_SaveProgress(): Took {0} seconds to compress files to ZIP",
                                       stopwatch.Elapsed.TotalSeconds);
-                    #endif
+                #endif
                     Finished();
+
                     break;
             }
         }

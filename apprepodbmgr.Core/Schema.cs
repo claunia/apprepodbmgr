@@ -30,57 +30,46 @@ namespace apprepodbmgr.Core
 {
     public static class Schema
     {
-        public const string FilesTableSql = "-- -----------------------------------------------------\n"               +
-                                            "-- Table `files`\n"                                                       +
-                                            "-- -----------------------------------------------------\n"               +
-                                            "DROP TABLE IF EXISTS `files` ;\n\n"                                       +
-                                            "CREATE TABLE IF NOT EXISTS `files` (\n"                                   +
-                                            "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                              +
-                                            "  `sha256` VARCHAR(64) NOT NULL,\n"                                       +
-                                            "  `crack` BOOLEAN NOT NULL,\n"                                            +
-                                            "  `hasvirus` BOOLEAN NULL,\n"                                             +
-                                            "  `clamtime` DATETIME NULL,\n"                                            +
-                                            "  `vtotaltime` DATETIME NULL,\n"                                          +
-                                            "  `virus` VARCHAR(128) NULL,\n"                                           +
-                                            "  `length` BIGINT NOT NULL);\n\n"                                         +
-                                            "CREATE UNIQUE INDEX `files_id_UNIQUE` ON `files` (`id` ASC);\n\n"         +
+        public const string FilesTableSql = "-- -----------------------------------------------------\n" +
+                                            "-- Table `files`\n" +
+                                            "-- -----------------------------------------------------\n" +
+                                            "DROP TABLE IF EXISTS `files` ;\n\n" +
+                                            "CREATE TABLE IF NOT EXISTS `files` (\n" +
+                                            "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                                            "  `sha256` VARCHAR(64) NOT NULL,\n" + "  `crack` BOOLEAN NOT NULL,\n" +
+                                            "  `hasvirus` BOOLEAN NULL,\n" + "  `clamtime` DATETIME NULL,\n" +
+                                            "  `vtotaltime` DATETIME NULL,\n" + "  `virus` VARCHAR(128) NULL,\n" +
+                                            "  `length` BIGINT NOT NULL);\n\n" +
+                                            "CREATE UNIQUE INDEX `files_id_UNIQUE` ON `files` (`id` ASC);\n\n" +
                                             "CREATE UNIQUE INDEX `files_sha256_UNIQUE` ON `files` (`sha256` ASC);\n\n" +
-                                            "CREATE INDEX `files_hasvirus_idx` ON `files` (`hasvirus` ASC);\n\n"       +
-                                            "CREATE INDEX `files_virus_idx` ON `files` (`virus` ASC);\n\n"             +
+                                            "CREATE INDEX `files_hasvirus_idx` ON `files` (`hasvirus` ASC);\n\n" +
+                                            "CREATE INDEX `files_virus_idx` ON `files` (`virus` ASC);\n\n" +
                                             "CREATE INDEX `files_length_idx` ON `files` (`length` ASC);";
 
-        public const string AppsTableSql = "-- -----------------------------------------------------\n"               +
-                                           "-- Table `apps`\n"                                                        +
-                                           "-- -----------------------------------------------------\n"               +
-                                           "DROP TABLE IF EXISTS `apps` ;\n\n"                                        +
-                                           "CREATE TABLE IF NOT EXISTS `apps` (\n"                                    +
-                                           "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n"                              +
-                                           "  `mdid` CHAR(40) NOT NULL,\n"                                            +
-                                           "  `developer` VARCHAR(45) NOT NULL,\n"                                    +
-                                           "  `product` VARCHAR(45) NOT NULL,\n"                                      +
-                                           "  `version` VARCHAR(45) NULL,\n"                                          +
-                                           "  `languages` VARCHAR(45) NULL,\n"                                        +
-                                           "  `architecture` VARCHAR(45) NULL,\n"                                     +
-                                           "  `targetos` VARCHAR(45) NULL,\n"                                         +
-                                           "  `format` VARCHAR(45) NULL,\n"                                           +
-                                           "  `description` TEXT NULL,\n"                                             +
-                                           "  `oem` BOOLEAN NOT NULL,\n"                                              +
-                                           "  `upgrade` BOOLEAN NOT NULL,\n"                                          +
-                                           "  `update` BOOLEAN NOT NULL,\n"                                           +
-                                           "  `source` BOOLEAN NOT NULL,\n"                                           +
-                                           "  `files` BOOLEAN NOT NULL,\n"                                            +
-                                           "  `installer` BOOLEAN NOT NULL,\n"                                        +
-                                           "  `xml` BLOB NULL,\n"                                                     +
-                                           "  `json` BLOB NULL,\n"                                                    +
-                                           "  `icon` BLOB NULL);\n\n"                                                 +
-                                           "CREATE UNIQUE INDEX `apps_id_UNIQUE` ON `apps` (`id` ASC);\n\n"           +
-                                           "CREATE UNIQUE INDEX `apps_mdid_UNIQUE` ON `apps` (`mdid` ASC);\n\n"       +
-                                           "CREATE INDEX `apps_developer_idx` ON `apps` (`developer` ASC);\n\n"       +
-                                           "CREATE INDEX `apps_product_idx` ON `apps` (`product` ASC);\n\n"           +
-                                           "CREATE INDEX `apps_version_idx` ON `apps` (`version` ASC);\n\n"           +
+        public const string AppsTableSql = "-- -----------------------------------------------------\n" +
+                                           "-- Table `apps`\n" +
+                                           "-- -----------------------------------------------------\n" +
+                                           "DROP TABLE IF EXISTS `apps` ;\n\n" +
+                                           "CREATE TABLE IF NOT EXISTS `apps` (\n" +
+                                           "  `id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                                           "  `mdid` CHAR(40) NOT NULL,\n" + "  `developer` VARCHAR(45) NOT NULL,\n" +
+                                           "  `product` VARCHAR(45) NOT NULL,\n" + "  `version` VARCHAR(45) NULL,\n" +
+                                           "  `languages` VARCHAR(45) NULL,\n" +
+                                           "  `architecture` VARCHAR(45) NULL,\n" + "  `targetos` VARCHAR(45) NULL,\n" +
+                                           "  `format` VARCHAR(45) NULL,\n" + "  `description` TEXT NULL,\n" +
+                                           "  `oem` BOOLEAN NOT NULL,\n" + "  `upgrade` BOOLEAN NOT NULL,\n" +
+                                           "  `update` BOOLEAN NOT NULL,\n" + "  `source` BOOLEAN NOT NULL,\n" +
+                                           "  `files` BOOLEAN NOT NULL,\n" + "  `installer` BOOLEAN NOT NULL,\n" +
+                                           "  `xml` BLOB NULL,\n" + "  `json` BLOB NULL,\n" +
+                                           "  `icon` BLOB NULL);\n\n" +
+                                           "CREATE UNIQUE INDEX `apps_id_UNIQUE` ON `apps` (`id` ASC);\n\n" +
+                                           "CREATE UNIQUE INDEX `apps_mdid_UNIQUE` ON `apps` (`mdid` ASC);\n\n" +
+                                           "CREATE INDEX `apps_developer_idx` ON `apps` (`developer` ASC);\n\n" +
+                                           "CREATE INDEX `apps_product_idx` ON `apps` (`product` ASC);\n\n" +
+                                           "CREATE INDEX `apps_version_idx` ON `apps` (`version` ASC);\n\n" +
                                            "CREATE INDEX `apps_architecture_idx` ON `apps` (`architecture` ASC);\n\n" +
-                                           "CREATE INDEX `apps_format_idx` ON `apps` (`format` ASC);\n\n"             +
-                                           "CREATE INDEX `apps_targetos_idx` ON `apps` (`targetos` ASC);\n\n"         +
+                                           "CREATE INDEX `apps_format_idx` ON `apps` (`format` ASC);\n\n" +
+                                           "CREATE INDEX `apps_targetos_idx` ON `apps` (`targetos` ASC);\n\n" +
                                            "CREATE INDEX `apps_description_idx` ON `apps` (`description` ASC);";
     }
 }

@@ -51,27 +51,31 @@ namespace DiscImageChef.Interop
 
         public static PlatformID GetRealPlatformID()
         {
-            if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5)
+            if((int)Environment.OSVersion.Platform < 4 ||
+               (int)Environment.OSVersion.Platform == 5)
                 return (PlatformID)(int)Environment.OSVersion.Platform;
 
             int error = uname(out utsname unixname);
-            if(error != 0) throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
+
+            if(error != 0)
+                throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
 
             switch(unixname.sysname)
             {
                 // TODO: Differentiate Linux, Android, Tizen
                 case "Linux":
                 {
-                    #if __ANDROID__
+                #if __ANDROID__
                         return PlatformID.Android;
-                                        #else
+                #else
                     return PlatformID.Linux;
-                    #endif
+                #endif
                 }
                 case "Darwin":
                 {
                     IntPtr pLen      = Marshal.AllocHGlobal(sizeof(int));
                     int    osx_error = OSX_sysctlbyname("hw.machine", IntPtr.Zero, pLen, IntPtr.Zero, 0);
+
                     if(osx_error != 0)
                     {
                         Marshal.FreeHGlobal(pLen);
@@ -81,7 +85,8 @@ namespace DiscImageChef.Interop
 
                     int    length = Marshal.ReadInt32(pLen);
                     IntPtr pStr   = Marshal.AllocHGlobal(length);
-                    osx_error     = OSX_sysctlbyname("hw.machine", pStr, pLen, IntPtr.Zero, 0);
+                    osx_error = OSX_sysctlbyname("hw.machine", pStr, pLen, IntPtr.Zero, 0);
+
                     if(osx_error != 0)
                     {
                         Marshal.FreeHGlobal(pStr);
@@ -95,22 +100,23 @@ namespace DiscImageChef.Interop
                     Marshal.FreeHGlobal(pStr);
                     Marshal.FreeHGlobal(pLen);
 
-                    if(machine.StartsWith("iPad",   StringComparison.Ordinal) ||
-                       machine.StartsWith("iPod",   StringComparison.Ordinal) ||
-                       machine.StartsWith("iPhone", StringComparison.Ordinal)) return PlatformID.iOS;
+                    if(machine.StartsWith("iPad", StringComparison.Ordinal) ||
+                       machine.StartsWith("iPod", StringComparison.Ordinal) ||
+                       machine.StartsWith("iPhone", StringComparison.Ordinal))
+                        return PlatformID.iOS;
 
                     return PlatformID.MacOSX;
                 }
                 case "GNU": return PlatformID.Hurd;
                 case "FreeBSD":
                 case "GNU/kFreeBSD": return PlatformID.FreeBSD;
-                case "DragonFly":    return PlatformID.DragonFly;
-                case "Haiku":        return PlatformID.Haiku;
-                case "HP-UX":        return PlatformID.HPUX;
-                case "AIX":          return PlatformID.AIX;
-                case "OS400":        return PlatformID.OS400;
+                case "DragonFly": return PlatformID.DragonFly;
+                case "Haiku":     return PlatformID.Haiku;
+                case "HP-UX":     return PlatformID.HPUX;
+                case "AIX":       return PlatformID.AIX;
+                case "OS400":     return PlatformID.OS400;
                 case "IRIX":
-                case "IRIX64":         return PlatformID.IRIX;
+                case "IRIX64": return PlatformID.IRIX;
                 case "Minix":          return PlatformID.Minix;
                 case "NetBSD":         return PlatformID.NetBSD;
                 case "NONSTOP_KERNEL": return PlatformID.NonStop;
@@ -126,63 +132,42 @@ namespace DiscImageChef.Interop
                 case "UWIN-W7": return PlatformID.Win32NT;
                 default:
                 {
-                    if(unixname.sysname.StartsWith("CYGWIN_NT",  StringComparison.Ordinal) ||
+                    if(unixname.sysname.StartsWith("CYGWIN_NT", StringComparison.Ordinal)  ||
                        unixname.sysname.StartsWith("MINGW32_NT", StringComparison.Ordinal) ||
-                       unixname.sysname.StartsWith("MSYS_NT",    StringComparison.Ordinal) ||
-                       unixname.sysname.StartsWith("UWIN",       StringComparison.Ordinal)) return PlatformID.Win32NT;
+                       unixname.sysname.StartsWith("MSYS_NT", StringComparison.Ordinal)    ||
+                       unixname.sysname.StartsWith("UWIN", StringComparison.Ordinal))
+                        return PlatformID.Win32NT;
 
                     return PlatformID.Unknown;
                 }
             }
         }
 
-        /// <summary>
-        ///     Checks if the underlying runtime runs in 64-bit mode
-        /// </summary>
-        public static bool Is64Bit()
-        {
-            return IntPtr.Size == 8;
-        }
+        /// <summary>Checks if the underlying runtime runs in 64-bit mode</summary>
+        public static bool Is64Bit() => IntPtr.Size == 8;
 
-        /// <summary>
-        ///     Checks if the underlying runtime runs in 32-bit mode
-        /// </summary>
-        public static bool Is32Bit()
-        {
-            return IntPtr.Size == 4;
-        }
+        /// <summary>Checks if the underlying runtime runs in 32-bit mode</summary>
+        public static bool Is32Bit() => IntPtr.Size == 4;
 
-        /// <summary>
-        ///     POSIX uname structure, size from OSX, big enough to handle extra fields
-        /// </summary>
+        /// <summary>POSIX uname structure, size from OSX, big enough to handle extra fields</summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         struct utsname
         {
-            /// <summary>
-            ///     System name
-            /// </summary>
+            /// <summary>System name</summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string sysname;
-            /// <summary>
-            ///     Node name
-            /// </summary>
+            public readonly string sysname;
+            /// <summary>Node name</summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string nodename;
-            /// <summary>
-            ///     Release level
-            /// </summary>
+            public readonly string nodename;
+            /// <summary>Release level</summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string release;
-            /// <summary>
-            ///     Version level
-            /// </summary>
+            public readonly string release;
+            /// <summary>Version level</summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string version;
-            /// <summary>
-            ///     Hardware level
-            /// </summary>
+            public readonly string version;
+            /// <summary>Hardware level</summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string machine;
+            public readonly string machine;
         }
     }
 }

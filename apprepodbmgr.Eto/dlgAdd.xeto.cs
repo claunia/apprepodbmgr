@@ -47,19 +47,19 @@ namespace apprepodbmgr.Eto
     {
         public delegate void OnAddedAppDelegate(DbEntry app);
 
-        ObservableCollection<DBEntryForEto> appView;
+        readonly ObservableCollection<DBEntryForEto> appView;
 
-        ObservableCollection<FileEntry> fileView;
-        int                             knownFiles;
-        bool                            stopped;
-        Thread                          thdAddFiles;
-        Thread                          thdCheckFiles;
-        Thread                          thdExtractArchive;
-        Thread                          thdFindFiles;
-        Thread                          thdHashFiles;
-        Thread                          thdOpenArchive;
-        Thread                          thdPackFiles;
-        Thread                          thdRemoveTemp;
+        readonly ObservableCollection<FileEntry> fileView;
+        int                                      knownFiles;
+        bool                                     stopped;
+        Thread                                   thdAddFiles;
+        Thread                                   thdCheckFiles;
+        Thread                                   thdExtractArchive;
+        Thread                                   thdFindFiles;
+        Thread                                   thdHashFiles;
+        Thread                                   thdOpenArchive;
+        Thread                                   thdPackFiles;
+        Thread                                   thdRemoveTemp;
 
         public dlgAdd()
         {
@@ -74,22 +74,37 @@ namespace apprepodbmgr.Eto
 
             treeFiles.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<FileEntry, string>(r => r.Path)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<FileEntry, string>(r => r.Path)
+                },
                 HeaderText = "Path"
             });
+
             treeFiles.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<FileEntry, bool?>(r => r.IsCrack)},
+                DataCell = new CheckBoxCell
+                {
+                    Binding = Binding.Property<FileEntry, bool?>(r => r.IsCrack)
+                },
                 HeaderText = "Crack?"
             });
+
             treeFiles.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<FileEntry, string>(r => r.Hash)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<FileEntry, string>(r => r.Hash)
+                },
                 HeaderText = "SHA256"
             });
+
             treeFiles.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<FileEntry, bool?>(r => r.Known)},
+                DataCell = new CheckBoxCell
+                {
+                    Binding = Binding.Property<FileEntry, bool?>(r => r.Known)
+                },
                 HeaderText = "Known?"
             });
 
@@ -106,72 +121,127 @@ namespace apprepodbmgr.Eto
 
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.developer)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, string>(r => r.developer)
+                },
                 HeaderText = "Developer"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.product)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, string>(r => r.product)
+                },
                 HeaderText = "Product"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.version)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, string>(r => r.version)
+                },
                 HeaderText = "Version"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.languages)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, string>(r => r.languages)
+                },
                 HeaderText = "Languages"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.architecture)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, string>(r => r.architecture)
+                },
                 HeaderText = "Architecture"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.targetos)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, string>(r => r.targetos)
+                },
                 HeaderText = "Target OS"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.format)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, string>(r => r.format)
+                },
                 HeaderText = "Format"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<DBEntryForEto, string>(r => r.description)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, string>(r => r.description)
+                },
                 HeaderText = "Description"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.oem)},
+                DataCell = new CheckBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, bool?>(r => r.oem)
+                },
                 HeaderText = "OEM?"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.upgrade)},
+                DataCell = new CheckBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, bool?>(r => r.upgrade)
+                },
                 HeaderText = "Upgrade?"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.update)},
+                DataCell = new CheckBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, bool?>(r => r.update)
+                },
                 HeaderText = "Update?"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.source)},
+                DataCell = new CheckBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, bool?>(r => r.source)
+                },
                 HeaderText = "Source?"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.files)},
+                DataCell = new CheckBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, bool?>(r => r.files)
+                },
                 HeaderText = "Files?"
             });
+
             treeApps.Columns.Add(new GridColumn
             {
-                DataCell   = new CheckBoxCell {Binding = Binding.Property<DBEntryForEto, bool?>(r => r.Installer)},
+                DataCell = new CheckBoxCell
+                {
+                    Binding = Binding.Property<DBEntryForEto, bool?>(r => r.Installer)
+                },
                 HeaderText = "Installer?"
             });
 
@@ -179,29 +249,43 @@ namespace apprepodbmgr.Eto
 
             txtArchitecture.ToolTip =
                 "This field contains a comma separated list of architectures the application can run on. To edit its contents use the metadata editor.";
+
             txtDescription.ToolTip = "This field contains a free-form text description of this application.";
+
             txtDeveloper.ToolTip =
                 "This field contains the developer of the application. To edit its contents use the metadata editor.";
+
             txtFormat.ToolTip =
                 "This field is contains the name of the format of the disk images, when it is not a byte-by-byte format like .iso or .img.";
+
             txtLanguages.ToolTip =
                 "This field contains a comma separated list of languages the application includes. To edit its contents use the metadata editor.";
+
             txtProduct.ToolTip =
                 "This field contains the application name. To edit its contents use the metadata editor.";
+
             txtTargetOs.ToolTip =
                 "This field contains a comma separated list of operating systems this application can run on. To edit its contents use the metadata editor.";
+
             txtVersion.ToolTip =
                 "This field contains the application version. To edit its contents use the metadata editor.";
+
             chkFiles.ToolTip = "If this field is checked it indicates the application is already installed.";
+
             chkInstaller.ToolTip =
                 "If this field is checked it indicates the application comes as an installer (one or several files), but it's not installed neither disk images.";
+
             chkOem.ToolTip =
                 "If this field is checked it indicates the application came bundled with hardware (aka OEM distributed).";
+
             chkSource.ToolTip = "If this field is checked it indicates this is the source code for the application.";
+
             chkUpdate.ToolTip =
                 "If this field is checked it indicates this version is a minor version update that requires a previous version of the application already installed.";
+
             chkUpgrade.ToolTip =
                 "If this field is checked it indicates this version is a major version upgrade that requires a previous version of the application already installed.";
+
             txtArchitecture.ReadOnly = true;
             txtDeveloper.ReadOnly    = true;
             txtLanguages.ReadOnly    = true;
@@ -212,22 +296,29 @@ namespace apprepodbmgr.Eto
 
         public event OnAddedAppDelegate OnAddedApp;
 
-        void UnarChangeStatus()
+        void UnarChangeStatus() => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate { btnArchive.Enabled = Context.UnarUsable; });
-        }
+            btnArchive.Enabled = Context.UnarUsable;
+        });
 
         protected void OnDeleteEvent(object sender, CancelEventArgs e)
         {
-            if(btnStop.Visible) btnStop.PerformClick();
-            if(btnClose.Enabled) btnClose.PerformClick();
+            if(btnStop.Visible)
+                btnStop.PerformClick();
+
+            if(btnClose.Enabled)
+                btnClose.PerformClick();
         }
 
         protected void OnBtnFolderClicked(object sender, EventArgs e)
         {
-            SelectFolderDialog dlgFolder = new SelectFolderDialog {Title = "Open folder"};
+            var dlgFolder = new SelectFolderDialog
+            {
+                Title = "Open folder"
+            };
 
-            if(dlgFolder.ShowDialog(this) != DialogResult.Ok) return;
+            if(dlgFolder.ShowDialog(this) != DialogResult.Ok)
+                return;
 
             knownFiles          =  0;
             stopped             =  false;
@@ -245,269 +336,290 @@ namespace apprepodbmgr.Eto
             thdFindFiles.Start();
         }
 
-        void FindFilesFailed(string text)
+        void FindFilesFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                if(!stopped) MessageBox.Show(text, MessageBoxType.Error);
-                lblProgress.Visible =  false;
-                prgProgress.Visible =  false;
-                btnExit.Enabled     =  true;
-                btnFolder.Visible   =  true;
-                btnArchive.Visible  =  true;
-                btnStop.Visible     =  false;
-                Workers.Failed      -= FindFilesFailed;
-                Workers.Finished    -= FindFilesFinished;
-                thdFindFiles        =  null;
-            });
-        }
+            if(!stopped)
+                MessageBox.Show(text, MessageBoxType.Error);
 
-        void FindFilesFinished()
+            lblProgress.Visible =  false;
+            prgProgress.Visible =  false;
+            btnExit.Enabled     =  true;
+            btnFolder.Visible   =  true;
+            btnArchive.Visible  =  true;
+            btnStop.Visible     =  false;
+            Workers.Failed      -= FindFilesFailed;
+            Workers.Finished    -= FindFilesFinished;
+            thdFindFiles        =  null;
+        });
+
+        void FindFilesFinished() => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                Workers.Failed   -= FindFilesFailed;
-                Workers.Finished -= FindFilesFinished;
+            Workers.Failed   -= FindFilesFailed;
+            Workers.Finished -= FindFilesFinished;
 
-                lblProgress.Visible  = true;
-                prgProgress.Visible  = true;
-                lblProgress2.Visible = true;
-                prgProgress2.Visible = true;
+            lblProgress.Visible  = true;
+            prgProgress.Visible  = true;
+            lblProgress2.Visible = true;
+            prgProgress2.Visible = true;
 
-                thdFindFiles            =  null;
-                thdHashFiles            =  new Thread(Workers.HashFiles);
-                Workers.Failed          += HashFilesFailed;
-                Workers.Finished        += HashFilesFinished;
-                Workers.UpdateProgress  += UpdateProgress;
-                Workers.UpdateProgress2 += UpdateProgress2;
-                thdHashFiles.Start();
-            });
-        }
+            thdFindFiles            =  null;
+            thdHashFiles            =  new Thread(Workers.HashFiles);
+            Workers.Failed          += HashFilesFailed;
+            Workers.Finished        += HashFilesFinished;
+            Workers.UpdateProgress  += UpdateProgress;
+            Workers.UpdateProgress2 += UpdateProgress2;
+            thdHashFiles.Start();
+        });
 
-        void HashFilesFailed(string text)
+        void HashFilesFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                if(!stopped) MessageBox.Show(text, MessageBoxType.Error);
-                lblProgress.Visible     =  false;
-                prgProgress.Visible     =  false;
-                lblProgress2.Visible    =  false;
-                prgProgress2.Visible    =  false;
-                Workers.Failed          -= HashFilesFailed;
-                Workers.Finished        -= HashFilesFinished;
-                Workers.UpdateProgress  -= UpdateProgress;
-                Workers.UpdateProgress2 -= UpdateProgress2;
-                btnExit.Enabled         =  true;
-                btnFolder.Visible       =  true;
-                btnArchive.Visible      =  true;
-                btnStop.Visible         =  false;
-                thdHashFiles            =  null;
-            });
-        }
+            if(!stopped)
+                MessageBox.Show(text, MessageBoxType.Error);
 
-        void HashFilesFinished()
+            lblProgress.Visible     =  false;
+            prgProgress.Visible     =  false;
+            lblProgress2.Visible    =  false;
+            prgProgress2.Visible    =  false;
+            Workers.Failed          -= HashFilesFailed;
+            Workers.Finished        -= HashFilesFinished;
+            Workers.UpdateProgress  -= UpdateProgress;
+            Workers.UpdateProgress2 -= UpdateProgress2;
+            btnExit.Enabled         =  true;
+            btnFolder.Visible       =  true;
+            btnArchive.Visible      =  true;
+            btnStop.Visible         =  false;
+            thdHashFiles            =  null;
+        });
+
+        void HashFilesFinished() => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                lblProgress.Visible     =  false;
-                prgProgress.Visible     =  false;
-                lblProgress2.Visible    =  false;
-                prgProgress2.Visible    =  false;
-                Workers.Failed          -= HashFilesFailed;
-                Workers.Finished        -= HashFilesFinished;
-                Workers.UpdateProgress  -= UpdateProgress;
-                Workers.UpdateProgress2 -= UpdateProgress2;
-                thdHashFiles            =  null;
+            lblProgress.Visible     =  false;
+            prgProgress.Visible     =  false;
+            lblProgress2.Visible    =  false;
+            prgProgress2.Visible    =  false;
+            Workers.Failed          -= HashFilesFailed;
+            Workers.Finished        -= HashFilesFinished;
+            Workers.UpdateProgress  -= UpdateProgress;
+            Workers.UpdateProgress2 -= UpdateProgress2;
+            thdHashFiles            =  null;
 
-                lblProgress.Visible = true;
-                prgProgress.Visible = true;
+            lblProgress.Visible = true;
+            prgProgress.Visible = true;
 
-                thdCheckFiles           =  new Thread(Workers.CheckDbForFiles);
-                Workers.Failed          += ChkFilesFailed;
-                Workers.Finished        += ChkFilesFinished;
-                Workers.UpdateProgress  += UpdateProgress;
-                Workers.UpdateProgress2 += UpdateProgress2;
-                Workers.AddFileForApp   += AddFile;
-                Workers.AddApp          += AddApp;
-                thdCheckFiles.Start();
-            });
-        }
+            thdCheckFiles           =  new Thread(Workers.CheckDbForFiles);
+            Workers.Failed          += ChkFilesFailed;
+            Workers.Finished        += ChkFilesFinished;
+            Workers.UpdateProgress  += UpdateProgress;
+            Workers.UpdateProgress2 += UpdateProgress2;
+            Workers.AddFileForApp   += AddFile;
+            Workers.AddApp          += AddApp;
+            thdCheckFiles.Start();
+        });
 
-        void ChkFilesFailed(string text)
+        void ChkFilesFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                if(!stopped) MessageBox.Show(text, MessageBoxType.Error);
-                prgProgress.Visible     =  false;
-                btnStop.Visible         =  false;
-                btnClose.Visible        =  false;
-                btnExit.Enabled         =  true;
-                Workers.Failed          -= ChkFilesFailed;
-                Workers.Finished        -= ChkFilesFinished;
-                Workers.UpdateProgress  -= UpdateProgress;
-                Workers.UpdateProgress2 -= UpdateProgress2;
-                Workers.AddFileForApp   -= AddFile;
-                Workers.AddApp          -= AddApp;
-                thdCheckFiles?.Abort();
-                thdHashFiles = null;
-                fileView?.Clear();
-                if(appView == null) return;
+            if(!stopped)
+                MessageBox.Show(text, MessageBoxType.Error);
 
-                tabApps.Visible = false;
-                appView.Clear();
-            });
-        }
+            prgProgress.Visible     =  false;
+            btnStop.Visible         =  false;
+            btnClose.Visible        =  false;
+            btnExit.Enabled         =  true;
+            Workers.Failed          -= ChkFilesFailed;
+            Workers.Finished        -= ChkFilesFinished;
+            Workers.UpdateProgress  -= UpdateProgress;
+            Workers.UpdateProgress2 -= UpdateProgress2;
+            Workers.AddFileForApp   -= AddFile;
+            Workers.AddApp          -= AddApp;
+            thdCheckFiles?.Abort();
+            thdHashFiles = null;
+            fileView?.Clear();
 
-        void ChkFilesFinished()
+            if(appView == null)
+                return;
+
+            tabApps.Visible = false;
+            appView.Clear();
+        });
+
+        void ChkFilesFinished() => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
+            Workers.Failed          -= ChkFilesFailed;
+            Workers.Finished        -= ChkFilesFinished;
+            Workers.UpdateProgress  -= UpdateProgress;
+            Workers.UpdateProgress2 -= UpdateProgress2;
+            Workers.AddFileForApp   -= AddFile;
+            Workers.AddApp          -= AddApp;
+
+            thdCheckFiles?.Abort();
+
+            thdHashFiles        = null;
+            lblProgress.Visible = false;
+            prgProgress.Visible = false;
+            btnStop.Visible     = false;
+
+            if(Context.Executables?.Count > 0 ||
+               Context.Readmes?.Count     > 0)
             {
-                Workers.Failed          -= ChkFilesFailed;
-                Workers.Finished        -= ChkFilesFinished;
-                Workers.UpdateProgress  -= UpdateProgress;
-                Workers.UpdateProgress2 -= UpdateProgress2;
-                Workers.AddFileForApp   -= AddFile;
-                Workers.AddApp          -= AddApp;
+                var importMetadataDlg = new dlgImportMetadata();
+                importMetadataDlg.ShowModal(this);
 
-                thdCheckFiles?.Abort();
-
-                thdHashFiles        = null;
-                lblProgress.Visible = false;
-                prgProgress.Visible = false;
-                btnStop.Visible     = false;
-
-                if(Context.Executables?.Count > 0 || Context.Readmes?.Count > 0)
+                if(!importMetadataDlg.canceled &&
+                   (importMetadataDlg.chosenArchitectures.Count > 0 || importMetadataDlg.chosenOses.Count > 0 ||
+                    !string.IsNullOrWhiteSpace(importMetadataDlg.description) ||
+                    !string.IsNullOrWhiteSpace(importMetadataDlg.developer) ||
+                    !string.IsNullOrWhiteSpace(importMetadataDlg.product) ||
+                    !string.IsNullOrWhiteSpace(importMetadataDlg.publisher) ||
+                    !string.IsNullOrWhiteSpace(importMetadataDlg.version)))
                 {
-                    dlgImportMetadata importMetadataDlg = new dlgImportMetadata();
-                    importMetadataDlg.ShowModal(this);
+                    if(Context.Metadata == null &&
+                       (importMetadataDlg.chosenArchitectures.Count > 0 || importMetadataDlg.chosenOses.Count > 0 ||
+                        !string.IsNullOrWhiteSpace(importMetadataDlg.developer) ||
+                        !string.IsNullOrWhiteSpace(importMetadataDlg.product) ||
+                        !string.IsNullOrWhiteSpace(importMetadataDlg.publisher) ||
+                        !string.IsNullOrWhiteSpace(importMetadataDlg.version)))
+                        Context.Metadata = new CICMMetadataType();
 
-                    if(!importMetadataDlg.canceled && (importMetadataDlg.chosenArchitectures.Count > 0           ||
-                                                       importMetadataDlg.chosenOses.Count          > 0           ||
-                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.description) ||
-                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.developer)   ||
-                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.product)     ||
-                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.publisher)   ||
-                                                       !string.IsNullOrWhiteSpace(importMetadataDlg.version)))
-                    {
-                        if(Context.Metadata == null && (importMetadataDlg.chosenArchitectures.Count > 0         ||
-                                                        importMetadataDlg.chosenOses.Count          > 0         ||
-                                                        !string.IsNullOrWhiteSpace(importMetadataDlg.developer) ||
-                                                        !string.IsNullOrWhiteSpace(importMetadataDlg.product)   ||
-                                                        !string.IsNullOrWhiteSpace(importMetadataDlg.publisher) ||
-                                                        !string.IsNullOrWhiteSpace(importMetadataDlg.version)))
-                            Context.Metadata = new CICMMetadataType();
+                    if(!string.IsNullOrWhiteSpace(importMetadataDlg.description))
+                        txtDescription.Text = importMetadataDlg.description;
 
-                        if(!string.IsNullOrWhiteSpace(importMetadataDlg.description))
-                            txtDescription.Text = importMetadataDlg.description;
-                        if(!string.IsNullOrWhiteSpace(importMetadataDlg.product))
-                            Context.Metadata.Name = importMetadataDlg.product;
-                        if(!string.IsNullOrWhiteSpace(importMetadataDlg.publisher))
-                            Context.Metadata.Publisher = new[] {importMetadataDlg.publisher};
-                        if(!string.IsNullOrWhiteSpace(importMetadataDlg.developer))
-                            Context.Metadata.Developer = new[] {importMetadataDlg.developer};
+                    if(!string.IsNullOrWhiteSpace(importMetadataDlg.product))
+                        Context.Metadata.Name = importMetadataDlg.product;
 
-                        if(importMetadataDlg.chosenArchitectures.Count > 0)
-                            Context.Metadata.Architectures = importMetadataDlg.chosenArchitectures.ToArray();
-
-                        if(importMetadataDlg.chosenOses.Count > 0)
+                    if(!string.IsNullOrWhiteSpace(importMetadataDlg.publisher))
+                        Context.Metadata.Publisher = new[]
                         {
-                            List<RequiredOperatingSystemType> reqOs = new List<RequiredOperatingSystemType>();
-                            foreach(TargetOsEntry osEntry in importMetadataDlg.chosenOses)
-                                reqOs.Add(new RequiredOperatingSystemType
-                                {
-                                    Name    = osEntry.name,
-                                    Version = new[] {osEntry.version}
-                                });
+                            importMetadataDlg.publisher
+                        };
 
-                            Context.Metadata.RequiredOperatingSystems = reqOs.ToArray();
-                        }
+                    if(!string.IsNullOrWhiteSpace(importMetadataDlg.developer))
+                        Context.Metadata.Developer = new[]
+                        {
+                            importMetadataDlg.developer
+                        };
+
+                    if(importMetadataDlg.chosenArchitectures.Count > 0)
+                        Context.Metadata.Architectures = importMetadataDlg.chosenArchitectures.ToArray();
+
+                    if(importMetadataDlg.chosenOses.Count > 0)
+                    {
+                        List<RequiredOperatingSystemType> reqOs = new List<RequiredOperatingSystemType>();
+
+                        foreach(TargetOsEntry osEntry in importMetadataDlg.chosenOses)
+                            reqOs.Add(new RequiredOperatingSystemType
+                            {
+                                Name = osEntry.name,
+                                Version = new[]
+                                {
+                                    osEntry.version
+                                }
+                            });
+
+                        Context.Metadata.RequiredOperatingSystems = reqOs.ToArray();
                     }
                 }
+            }
 
-                btnClose.Visible       = true;
-                btnExit.Enabled        = true;
-                btnPack.Visible        = true;
-                btnPack.Enabled        = true;
-                btnRemoveFile.Visible  = true;
-                btnToggleCrack.Visible = true;
-                btnRemoveFile.Enabled  = true;
-                btnToggleCrack.Enabled = true;
+            btnClose.Visible       = true;
+            btnExit.Enabled        = true;
+            btnPack.Visible        = true;
+            btnPack.Enabled        = true;
+            btnRemoveFile.Visible  = true;
+            btnToggleCrack.Visible = true;
+            btnRemoveFile.Enabled  = true;
+            btnToggleCrack.Enabled = true;
 
-                txtFormat.ReadOnly      = false;
-                txtDescription.ReadOnly = false;
-                chkOem.Enabled          = true;
-                chkFiles.Enabled        = true;
-                chkUpdate.Enabled       = true;
-                chkUpgrade.Enabled      = true;
-                chkInstaller.Enabled    = true;
-                chkSource.Enabled       = true;
+            txtFormat.ReadOnly      = false;
+            txtDescription.ReadOnly = false;
+            chkOem.Enabled          = true;
+            chkFiles.Enabled        = true;
+            chkUpdate.Enabled       = true;
+            chkUpgrade.Enabled      = true;
+            chkInstaller.Enabled    = true;
+            chkSource.Enabled       = true;
 
-                btnMetadata.Visible = true;
-                if(Context.Metadata != null)
-                {
-                    if(Context.Metadata.Developer != null)
-                        foreach(string developer in Context.Metadata.Developer)
-                        {
-                            if(!string.IsNullOrWhiteSpace(txtDeveloper.Text)) txtDeveloper.Text += ",";
-                            txtDeveloper.Text += developer;
-                        }
+            btnMetadata.Visible = true;
 
-                    if(!string.IsNullOrWhiteSpace(Context.Metadata.Name)) txtProduct.Text    = Context.Metadata.Name;
-                    if(!string.IsNullOrWhiteSpace(Context.Metadata.Version)) txtVersion.Text = Context.Metadata.Version;
-
-                    if(Context.Metadata.Languages != null)
-                        foreach(LanguagesTypeLanguage language in Context.Metadata.Languages)
-                        {
-                            if(!string.IsNullOrWhiteSpace(txtLanguages.Text)) txtLanguages.Text += ",";
-                            txtLanguages.Text += language;
-                        }
-
-                    if(Context.Metadata.Architectures != null)
-                        foreach(ArchitecturesTypeArchitecture architecture in Context.Metadata.Architectures)
-                        {
-                            if(!string.IsNullOrWhiteSpace(txtArchitecture.Text)) txtArchitecture.Text += ",";
-                            txtArchitecture.Text += architecture;
-                        }
-
-                    if(Context.Metadata.RequiredOperatingSystems != null)
-                        foreach(string targetos in Context
-                                                  .Metadata.RequiredOperatingSystems.Select(os => os.Name).Distinct())
-                        {
-                            if(!string.IsNullOrWhiteSpace(txtTargetOs.Text)) txtTargetOs.Text += ",";
-                            txtTargetOs.Text += targetos;
-                        }
-
-                    btnMetadata.BackgroundColor = Colors.Green;
-                }
-                else btnMetadata.BackgroundColor = Colors.Red;
-
-                lblStatus.Visible = true;
-                lblStatus.Text    = $"{fileView.Count} files ({knownFiles} already known)";
-            });
-        }
-
-        void AddFile(string filename, string hash, bool known, bool isCrack)
-        {
-            Application.Instance.Invoke(delegate
+            if(Context.Metadata != null)
             {
-                fileView.Add(new FileEntry {Path = filename, Hash = hash, Known = known, IsCrack = isCrack});
-                btnPack.Enabled |= !known;
-                if(known) knownFiles++;
-            });
-        }
+                if(Context.Metadata.Developer != null)
+                    foreach(string developer in Context.Metadata.Developer)
+                    {
+                        if(!string.IsNullOrWhiteSpace(txtDeveloper.Text))
+                            txtDeveloper.Text += ",";
 
-        void AddApp(DbEntry app)
+                        txtDeveloper.Text += developer;
+                    }
+
+                if(!string.IsNullOrWhiteSpace(Context.Metadata.Name))
+                    txtProduct.Text = Context.Metadata.Name;
+
+                if(!string.IsNullOrWhiteSpace(Context.Metadata.Version))
+                    txtVersion.Text = Context.Metadata.Version;
+
+                if(Context.Metadata.Languages != null)
+                    foreach(LanguagesTypeLanguage language in Context.Metadata.Languages)
+                    {
+                        if(!string.IsNullOrWhiteSpace(txtLanguages.Text))
+                            txtLanguages.Text += ",";
+
+                        txtLanguages.Text += language;
+                    }
+
+                if(Context.Metadata.Architectures != null)
+                    foreach(ArchitecturesTypeArchitecture architecture in Context.Metadata.Architectures)
+                    {
+                        if(!string.IsNullOrWhiteSpace(txtArchitecture.Text))
+                            txtArchitecture.Text += ",";
+
+                        txtArchitecture.Text += architecture;
+                    }
+
+                if(Context.Metadata.RequiredOperatingSystems != null)
+                    foreach(string targetos in Context.Metadata.RequiredOperatingSystems.Select(os => os.Name).
+                                                       Distinct())
+                    {
+                        if(!string.IsNullOrWhiteSpace(txtTargetOs.Text))
+                            txtTargetOs.Text += ",";
+
+                        txtTargetOs.Text += targetos;
+                    }
+
+                btnMetadata.BackgroundColor = Colors.Green;
+            }
+            else
+                btnMetadata.BackgroundColor = Colors.Red;
+
+            lblStatus.Visible = true;
+            lblStatus.Text    = $"{fileView.Count} files ({knownFiles} already known)";
+        });
+
+        void AddFile(string filename, string hash, bool known, bool isCrack) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
+            fileView.Add(new FileEntry
             {
-                tabApps.Visible = true;
-                appView.Add(new DBEntryForEto(app));
+                Path    = filename,
+                Hash    = hash,
+                Known   = known,
+                IsCrack = isCrack
             });
-        }
+
+            btnPack.Enabled |= !known;
+
+            if(known)
+                knownFiles++;
+        });
+
+        void AddApp(DbEntry app) => Application.Instance.Invoke(delegate
+        {
+            tabApps.Visible = true;
+            appView.Add(new DBEntryForEto(app));
+        });
 
         protected void OnBtnExitClicked(object sender, EventArgs e)
         {
-            if(btnClose.Enabled) OnBtnCloseClicked(sender, e);
+            if(btnClose.Enabled)
+                OnBtnCloseClicked(sender, e);
 
             Close();
         }
@@ -527,6 +639,7 @@ namespace apprepodbmgr.Eto
             btnRemoveFile.Visible  = false;
             btnToggleCrack.Visible = false;
             fileView?.Clear();
+
             if(appView != null)
             {
                 tabApps.Visible = false;
@@ -574,17 +687,22 @@ namespace apprepodbmgr.Eto
             lblStatus.Visible   = false;
         }
 
-        void UpdateProgress(string text, string inner, long current, long maximum)
-        {
+        void UpdateProgress(string text, string inner, long current, long maximum) =>
             Application.Instance.Invoke(delegate
             {
-                if(!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(inner))
-                    lblProgress.Text                                        = $"{text}: {inner}";
-                else if(!string.IsNullOrWhiteSpace(inner)) lblProgress.Text = inner;
-                else lblProgress.Text                                       = text;
+                if(!string.IsNullOrWhiteSpace(text) &&
+                   !string.IsNullOrWhiteSpace(inner))
+                    lblProgress.Text = $"{text}: {inner}";
+                else if(!string.IsNullOrWhiteSpace(inner))
+                    lblProgress.Text = inner;
+                else
+                    lblProgress.Text = text;
+
                 if(maximum > 0)
                 {
-                    if(current < int.MinValue || current > int.MaxValue || maximum < int.MinValue ||
+                    if(current < int.MinValue ||
+                       current > int.MaxValue ||
+                       maximum < int.MinValue ||
                        maximum > int.MaxValue)
                     {
                         current /= 100;
@@ -596,21 +714,26 @@ namespace apprepodbmgr.Eto
                     prgProgress.MaxValue      = (int)maximum;
                     prgProgress.Value         = (int)current;
                 }
-                else prgProgress.Indeterminate = true;
+                else
+                    prgProgress.Indeterminate = true;
             });
-        }
 
-        void UpdateProgress2(string text, string inner, long current, long maximum)
-        {
+        void UpdateProgress2(string text, string inner, long current, long maximum) =>
             Application.Instance.Invoke(delegate
             {
-                if(!string.IsNullOrWhiteSpace(text) && !string.IsNullOrWhiteSpace(inner))
-                    lblProgress2.Text                                        = $"{text}: {inner}";
-                else if(!string.IsNullOrWhiteSpace(inner)) lblProgress2.Text = inner;
-                else lblProgress2.Text                                       = text;
+                if(!string.IsNullOrWhiteSpace(text) &&
+                   !string.IsNullOrWhiteSpace(inner))
+                    lblProgress2.Text = $"{text}: {inner}";
+                else if(!string.IsNullOrWhiteSpace(inner))
+                    lblProgress2.Text = inner;
+                else
+                    lblProgress2.Text = text;
+
                 if(maximum > 0)
                 {
-                    if(current < int.MinValue || current > int.MaxValue || maximum < int.MinValue ||
+                    if(current < int.MinValue ||
+                       current > int.MaxValue ||
+                       maximum < int.MinValue ||
                        maximum > int.MaxValue)
                     {
                         current /= 100;
@@ -622,9 +745,9 @@ namespace apprepodbmgr.Eto
                     prgProgress2.MaxValue      = (int)maximum;
                     prgProgress2.Value         = (int)current;
                 }
-                else prgProgress2.Indeterminate = true;
+                else
+                    prgProgress2.Indeterminate = true;
             });
-        }
 
         protected void OnBtnStopClicked(object sender, EventArgs e)
         {
@@ -703,7 +826,8 @@ namespace apprepodbmgr.Eto
                 thdRemoveTemp             =  new Thread(Workers.RemoveTempFolder);
                 thdRemoveTemp.Start();
             }
-            else RestoreUi();
+            else
+                RestoreUi();
         }
 
         void RestoreUi()
@@ -740,36 +864,32 @@ namespace apprepodbmgr.Eto
             Workers.UpdateProgress2  -= UpdateProgress2;
             btnStop.Visible          =  false;
             fileView?.Clear();
-            if(appView == null) return;
+
+            if(appView == null)
+                return;
 
             tabApps.Visible = false;
             appView.Clear();
         }
 
-        void RemoveTempFilesFailed(string text)
+        void RemoveTempFilesFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                MessageBox.Show(text, MessageBoxType.Error);
-                Workers.Failed    -= RemoveTempFilesFailed;
-                Workers.Finished  -= RemoveTempFilesFinished;
-                Context.Path      =  null;
-                Context.TmpFolder =  null;
-                RestoreUi();
-            });
-        }
+            MessageBox.Show(text, MessageBoxType.Error);
+            Workers.Failed    -= RemoveTempFilesFailed;
+            Workers.Finished  -= RemoveTempFilesFinished;
+            Context.Path      =  null;
+            Context.TmpFolder =  null;
+            RestoreUi();
+        });
 
-        void RemoveTempFilesFinished()
+        void RemoveTempFilesFinished() => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                Workers.Failed    -= RemoveTempFilesFailed;
-                Workers.Finished  -= RemoveTempFilesFinished;
-                Context.Path      =  null;
-                Context.TmpFolder =  null;
-                RestoreUi();
-            });
-        }
+            Workers.Failed    -= RemoveTempFilesFailed;
+            Workers.Finished  -= RemoveTempFilesFinished;
+            Context.Path      =  null;
+            Context.TmpFolder =  null;
+            RestoreUi();
+        });
 
         void AddToDatabase()
         {
@@ -808,13 +928,13 @@ namespace apprepodbmgr.Eto
 
             if(Context.Metadata != null)
             {
-                MemoryStream  ms = new MemoryStream();
-                XmlSerializer xs = new XmlSerializer(typeof(CICMMetadataType));
+                var ms = new MemoryStream();
+                var xs = new XmlSerializer(typeof(CICMMetadataType));
                 xs.Serialize(ms, Context.Metadata);
                 Context.DbInfo.Xml = ms.ToArray();
-                JsonSerializer js = new JsonSerializer();
+                var js = new JsonSerializer();
                 ms = new MemoryStream();
-                StreamWriter sw = new StreamWriter(ms);
+                var sw = new StreamWriter(ms);
                 js.Serialize(sw, Context.Metadata, typeof(CICMMetadataType));
                 Context.DbInfo.Json = ms.ToArray();
             }
@@ -828,50 +948,53 @@ namespace apprepodbmgr.Eto
             thdAddFiles.Start();
         }
 
-        void AddFilesToDbFinished()
+        void AddFilesToDbFinished() => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
+            Workers.UpdateProgress -= UpdateProgress;
+            Workers.Finished       -= AddFilesToDbFinished;
+            Workers.Failed         -= AddFilesToDbFailed;
+
+            thdAddFiles?.Abort();
+
+            long counter = 0;
+            fileView.Clear();
+
+            foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
             {
-                Workers.UpdateProgress -= UpdateProgress;
-                Workers.Finished       -= AddFilesToDbFinished;
-                Workers.Failed         -= AddFilesToDbFailed;
+                UpdateProgress(null, "Updating table", counter, Context.Hashes.Count);
 
-                thdAddFiles?.Abort();
-
-                long counter = 0;
-                fileView.Clear();
-                foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
+                fileView.Add(new FileEntry
                 {
-                    UpdateProgress(null, "Updating table", counter, Context.Hashes.Count);
-                    fileView.Add(new FileEntry {Path = kvp.Key, Hash = kvp.Value.Sha256, Known = true});
-                    counter++;
-                }
+                    Path  = kvp.Key,
+                    Hash  = kvp.Value.Sha256,
+                    Known = true
+                });
 
-                // TODO: Update application table
+                counter++;
+            }
 
-                OnAddedApp?.Invoke(Context.DbInfo);
+            // TODO: Update application table
 
-                lblProgress.Visible = false;
-                prgProgress.Visible = false;
-                btnClose.Enabled    = true;
-            });
-        }
+            OnAddedApp?.Invoke(Context.DbInfo);
 
-        void AddFilesToDbFailed(string text)
+            lblProgress.Visible = false;
+            prgProgress.Visible = false;
+            btnClose.Enabled    = true;
+        });
+
+        void AddFilesToDbFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                if(!stopped) MessageBox.Show(text, MessageBoxType.Error);
+            if(!stopped)
+                MessageBox.Show(text, MessageBoxType.Error);
 
-                Workers.UpdateProgress -= UpdateProgress;
-                Workers.Finished       -= AddFilesToDbFinished;
-                Workers.Failed         -= AddFilesToDbFailed;
+            Workers.UpdateProgress -= UpdateProgress;
+            Workers.Finished       -= AddFilesToDbFinished;
+            Workers.Failed         -= AddFilesToDbFailed;
 
-                thdAddFiles?.Abort();
+            thdAddFiles?.Abort();
 
-                ChkFilesFinished();
-            });
-        }
+            ChkFilesFinished();
+        });
 
         protected void OnBtnPackClicked(object sender, EventArgs e)
         {
@@ -916,68 +1039,69 @@ namespace apprepodbmgr.Eto
             thdPackFiles.Start();
         }
 
-        void PackFilesFinished(string text)
+        void PackFilesFinished(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                Workers.UpdateProgress   -= UpdateProgress;
-                Workers.UpdateProgress2  -= UpdateProgress2;
-                Workers.FinishedWithText -= PackFilesFinished;
-                Workers.Failed           -= PackFilesFailed;
-                prgProgress2.Visible     =  false;
-                lblProgress2.Visible     =  false;
+            Workers.UpdateProgress   -= UpdateProgress;
+            Workers.UpdateProgress2  -= UpdateProgress2;
+            Workers.FinishedWithText -= PackFilesFinished;
+            Workers.Failed           -= PackFilesFailed;
+            prgProgress2.Visible     =  false;
+            lblProgress2.Visible     =  false;
 
-                thdPackFiles?.Abort();
+            thdPackFiles?.Abort();
 
-                AddToDatabase();
+            AddToDatabase();
 
-                MessageBox.Show(text);
-            });
-        }
+            MessageBox.Show(text);
+        });
 
-        void PackFilesFailed(string text)
+        void PackFilesFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                if(!stopped) MessageBox.Show(text, MessageBoxType.Error);
+            if(!stopped)
+                MessageBox.Show(text, MessageBoxType.Error);
 
-                Workers.UpdateProgress   -= UpdateProgress;
-                Workers.UpdateProgress2  -= UpdateProgress2;
-                Workers.FinishedWithText -= PackFilesFinished;
-                Workers.Failed           -= PackFilesFailed;
+            Workers.UpdateProgress   -= UpdateProgress;
+            Workers.UpdateProgress2  -= UpdateProgress2;
+            Workers.FinishedWithText -= PackFilesFinished;
+            Workers.Failed           -= PackFilesFailed;
 
-                thdPackFiles?.Abort();
+            thdPackFiles?.Abort();
 
-                btnRemoveFile.Enabled   = true;
-                btnToggleCrack.Enabled  = true;
-                btnPack.Enabled         = true;
-                btnClose.Enabled        = true;
-                prgProgress.Visible     = false;
-                prgProgress2.Visible    = false;
-                lblProgress.Visible     = false;
-                lblProgress2.Visible    = false;
-                txtFormat.ReadOnly      = false;
-                txtDescription.ReadOnly = false;
-                chkOem.Enabled          = true;
-                chkFiles.Enabled        = true;
-                chkUpdate.Enabled       = true;
-                chkUpgrade.Enabled      = true;
-                chkInstaller.Enabled    = true;
-                chkSource.Enabled       = true;
-            });
-        }
+            btnRemoveFile.Enabled   = true;
+            btnToggleCrack.Enabled  = true;
+            btnPack.Enabled         = true;
+            btnClose.Enabled        = true;
+            prgProgress.Visible     = false;
+            prgProgress2.Visible    = false;
+            lblProgress.Visible     = false;
+            lblProgress2.Visible    = false;
+            txtFormat.ReadOnly      = false;
+            txtDescription.ReadOnly = false;
+            chkOem.Enabled          = true;
+            chkFiles.Enabled        = true;
+            chkUpdate.Enabled       = true;
+            chkUpgrade.Enabled      = true;
+            chkInstaller.Enabled    = true;
+            chkSource.Enabled       = true;
+        });
 
         protected void OnBtnArchiveClicked(object sender, EventArgs e)
         {
             if(!Context.UnarUsable)
             {
                 MessageBox.Show("Cannot open archives without a working unar installation.", MessageBoxType.Error);
+
                 return;
             }
 
-            OpenFileDialog dlgFile = new OpenFileDialog {Title = "Open archive", MultiSelect = false};
+            var dlgFile = new OpenFileDialog
+            {
+                Title       = "Open archive",
+                MultiSelect = false
+            };
 
-            if(dlgFile.ShowDialog(this) != DialogResult.Ok) return;
+            if(dlgFile.ShowDialog(this) != DialogResult.Ok)
+                return;
 
             knownFiles                = 0;
             stopped                   = false;
@@ -997,110 +1121,109 @@ namespace apprepodbmgr.Eto
             thdOpenArchive.Start();
         }
 
-        void OpenArchiveFailed(string text)
+        void OpenArchiveFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                if(!stopped) MessageBox.Show(text, MessageBoxType.Error);
-                lblProgress.Visible =  false;
-                prgProgress.Visible =  false;
-                btnExit.Enabled     =  true;
-                btnFolder.Visible   =  true;
-                btnArchive.Visible  =  true;
-                btnStop.Visible     =  false;
-                Workers.Failed      -= OpenArchiveFailed;
-                Workers.Finished    -= OpenArchiveFinished;
-                thdOpenArchive      =  null;
-            });
-        }
+            if(!stopped)
+                MessageBox.Show(text, MessageBoxType.Error);
 
-        void OpenArchiveFinished()
+            lblProgress.Visible =  false;
+            prgProgress.Visible =  false;
+            btnExit.Enabled     =  true;
+            btnFolder.Visible   =  true;
+            btnArchive.Visible  =  true;
+            btnStop.Visible     =  false;
+            Workers.Failed      -= OpenArchiveFailed;
+            Workers.Finished    -= OpenArchiveFinished;
+            thdOpenArchive      =  null;
+        });
+
+        void OpenArchiveFinished() => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                stopped                 =  false;
-                lblProgress.Text        =  "Extracting archive";
-                prgProgress.Visible     =  true;
-                prgProgress2.Visible    =  true;
-                btnExit.Enabled         =  false;
-                btnFolder.Visible       =  false;
-                btnArchive.Visible      =  false;
-                Workers.UpdateProgress  += UpdateProgress;
-                lblProgress.Visible     =  true;
-                lblProgress2.Visible    =  true;
-                Workers.Failed          -= OpenArchiveFailed;
-                Workers.Finished        -= OpenArchiveFinished;
-                thdOpenArchive          =  null;
-                Workers.Failed          += ExtractArchiveFailed;
-                Workers.Finished        += ExtractArchiveFinished;
-                Workers.UpdateProgress2 += UpdateProgress2;
-                thdExtractArchive       =  new Thread(Workers.ExtractArchive);
-                thdExtractArchive.Start();
-            });
-        }
+            stopped                 =  false;
+            lblProgress.Text        =  "Extracting archive";
+            prgProgress.Visible     =  true;
+            prgProgress2.Visible    =  true;
+            btnExit.Enabled         =  false;
+            btnFolder.Visible       =  false;
+            btnArchive.Visible      =  false;
+            Workers.UpdateProgress  += UpdateProgress;
+            lblProgress.Visible     =  true;
+            lblProgress2.Visible    =  true;
+            Workers.Failed          -= OpenArchiveFailed;
+            Workers.Finished        -= OpenArchiveFinished;
+            thdOpenArchive          =  null;
+            Workers.Failed          += ExtractArchiveFailed;
+            Workers.Finished        += ExtractArchiveFinished;
+            Workers.UpdateProgress2 += UpdateProgress2;
+            thdExtractArchive       =  new Thread(Workers.ExtractArchive);
+            thdExtractArchive.Start();
+        });
 
-        void ExtractArchiveFailed(string text)
+        void ExtractArchiveFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                if(!stopped) MessageBox.Show(text, MessageBoxType.Error);
-                lblProgress2.Visible    =  false;
-                prgProgress2.Visible    =  false;
-                btnExit.Enabled         =  true;
-                btnFolder.Visible       =  true;
-                btnArchive.Visible      =  true;
-                Workers.Failed          -= ExtractArchiveFailed;
-                Workers.Finished        -= ExtractArchiveFinished;
-                Workers.UpdateProgress  -= UpdateProgress;
-                Workers.UpdateProgress2 -= UpdateProgress2;
-                thdExtractArchive       =  null;
-                if(Context.TmpFolder == null) return;
+            if(!stopped)
+                MessageBox.Show(text, MessageBoxType.Error);
 
-                btnStop.Visible           =  false;
-                lblProgress.Text          =  "Removing temporary files";
-                prgProgress.Indeterminate =  true;
-                Workers.Failed            += RemoveTempFilesFailed;
-                Workers.Finished          += RemoveTempFilesFinished;
-                thdRemoveTemp             =  new Thread(Workers.RemoveTempFolder);
-                thdRemoveTemp.Start();
-            });
-        }
+            lblProgress2.Visible    =  false;
+            prgProgress2.Visible    =  false;
+            btnExit.Enabled         =  true;
+            btnFolder.Visible       =  true;
+            btnArchive.Visible      =  true;
+            Workers.Failed          -= ExtractArchiveFailed;
+            Workers.Finished        -= ExtractArchiveFinished;
+            Workers.UpdateProgress  -= UpdateProgress;
+            Workers.UpdateProgress2 -= UpdateProgress2;
+            thdExtractArchive       =  null;
 
-        void ExtractArchiveFinished()
+            if(Context.TmpFolder == null)
+                return;
+
+            btnStop.Visible           =  false;
+            lblProgress.Text          =  "Removing temporary files";
+            prgProgress.Indeterminate =  true;
+            Workers.Failed            += RemoveTempFilesFailed;
+            Workers.Finished          += RemoveTempFilesFinished;
+            thdRemoveTemp             =  new Thread(Workers.RemoveTempFolder);
+            thdRemoveTemp.Start();
+        });
+
+        void ExtractArchiveFinished() => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                stopped                   =  false;
-                lblProgress.Text          =  "Finding files";
-                lblProgress.Visible       =  true;
-                lblProgress2.Visible      =  false;
-                prgProgress.Visible       =  true;
-                btnExit.Enabled           =  false;
-                btnFolder.Visible         =  false;
-                btnArchive.Visible        =  false;
-                Workers.Failed            -= ExtractArchiveFailed;
-                Workers.Finished          -= ExtractArchiveFinished;
-                Workers.UpdateProgress    -= UpdateProgress;
-                Workers.UpdateProgress2   -= UpdateProgress2;
-                prgProgress.Indeterminate =  true;
+            stopped                   =  false;
+            lblProgress.Text          =  "Finding files";
+            lblProgress.Visible       =  true;
+            lblProgress2.Visible      =  false;
+            prgProgress.Visible       =  true;
+            btnExit.Enabled           =  false;
+            btnFolder.Visible         =  false;
+            btnArchive.Visible        =  false;
+            Workers.Failed            -= ExtractArchiveFailed;
+            Workers.Finished          -= ExtractArchiveFinished;
+            Workers.UpdateProgress    -= UpdateProgress;
+            Workers.UpdateProgress2   -= UpdateProgress2;
+            prgProgress.Indeterminate =  true;
 
-                thdExtractArchive =  null;
-                thdFindFiles      =  new Thread(Workers.FindFiles);
-                Workers.Failed    += FindFilesFailed;
-                Workers.Finished  += FindFilesFinished;
-                btnStop.Visible   =  true;
-                thdFindFiles.Start();
-            });
-        }
+            thdExtractArchive =  null;
+            thdFindFiles      =  new Thread(Workers.FindFiles);
+            Workers.Failed    += FindFilesFailed;
+            Workers.Finished  += FindFilesFinished;
+            btnStop.Visible   =  true;
+            thdFindFiles.Start();
+        });
 
         protected void OnBtnMetadataClicked(object sender, EventArgs e)
         {
-            dlgMetadata _dlgMetadata = new dlgMetadata {Metadata = Context.Metadata};
+            var _dlgMetadata = new dlgMetadata
+            {
+                Metadata = Context.Metadata
+            };
+
             _dlgMetadata.FillFields();
 
             _dlgMetadata.ShowModal(this);
 
-            if(!_dlgMetadata.Modified) return;
+            if(!_dlgMetadata.Modified)
+                return;
 
             Context.Metadata = _dlgMetadata.Metadata;
 
@@ -1108,7 +1231,9 @@ namespace apprepodbmgr.Eto
                 if(Context.Metadata.Developer != null)
                     foreach(string developer in Context.Metadata.Developer)
                     {
-                        if(!string.IsNullOrWhiteSpace(txtDeveloper.Text)) txtDeveloper.Text += ",";
+                        if(!string.IsNullOrWhiteSpace(txtDeveloper.Text))
+                            txtDeveloper.Text += ",";
+
                         txtDeveloper.Text += developer;
                     }
 
@@ -1124,7 +1249,9 @@ namespace apprepodbmgr.Eto
                 if(Context.Metadata.Languages != null)
                     foreach(LanguagesTypeLanguage language in Context.Metadata.Languages)
                     {
-                        if(!string.IsNullOrWhiteSpace(txtLanguages.Text)) txtLanguages.Text += ",";
+                        if(!string.IsNullOrWhiteSpace(txtLanguages.Text))
+                            txtLanguages.Text += ",";
+
                         txtLanguages.Text += language;
                     }
 
@@ -1132,16 +1259,20 @@ namespace apprepodbmgr.Eto
                 if(Context.Metadata.Architectures != null)
                     foreach(ArchitecturesTypeArchitecture architecture in Context.Metadata.Architectures)
                     {
-                        if(!string.IsNullOrWhiteSpace(txtArchitecture.Text)) txtArchitecture.Text += ",";
+                        if(!string.IsNullOrWhiteSpace(txtArchitecture.Text))
+                            txtArchitecture.Text += ",";
+
                         txtArchitecture.Text += architecture;
                     }
 
             if(string.IsNullOrWhiteSpace(txtTargetOs.Text))
                 if(Context.Metadata.RequiredOperatingSystems != null)
-                    foreach(string targetos in Context.Metadata.RequiredOperatingSystems.Select(os => os.Name)
-                                                      .Distinct())
+                    foreach(string targetos in Context.Metadata.RequiredOperatingSystems.Select(os => os.Name).
+                                                       Distinct())
                     {
-                        if(!string.IsNullOrWhiteSpace(txtTargetOs.Text)) txtTargetOs.Text += ",";
+                        if(!string.IsNullOrWhiteSpace(txtTargetOs.Text))
+                            txtTargetOs.Text += ",";
+
                         txtTargetOs.Text += targetos;
                     }
 
@@ -1150,14 +1281,17 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnRemoveFileClicked(object sender, EventArgs e)
         {
-            if(treeFiles.SelectedItem == null) return;
+            if(treeFiles.SelectedItem == null)
+                return;
 
             string name = ((FileEntry)treeFiles.SelectedItem).Path;
             string filesPath;
 
-            if(!string.IsNullOrEmpty(Context.TmpFolder) && Directory.Exists(Context.TmpFolder))
-                filesPath  = Context.TmpFolder;
-            else filesPath = Context.Path;
+            if(!string.IsNullOrEmpty(Context.TmpFolder) &&
+               Directory.Exists(Context.TmpFolder))
+                filesPath = Context.TmpFolder;
+            else
+                filesPath = Context.Path;
 
             Context.Hashes.Remove(name);
             Context.Files.Remove(Path.Combine(filesPath, name));
@@ -1166,24 +1300,34 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnToggleCrackClicked(object sender, EventArgs e)
         {
-            if(treeFiles.SelectedItem == null) return;
+            if(treeFiles.SelectedItem == null)
+                return;
 
             string name  = ((FileEntry)treeFiles.SelectedItem).Path;
             bool   known = ((FileEntry)treeFiles.SelectedItem).Known;
 
-            if(!Context.Hashes.TryGetValue(name, out DbAppFile appFile)) return;
+            if(!Context.Hashes.TryGetValue(name, out DbAppFile appFile))
+                return;
 
             appFile.Crack = !appFile.Crack;
             Context.Hashes.Remove(name);
             Context.Hashes.Add(name, appFile);
             ((FileEntry)treeFiles.SelectedItem).IsCrack = appFile.Crack;
             fileView.Remove((FileEntry)treeFiles.SelectedItem);
-            fileView.Add(new FileEntry {Path = name, Hash = appFile.Sha256, Known = known, IsCrack = appFile.Crack});
+
+            fileView.Add(new FileEntry
+            {
+                Path    = name,
+                Hash    = appFile.Sha256,
+                Known   = known,
+                IsCrack = appFile.Crack
+            });
         }
 
         void treeFilesSelectionChanged(object sender, EventArgs e)
         {
-            if(treeFiles.SelectedItem == null) return;
+            if(treeFiles.SelectedItem == null)
+                return;
 
             btnToggleCrack.Text = ((FileEntry)treeFiles.SelectedItem).IsCrack ? "Mark as not crack" : "Mark as crack";
         }

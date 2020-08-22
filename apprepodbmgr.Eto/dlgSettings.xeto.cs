@@ -47,7 +47,8 @@ namespace apprepodbmgr.Eto
             txtDatabase.Text   = Settings.Current.DatabasePath;
             txtRepository.Text = Settings.Current.RepositoryPath;
 
-            if(!string.IsNullOrWhiteSpace(txtUnar.Text)) CheckUnar();
+            if(!string.IsNullOrWhiteSpace(txtUnar.Text))
+                CheckUnar();
 
             cmbCompAlg = new EnumDropDown<AlgoEnum>();
             StackLayoutForAlgoEnum.Items.Add(new StackLayoutItem(cmbCompAlg, HorizontalAlignment.Stretch, true));
@@ -56,7 +57,9 @@ namespace apprepodbmgr.Eto
             spClamdPort.Value    = 3310;
             chkAntivirus.Checked = Settings.Current.UseAntivirus;
             frmClamd.Visible     = chkAntivirus.Checked.Value;
-            if(Settings.Current.UseAntivirus && Settings.Current.UseClamd)
+
+            if(Settings.Current.UseAntivirus &&
+               Settings.Current.UseClamd)
             {
                 chkClamd.Checked        = Settings.Current.UseClamd;
                 txtClamdHost.Text       = Settings.Current.ClamdHost;
@@ -64,7 +67,9 @@ namespace apprepodbmgr.Eto
                 chkClamdIsLocal.Checked = Settings.Current.ClamdIsLocal;
             }
 
-            if(!Settings.Current.UseAntivirus || !Settings.Current.UseVirusTotal) return;
+            if(!Settings.Current.UseAntivirus ||
+               !Settings.Current.UseVirusTotal)
+                return;
 
             chkVirusTotal.Checked = true;
             chkVirusTotal.Enabled = true;
@@ -73,10 +78,7 @@ namespace apprepodbmgr.Eto
             btnVirusTotal.Enabled = true;
         }
 
-        protected void OnBtnCancelClicked(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnCancelClicked(object sender, EventArgs e) => Close();
 
         protected void OnBtnApplyClicked(object sender, EventArgs e)
         {
@@ -86,7 +88,9 @@ namespace apprepodbmgr.Eto
             Settings.Current.DatabasePath         = txtDatabase.Text;
             Settings.Current.RepositoryPath       = txtRepository.Text;
             Settings.Current.CompressionAlgorithm = cmbCompAlg.SelectedValue;
-            if(!chkClamd.Checked.Value || !chkAntivirus.Checked.Value)
+
+            if(!chkClamd.Checked.Value ||
+               !chkAntivirus.Checked.Value)
             {
                 Settings.Current.UseClamd     = false;
                 Settings.Current.ClamdHost    = null;
@@ -94,7 +98,8 @@ namespace apprepodbmgr.Eto
                 Settings.Current.ClamdIsLocal = false;
             }
 
-            if(chkVirusTotal.Checked.Value && chkAntivirus.Checked.Value)
+            if(chkVirusTotal.Checked.Value &&
+               chkAntivirus.Checked.Value)
             {
                 Settings.Current.UseVirusTotal = true;
                 Settings.Current.VirusTotalKey = txtVirusTotal.Text;
@@ -117,11 +122,17 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnUnarClicked(object sender, EventArgs e)
         {
-            OpenFileDialog dlgFile = new OpenFileDialog {Title = "Choose UnArchiver executable", MultiSelect = false};
+            var dlgFile = new OpenFileDialog
+            {
+                Title       = "Choose UnArchiver executable",
+                MultiSelect = false
+            };
+
             if(!string.IsNullOrWhiteSpace(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)))
                 dlgFile.Directory = new Uri(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 
-            if(dlgFile.ShowDialog(this) != DialogResult.Ok) return;
+            if(dlgFile.ShowDialog(this) != DialogResult.Ok)
+                return;
 
             txtUnar.Text           = dlgFile.FileName;
             lblUnarVersion.Visible = false;
@@ -130,23 +141,31 @@ namespace apprepodbmgr.Eto
 
         protected void OnBtnTmpClicked(object sender, EventArgs e)
         {
-            SelectFolderDialog dlgFolder      =
-                new SelectFolderDialog {Title = "Choose temporary folder", Directory = Path.GetTempPath()};
+            var dlgFolder = new SelectFolderDialog
+            {
+                Title     = "Choose temporary folder",
+                Directory = Path.GetTempPath()
+            };
 
-            if(dlgFolder.ShowDialog(this) == DialogResult.Ok) txtTmp.Text = dlgFolder.Directory;
+            if(dlgFolder.ShowDialog(this) == DialogResult.Ok)
+                txtTmp.Text = dlgFolder.Directory;
         }
 
         protected void OnBtnRepositoryClicked(object sender, EventArgs e)
         {
-            SelectFolderDialog dlgFolder      =
-                new SelectFolderDialog {Title = "Choose repository folder", Directory = Path.GetTempPath()};
+            var dlgFolder = new SelectFolderDialog
+            {
+                Title     = "Choose repository folder",
+                Directory = Path.GetTempPath()
+            };
 
-            if(dlgFolder.ShowDialog(this) == DialogResult.Ok) txtRepository.Text = dlgFolder.Directory;
+            if(dlgFolder.ShowDialog(this) == DialogResult.Ok)
+                txtRepository.Text = dlgFolder.Directory;
         }
 
         protected void OnBtnDatabaseClicked(object sender, EventArgs e)
         {
-            SaveFileDialog dlgFile = new SaveFileDialog
+            var dlgFile = new SaveFileDialog
             {
                 Title           = "Choose database to open/create",
                 Directory       = new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)),
@@ -154,20 +173,28 @@ namespace apprepodbmgr.Eto
                 FileName        = "apprepodbmgr.db"
             };
 
-            if(dlgFile.ShowDialog(this) != DialogResult.Ok) return;
+            if(dlgFile.ShowDialog(this) != DialogResult.Ok)
+                return;
 
             if(File.Exists(dlgFile.FileName))
             {
                 DbCore dbCore = new SQLite();
                 bool   notDb  = false;
 
-                try { notDb   |= !dbCore.OpenDb(dlgFile.FileName, null, null, null); }
-                catch { notDb =  true; }
+                try
+                {
+                    notDb |= !dbCore.OpenDb(dlgFile.FileName, null, null, null);
+                }
+                catch
+                {
+                    notDb = true;
+                }
 
                 if(notDb)
                 {
                     MessageBox.Show("Cannot open specified file as a database, please choose another.",
                                     MessageBoxType.Error);
+
                     return;
                 }
 
@@ -178,13 +205,20 @@ namespace apprepodbmgr.Eto
                 DbCore dbCore = new SQLite();
                 bool   notDb  = false;
 
-                try { notDb   |= !dbCore.CreateDb(dlgFile.FileName, null, null, null); }
-                catch { notDb =  true; }
+                try
+                {
+                    notDb |= !dbCore.CreateDb(dlgFile.FileName, null, null, null);
+                }
+                catch
+                {
+                    notDb = true;
+                }
 
                 if(notDb)
                 {
                     MessageBox.Show("Cannot create a database in the specified file as a database.",
                                     MessageBoxType.Error);
+
                     return;
                 }
 
@@ -201,35 +235,29 @@ namespace apprepodbmgr.Eto
 
             oldUnarPath                     = Settings.Current.UnArchiverPath;
             Settings.Current.UnArchiverPath = txtUnar.Text;
-            Thread thdCheckUnar             = new Thread(Workers.CheckUnar);
+            var thdCheckUnar = new Thread(Workers.CheckUnar);
             thdCheckUnar.Start();
         }
 
-        void CheckUnarFinished(string text)
+        void CheckUnarFinished(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                Workers.FinishedWithText -= CheckUnarFinished;
-                Workers.Failed           -= CheckUnarFailed;
+            Workers.FinishedWithText -= CheckUnarFinished;
+            Workers.Failed           -= CheckUnarFailed;
 
-                lblUnarVersion.Text             = text;
-                lblUnarVersion.Visible          = true;
-                Settings.Current.UnArchiverPath = oldUnarPath;
-            });
-        }
+            lblUnarVersion.Text             = text;
+            lblUnarVersion.Visible          = true;
+            Settings.Current.UnArchiverPath = oldUnarPath;
+        });
 
-        void CheckUnarFailed(string text)
+        void CheckUnarFailed(string text) => Application.Instance.Invoke(delegate
         {
-            Application.Instance.Invoke(delegate
-            {
-                Workers.FinishedWithText -= CheckUnarFinished;
-                Workers.Failed           -= CheckUnarFailed;
+            Workers.FinishedWithText -= CheckUnarFinished;
+            Workers.Failed           -= CheckUnarFailed;
 
-                txtUnar.Text                    = string.IsNullOrWhiteSpace(oldUnarPath) ? "" : oldUnarPath;
-                Settings.Current.UnArchiverPath = oldUnarPath;
-                MessageBox.Show(text, MessageBoxType.Error);
-            });
-        }
+            txtUnar.Text                    = string.IsNullOrWhiteSpace(oldUnarPath) ? "" : oldUnarPath;
+            Settings.Current.UnArchiverPath = oldUnarPath;
+            MessageBox.Show(text, MessageBoxType.Error);
+        });
 
         protected void OnChkAntivirusToggled(object sender, EventArgs e)
         {
@@ -253,14 +281,15 @@ namespace apprepodbmgr.Eto
             if(string.IsNullOrEmpty(txtClamdHost.Text))
             {
                 MessageBox.Show("clamd host cannot be empty", MessageBoxType.Error);
+
                 return;
             }
 
-            string oldVersion    = Context.ClamdVersion;
+            string oldVersion = Context.ClamdVersion;
             Context.ClamdVersion = null;
 
-            string oldHost             = Settings.Current.ClamdHost;
-            ushort oldPort             = Settings.Current.ClamdPort;
+            string oldHost = Settings.Current.ClamdHost;
+            ushort oldPort = Settings.Current.ClamdPort;
             Settings.Current.ClamdHost = txtClamdHost.Text;
             Settings.Current.ClamdPort = (ushort)spClamdPort.Value;
 
@@ -272,6 +301,7 @@ namespace apprepodbmgr.Eto
             if(string.IsNullOrEmpty(Context.ClamdVersion))
             {
                 MessageBox.Show("Cannot connect to clamd", MessageBoxType.Error);
+
                 return;
             }
 
@@ -290,39 +320,38 @@ namespace apprepodbmgr.Eto
         protected void OnBtnVirusTotalClicked(object sender, EventArgs e)
         {
             Workers.Failed += VirusTotalTestFailed;
-            if(!Workers.TestVirusTotal(txtVirusTotal.Text)) return;
+
+            if(!Workers.TestVirusTotal(txtVirusTotal.Text))
+                return;
 
             lblVirusTotal.Visible = true;
             lblVirusTotal.Text    = "Working!";
         }
 
-        static void VirusTotalTestFailed(string text)
-        {
-            MessageBox.Show(text, MessageBoxType.Error);
-        }
+        static void VirusTotalTestFailed(string text) => MessageBox.Show(text, MessageBoxType.Error);
 
         #region XAML UI elements
         #pragma warning disable 0649
-        TextBox                txtTmp;
-        TextBox                txtUnar;
-        TextBox                txtDatabase;
-        TextBox                txtRepository;
-        Label                  lblUnarVersion;
-        EnumDropDown<AlgoEnum> cmbCompAlg;
-        StackLayout            StackLayoutForAlgoEnum;
-        GroupBox               frmClamd;
-        CheckBox               chkAntivirus;
-        CheckBox               chkClamd;
-        TextBox                txtClamdHost;
-        NumericUpDown          spClamdPort;
-        Button                 btnClamdTest;
-        Label                  lblClamdVersion;
-        CheckBox               chkClamdIsLocal;
-        GroupBox               frmVirusTotal;
-        CheckBox               chkVirusTotal;
-        TextBox                txtVirusTotal;
-        Button                 btnVirusTotal;
-        Label                  lblVirusTotal;
+        TextBox                         txtTmp;
+        TextBox                         txtUnar;
+        TextBox                         txtDatabase;
+        TextBox                         txtRepository;
+        Label                           lblUnarVersion;
+        readonly EnumDropDown<AlgoEnum> cmbCompAlg;
+        StackLayout                     StackLayoutForAlgoEnum;
+        GroupBox                        frmClamd;
+        CheckBox                        chkAntivirus;
+        CheckBox                        chkClamd;
+        TextBox                         txtClamdHost;
+        NumericUpDown                   spClamdPort;
+        Button                          btnClamdTest;
+        Label                           lblClamdVersion;
+        CheckBox                        chkClamdIsLocal;
+        GroupBox                        frmVirusTotal;
+        CheckBox                        chkVirusTotal;
+        TextBox                         txtVirusTotal;
+        Button                          btnVirusTotal;
+        Label                           lblVirusTotal;
         #pragma warning restore 0649
         #endregion XAML UI elements
     }

@@ -40,49 +40,54 @@ namespace apprepodbmgr.Core
         {
             try
             {
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 dbCore.DbOps.GetAllApps(out List<DbEntry> apps);
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.GetAllApps(): Took {0} seconds to get apps from database",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 if(AddApp != null)
                 {
-                    #if DEBUG
+                #if DEBUG
                     stopwatch.Restart();
-                    #endif
+                #endif
                     int counter = 0;
+
                     // TODO: Check file name and existence
                     foreach(DbEntry app in apps)
                     {
                         UpdateProgress?.Invoke("Populating apps table", $"{app.Developer} {app.Product}", counter,
                                                apps.Count);
+
                         AddApp?.Invoke(app);
 
                         counter++;
                     }
-                    #if DEBUG
+                #if DEBUG
                     stopwatch.Stop();
+
                     Console.WriteLine("Core.GetAllApps(): Took {0} seconds to add apps to the GUI",
                                       stopwatch.Elapsed.TotalSeconds);
-                    #endif
+                #endif
                 }
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -91,9 +96,9 @@ namespace apprepodbmgr.Core
             try
             {
                 long counter = 0;
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 Dictionary<string, DbAppFile> knownFiles = new Dictionary<string, DbAppFile>();
 
                 bool unknownFile = false;
@@ -105,6 +110,7 @@ namespace apprepodbmgr.Core
                     {
                         AddFileForApp(kvp.Key, kvp.Value.Sha256, true, kvp.Value.Crack);
                         counter++;
+
                         continue;
                     }
 
@@ -118,43 +124,50 @@ namespace apprepodbmgr.Core
                         counter++;
                         knownFiles.Add(kvp.Key, kvp.Value);
                     }
-                    else unknownFile = true;
+                    else
+                        unknownFile = true;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.CheckDbForFiles(): Took {0} seconds to checks for file knowledge in the DB",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
+            #endif
                 if(knownFiles.Count == 0 || unknownFile)
                 {
                     Finished?.Invoke();
+
                     return;
                 }
 
                 UpdateProgress?.Invoke(null, "Retrieving apps from database", counter, Context.Hashes.Count);
                 dbCore.DbOps.GetAllApps(out List<DbEntry> apps);
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.CheckDbForFiles(): Took {0} seconds get all apps from DB",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
-                if(apps != null && apps.Count > 0)
+                if(apps       != null &&
+                   apps.Count > 0)
                 {
                     DbEntry[] appsArray = new DbEntry[apps.Count];
                     apps.CopyTo(appsArray);
 
                     long appCounter = 0;
-                    #if DEBUG
+                #if DEBUG
                     stopwatch.Restart();
-                    #endif
+                #endif
 
                     foreach(DbEntry app in appsArray)
                     {
                         UpdateProgress?.Invoke(null, $"Check application id {app.Id}", appCounter, appsArray.Length);
 
                         counter = 0;
+
                         foreach(KeyValuePair<string, DbAppFile> kvp in knownFiles)
                         {
                             UpdateProgress2?.Invoke(null, $"Checking for file {kvp.Value.Path}", counter,
@@ -162,7 +175,8 @@ namespace apprepodbmgr.Core
 
                             if(!dbCore.DbOps.ExistsFileInApp(kvp.Value.Sha256, app.Id))
                             {
-                                if(apps.Contains(app)) apps.Remove(app);
+                                if(apps.Contains(app))
+                                    apps.Remove(app);
 
                                 // If one file is missing, the rest don't matter
                                 break;
@@ -171,13 +185,15 @@ namespace apprepodbmgr.Core
                             counter++;
                         }
 
-                        if(apps.Count == 0) break; // No apps left
+                        if(apps.Count == 0)
+                            break; // No apps left
                     }
-                    #if DEBUG
+                #if DEBUG
                     stopwatch.Stop();
+
                     Console.WriteLine("Core.CheckDbForFiles(): Took {0} seconds correlate all files with all known applications",
                                       stopwatch.Elapsed.TotalSeconds);
-                    #endif
+                #endif
                 }
 
                 if(AddApp != null)
@@ -186,15 +202,16 @@ namespace apprepodbmgr.Core
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -203,16 +220,16 @@ namespace apprepodbmgr.Core
             try
             {
                 long counter = 0;
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
                 {
                     UpdateProgress?.Invoke(null, "Adding files to database", counter, Context.Hashes.Count);
 
                     if(!dbCore.DbOps.ExistsFile(kvp.Value.Sha256))
                     {
-                        DbFile file = new DbFile
+                        var file = new DbFile
                         {
                             Sha256         = kvp.Value.Sha256,
                             ClamTime       = null,
@@ -222,6 +239,7 @@ namespace apprepodbmgr.Core
                             HasVirus       = null,
                             VirusTotalTime = null
                         };
+
                         dbCore.DbOps.AddFile(file);
 
                         AddFile?.Invoke(file);
@@ -229,21 +247,23 @@ namespace apprepodbmgr.Core
 
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.AddFilesToDb(): Took {0} seconds to add all files to the database",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 UpdateProgress?.Invoke(null, "Adding application information", counter, Context.Hashes.Count);
                 dbCore.DbOps.AddApp(Context.DbInfo, out Context.DbInfo.Id);
                 UpdateProgress?.Invoke(null, "Creating application table", counter, Context.Hashes.Count);
                 dbCore.DbOps.CreateTableForApp(Context.DbInfo.Id);
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 counter = 0;
+
                 foreach(KeyValuePair<string, DbAppFile> kvp in Context.Hashes)
                 {
                     UpdateProgress?.Invoke(null, "Adding files to application in database", counter,
@@ -253,13 +273,16 @@ namespace apprepodbmgr.Core
 
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.AddFilesToDb(): Took {0} seconds to add all files to the application in the database",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
+            #endif
                 counter = 0;
+
                 foreach(KeyValuePair<string, DbFolder> kvp in Context.FoldersDict)
                 {
                     UpdateProgress?.Invoke(null, "Adding folders to application in database", counter,
@@ -269,14 +292,18 @@ namespace apprepodbmgr.Core
 
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.AddFilesToDb(): Took {0} seconds to add all folders to the database",
                                   stopwatch.Elapsed.TotalSeconds);
+
                 stopwatch.Restart();
-                #endif
+            #endif
                 counter = 0;
-                if(Context.SymlinksDict.Count > 0) dbCore.DbOps.CreateSymlinkTableForOs(Context.DbInfo.Id);
+
+                if(Context.SymlinksDict.Count > 0)
+                    dbCore.DbOps.CreateSymlinkTableForOs(Context.DbInfo.Id);
 
                 foreach(KeyValuePair<string, string> kvp in Context.SymlinksDict)
                 {
@@ -287,23 +314,25 @@ namespace apprepodbmgr.Core
 
                     counter++;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.AddFilesToDb(): Took {0} seconds to add all symbolic links to the database",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -317,16 +346,19 @@ namespace apprepodbmgr.Core
                 if(string.IsNullOrEmpty(Settings.Current.DatabasePath))
                 {
                     Failed?.Invoke("No database file specified");
+
                     return;
                 }
 
                 dbCore = new SQLite();
+
                 if(File.Exists(Settings.Current.DatabasePath))
                 {
                     if(!dbCore.OpenDb(Settings.Current.DatabasePath, null, null, null))
                     {
                         Failed?.Invoke("Could not open database, correct file selected?");
                         dbCore = null;
+
                         return;
                     }
                 }
@@ -336,6 +368,7 @@ namespace apprepodbmgr.Core
                     {
                         Failed?.Invoke("Could not create database, correct file selected?");
                         dbCore = null;
+
                         return;
                     }
 
@@ -343,32 +376,33 @@ namespace apprepodbmgr.Core
                     {
                         Failed?.Invoke("Could not open database, correct file selected?");
                         dbCore = null;
+
                         return;
                     }
                 }
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
-        public static void CloseDB()
-        {
-            dbCore?.CloseDb();
-        }
+        public static void CloseDB() => dbCore?.CloseDb();
 
         public static void RemoveApp(long id, string mdid)
         {
-            if(id == 0 || string.IsNullOrWhiteSpace(mdid)) return;
+            if(id == 0 ||
+               string.IsNullOrWhiteSpace(mdid))
+                return;
 
             dbCore.DbOps.RemoveApp(id);
         }
@@ -381,12 +415,13 @@ namespace apprepodbmgr.Core
                 const ulong PAGE   = 2500;
                 ulong       offset = 0;
 
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Restart();
-                #endif
+            #endif
                 while(dbCore.DbOps.GetFiles(out List<DbFile> files, offset, PAGE))
                 {
-                    if(files.Count == 0) break;
+                    if(files.Count == 0)
+                        break;
 
                     UpdateProgress?.Invoke(null, $"Loaded file {offset} of {count}", (long)offset, (long)count);
 
@@ -394,23 +429,25 @@ namespace apprepodbmgr.Core
 
                     offset += PAGE;
                 }
-                #if DEBUG
+            #if DEBUG
                 stopwatch.Stop();
+
                 Console.WriteLine("Core.GetFilesFromDb(): Took {0} seconds to get all files from the database",
                                   stopwatch.Elapsed.TotalSeconds);
-                #endif
+            #endif
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
@@ -422,21 +459,19 @@ namespace apprepodbmgr.Core
 
                 Finished?.Invoke();
             }
-            catch(ThreadAbortException) { }
+            catch(ThreadAbortException) {}
             catch(Exception ex)
             {
-                if(Debugger.IsAttached) throw;
+                if(Debugger.IsAttached)
+                    throw;
 
                 Failed?.Invoke($"Exception {ex.Message}\n{ex.InnerException}");
-                #if DEBUG
+            #if DEBUG
                 Console.WriteLine("Exception {0}\n{1}", ex.Message, ex.InnerException);
-                #endif
+            #endif
             }
         }
 
-        public static DbFile GetDBFile(string hash)
-        {
-            return dbCore.DbOps.GetFile(hash);
-        }
+        public static DbFile GetDBFile(string hash) => dbCore.DbOps.GetFile(hash);
     }
 }

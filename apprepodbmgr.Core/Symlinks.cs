@@ -15,7 +15,8 @@ namespace apprepodbmgr.Core
 
             int ret = readlink(path, buf, 16384);
 
-            if(ret < 0) return null;
+            if(ret < 0)
+                return null;
 
             byte[] target = new byte[ret];
             Marshal.Copy(buf, target, 0, ret);
@@ -26,9 +27,6 @@ namespace apprepodbmgr.Core
         [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
         static extern int symlink(string target, string path);
 
-        public static int Symlink(string target, string path)
-        {
-            return symlink(target, path);
-        }
+        public static int Symlink(string target, string path) => symlink(target, path);
     }
 }
