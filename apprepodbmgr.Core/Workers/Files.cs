@@ -454,7 +454,6 @@ namespace apprepodbmgr.Core
 
                     byte[]        dataBuffer;
                     Sha256Context sha256Context = new Sha256Context();
-                    sha256Context.Init();
 
                     if(fileStream.Length > BUFFER_SIZE)
                     {
@@ -887,6 +886,8 @@ namespace apprepodbmgr.Core
                     FileStream outFs = new FileStream(Path.Combine(Context.Path, file.Path), FileMode.CreateNew,
                                                       FileAccess.Write);
 
+                    long inLength = inFs.Length;
+                    
                     switch(algorithm)
                     {
                         case AlgoEnum.GZip:
@@ -924,8 +925,8 @@ namespace apprepodbmgr.Core
                     zStream.Read(buffer, 0, buffer.Length);
                     outFs.Write(buffer, 0, buffer.Length);
 
-                    UpdateProgress2?.Invoke($"{file.Length / (double)file.Length:P}", "Finishing...", inFs.Length,
-                                            inFs.Length);
+                    UpdateProgress2?.Invoke($"{file.Length / (double)file.Length:P}", "Finishing...", inLength,
+                                            inLength);
 
                     zStream.Close();
                     outFs.Close();
